@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calculator, BarChart3, Database, ArrowLeft } from "lucide-react";
+import { Calculator, BarChart3, Database, ArrowLeft, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import _ from "lodash";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,15 +26,24 @@ export default function Results() {
 
   // Get samples from localStorage
   const getSamplesFromStorage = (type) => {
-    const allSamples = JSON.parse(localStorage.getItem("phyto_samples") || "[]");
-    return allSamples.filter(s => s.analysis_type === type);
+    try {
+      const allSamples = JSON.parse(localStorage.getItem("phyto_samples") || "[]");
+      return allSamples.filter(s => s.analysis_type === type);
+    } catch (error) {
+      console.error("Error loading samples from localStorage:", error);
+      return [];
+    }
   };
 
   // Save samples to localStorage
   const saveSamplesToStorage = (newSamples) => {
-    const allSamples = JSON.parse(localStorage.getItem("phyto_samples") || "[]");
-    const otherSamples = allSamples.filter(s => s.analysis_type !== analysisType);
-    localStorage.setItem("phyto_samples", JSON.stringify([...otherSamples, ...newSamples]));
+    try {
+      const allSamples = JSON.parse(localStorage.getItem("phyto_samples") || "[]");
+      const otherSamples = allSamples.filter(s => s.analysis_type !== analysisType);
+      localStorage.setItem("phyto_samples", JSON.stringify([...otherSamples, ...newSamples]));
+    } catch (error) {
+      console.error("Error saving samples to localStorage:", error);
+    }
   };
 
   useEffect(() => {
@@ -50,10 +60,10 @@ export default function Results() {
   };
   
   const loadSamples = () => {
-      setSamples(getSamplesFromStorage(analysisType));
+    setSamples(getSamplesFromStorage(analysisType));
   };
 
-  const handleAddOrUpdateSample = async (sampleData, isEditing) => {
+  const handleAddOrUpdateSample = (sampleData, isEditing) => {
     const currentSamples = getSamplesFromStorage(analysisType);
     let updatedSamples;
     if (isEditing) {
@@ -65,7 +75,7 @@ export default function Results() {
     loadSamples();
   };
 
-  const handleRemoveSample = async (sampleId) => {
+  const handleRemoveSample = (sampleId) => {
     const currentSamples = getSamplesFromStorage(analysisType);
     const updatedSamples = currentSamples.filter(s => s.id !== sampleId);
     saveSamplesToStorage(updatedSamples);
@@ -77,7 +87,7 @@ export default function Results() {
     });
   };
 
-  const handleRemoveMultipleSamples = async (sampleIds) => {
+  const handleRemoveMultipleSamples = (sampleIds) => {
     const currentSamples = getSamplesFromStorage(analysisType);
     const updatedSamples = currentSamples.filter(s => !sampleIds.includes(s.id));
     saveSamplesToStorage(updatedSamples);
@@ -85,7 +95,7 @@ export default function Results() {
     setSelectedSampleIds(new Set());
   };
 
-  const handleSamplesUploaded = async (uploadedSamples) => {
+  const handleSamplesUploaded = (uploadedSamples) => {
     const newSamples = uploadedSamples.map(s => ({ 
         ...s, 
         id: `${Date.now()}-${Math.random()}`, 
@@ -119,9 +129,9 @@ export default function Results() {
         case "total_flavonoid":
         case "h2o2": {
             if (!p.std_a || !p.std_b) return { result: 0, unit: "N/A" };
-            const y = values[Object.keys(values)[0]] || 0;
+            const y = values[Object.keys(values)[0]] || 0; // Assumes a single absorbance value
             const result = (y - parseFloat(p.std_b)) / parseFloat(p.std_a);
-            const unitMap = { total_phenol: "mg GAE/g FW", total_flavonoid: "mg QE/g FW", h2o2: "μmol/g FW" };
+            const unitMap = { total_phenol: "mg GAE/g FW", total_flavonoid: "mg QE/g FW", h2o2: "μmol/g DW" };
             return { result, unit: unitMap[sample.analysis_type] };
         }
         case "glucosinolate":
@@ -185,6 +195,66 @@ export default function Results() {
     };
     return titles[analysisType] || "분석";
   };
+
+  const getTemplateHeaders = (type) => {
+    const commonHeaders = ["Sample Name", "Description", "Replicate"];
+    const typeSpecificAbsorbanceHeaders = {
+        chlorophyll_a_b: ["665.2", "652.4"],
+        carotenoid: ["470", "665.2", "652.4"],
+        total_phenol: ["Absorbance"], // For single absorbance inputs for standard curves
+        total_flavonoid: ["Absorbance"],
+        h2o2: ["Absorbance"],
+        glucosinolate: ["425"],
+        dpph_scavenging: ["517"],
+        anthocyanin: ["530", "600"],
+        sod: ["560"],
+        // For 'cat' and 'pod', the 'delta_A' value is taken from `calculationParams`,
+        // not `sample.absorbance_values`, so no specific absorbance columns are needed
+        // in the sample input template according to the current calculation logic.
+    };
+
+    return [...commonHeaders, ...(typeSpecificAbsorbanceHeaders[type] || [])];
+  };
+
+  const handleDownloadTemplate = () => {
+      if (!analysisType) {
+          alert("먼저 분석 항목을 선택해주세요.");
+          return;
+      }
+
+      const headers = getTemplateHeaders(analysisType);
+      if (headers.length <= 3) { // Only common headers, no specific absorbance headers
+          alert("이 분석 항목에 대한 특정 템플릿이 없습니다. '샘플 이름', '설명', '반복' 열만 제공됩니다.");
+      }
+
+      let csvContent = headers.map(header => `"${header}"`).join(",") + "\n";
+      // Add a few example rows
+      for (let i = 1; i <= 3; i++) {
+          const exampleRow = headers.map(header => {
+              if (header === "Sample Name") return `"Sample ${i}"`;
+              if (header === "Description") return `"Description for Sample ${i}"`;
+              if (header === "Replicate") return `""`; // Leave empty for user to fill
+              // For absorbance values, provide placeholder 0.000
+              return `"0.000"`;
+          }).join(",");
+          csvContent += exampleRow + "\n";
+      }
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      if (link.download !== undefined) { // feature detection
+          const url = URL.createObjectURL(blob);
+          link.setAttribute("href", url);
+          link.setAttribute("download", `${analysisType}_template.csv`);
+          link.style.visibility = 'hidden';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+      } else {
+          alert("파일을 직접 다운로드하는 기능은 귀하의 브라우저에서 지원되지 않습니다.");
+      }
+  };
+
 
   if (!analysisType) {
     return (
@@ -287,10 +357,10 @@ export default function Results() {
                     />
                   </TabsContent>
                   <TabsContent value="excel" className="mt-4 sm:mt-6">
-                    <ExcelUpload 
-                      analysisType={analysisType}
-                      onSamplesUploaded={handleSamplesUploaded}
-                    />
+                      <ExcelUpload 
+                        analysisType={analysisType}
+                        onSamplesUploaded={handleSamplesUploaded}
+                      />
                   </TabsContent>
                 </Tabs>
                 <CalculationEngine samples={selectedSamples} />
@@ -303,6 +373,7 @@ export default function Results() {
                   onEdit={handleAddOrUpdateSample}
                   onRemove={handleRemoveSample}
                   onRemoveMultiple={handleRemoveMultipleSamples}
+                  analysisType={analysisType}
                 />
               </div>
             </motion.div>

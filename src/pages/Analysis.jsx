@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,7 +15,7 @@ const analysisProtocols = {
     protocol: [
       "2mL 튜브에 2mL의 90% MeOH과 시료 20mg 넣기",
       "20℃에서 중간 강도로 sonication 20분간 추출",
-      "15,000RPM, 4℃, 10min 조건으로 원심분리",
+      "15,000RPM, 4℃, 10min 조건으로 centrifuge", // Changed from "원심분리"
       "상층액 1.5mL 추출 후 냉장보관",
       "96 well에 추출물 200μL 분주하여 흡광도 측정"
     ],
@@ -102,7 +103,7 @@ const analysisProtocols = {
     protocol: [
       "2mL 튜브에 1% HCl (90% MeOH + 10% HCl) 2mL + 시료 20mg 넣기",
       "40℃에서 중간 강도로 sonication 1시간 추출",
-      "15,000RPM, 4℃, 10min 조건으로 원심분리",
+      "15,000RPM, 4℃, 10min 조건으로 centrifuge", // Changed from "원심분리"
       "상층액 1.5mL 추출 후 냉장보관",
       "530nm, 600nm에서 흡광도 측정"
     ],
@@ -120,7 +121,8 @@ const analysisProtocols = {
     protocol: [
       "시료 20mg + pH 7.0 50mM PBS 2mL로 효소 추출",
       "액체질소 5분 + sonication 10분 (3회 반복)",
-      "15,000RPM, 4℃, 10min 원심분리",
+      "15,000RPM, 4℃, 10min centrifuge", // Changed from "원심분리"
+      "Centrifuge 후 상층액 (1.5mL) 뽑고 박스에 넣어 deep freezer에 보관",
       "3% H₂O₂ 3.4μL + 50mM phosphate buffer 193.6μL + enzyme 3μL 넣기",
       "240nm에서 10초마다 10분간 흡광도 측정"
     ],
@@ -138,7 +140,8 @@ const analysisProtocols = {
     protocol: [
       "시료 20mg + pH 7.0 50mM PBS 2mL로 효소 추출",
       "액체질소 5분 + sonication 10분 (3회 반복)",
-      "15,000RPM, 4℃, 10min 원심분리",
+      "15,000RPM, 4℃, 10min centrifuge", // Changed from "원심분리"
+      "Centrifuge 후 상층액 (1.5mL) 뽑고 박스에 넣어 deep freezer에 보관",
       "40mM phosphate buffer 66.6μL + 20mM guaiacol 80μL + 3% H₂O₂ 33.3μL + sample 20μL 넣기",
       "470nm에서 10초마다 흡광도 측정"
     ],
@@ -155,9 +158,11 @@ const analysisProtocols = {
     wavelengths: ["560"],
     protocol: [
       "시료 20mg + pH 7.0 50mM PBS 2mL로 효소 추출",
-      "50mM phosphate buffer 93.5μL + 0.1M methionine 52μL + 2.5mM NBT 24.5μL 넣기",
-      "10mM EDTA 2μL + 0.5mM riboflavin 8μL 혼합",
-      "PPFD 50 μmol/m²/s LED 광에 15분간 노출",
+      "액체질소 5분 + sonication 10분 (3회 반복)",
+      "15,000RPM, 4℃, 10min centrifuge",
+      "Centrifuge 후 상층액 (1.5mL) 뽑고 박스에 넣어 deep freezer에 보관",
+      "순서대로 50mM phosphate buffer 93.5μL, 0.1M methionine 52μL, 2.5mM NBT 24.5μL, 10mM EDTA 2μL, 0.5mM riboflavin 8μL 넣기",
+      "PPFD 50 μmolm-2s-1의 LED 광에 15분간 노출시킨 후 빛을 차단",
       "560nm에서 흡광도 측정"
     ],
     formulas: [
@@ -175,7 +180,7 @@ const analysisProtocols = {
     protocol: [
       "시료 20mg + 0.1% TCA 2mL 혼합 후 vortex",
       "액체질소 5분 + sonication 10분 (3회 반복)",
-      "15,000RPM, 4℃, 10min 원심분리",
+      "15,000RPM, 4℃, 10min centrifuge",
       "상등액 1.5mL 추출",
       "10mM potassium phosphate buffer + 1M KI 사용하여 반응",
       "암실에서 10분 반응 후 390nm에서 측정"
@@ -184,7 +189,7 @@ const analysisProtocols = {
       "H₂O₂ standard curve 사용하여 함량 계산",
       "농도 = (흡광도 - b) / a"
     ],
-    unit: "μmol/g FW",
+    unit: "μmol/g DW",
     icon: <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />
   }
 };
@@ -265,7 +270,7 @@ export default function Analysis() {
                           <span className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold">
                             {index + 1}
                           </span>
-                          <span className="text-gray-700 text-xs sm:text-sm leading-relaxed">{step}</span>
+                          <span className="text-gray-700  text-xs sm:text-sm leading-relaxed">{step}</span>
                         </li>
                       ))}
                     </ol>

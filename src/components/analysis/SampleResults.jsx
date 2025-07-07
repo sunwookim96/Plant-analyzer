@@ -13,6 +13,12 @@ import {
   DialogTrigger,
   DialogFooter
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -127,10 +133,39 @@ const SampleEditForm = ({ sample, onSave, onCancel }) => {
   );
 };
 
-export default function SampleResults({ samples, selectedIds, onSelectionChange, onEdit, onRemove, onRemoveMultiple }) {
+export default function SampleResults({ samples, selectedIds, onSelectionChange, onEdit, onRemove, onRemoveMultiple, analysisType }) {
   const [editingSample, setEditingSample] = useState(null);
 
-  const exportResults = () => {
+  // 선택된 샘플만 내보내기
+  const exportSelectedResults = () => {
+    const selectedSamples = samples.filter(sample => selectedIds.has(sample.id));
+    if (selectedSamples.length === 0) return;
+    
+    const headers = ['처리구명', '샘플명', '분석결과', '단위', '등록일'];
+    const csvRows = [
+      headers.join(','),
+      ...selectedSamples.map(sample => [
+        `"${sample.treatment_name}"`,
+        `"${sample.sample_name}"`,
+        sample.result.toFixed(4),
+        `"${sample.unit}"`,
+        `"${new Date(sample.created_date).toLocaleDateString()}"`
+      ].join(','))
+    ];
+
+    const csvContent = csvRows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `selected_results_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // 전체 샘플 내보내기
+  const exportAllResults = () => {
     if (samples.length === 0) return;
     const headers = ['처리구명', '샘플명', '분석결과', '단위', '등록일'];
     const csvRows = [
@@ -149,7 +184,7 @@ export default function SampleResults({ samples, selectedIds, onSelectionChange,
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
-    link.setAttribute("download", `analysis_results_${Date.now()}.csv`);
+    link.setAttribute("download", `all_results_${Date.now()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -223,15 +258,37 @@ export default function SampleResults({ samples, selectedIds, onSelectionChange,
                         <Trash2 className="h-3 w-3 mr-1" />
                         <span>전체 삭제</span>
                     </Button>
-                    <Button 
-                        onClick={exportResults} 
-                        variant="outline"
-                        size="sm" 
-                        className="h-8 rounded-lg bg-white/80 border-gray-300 text-gray-700 hover:bg-gray-100 font-medium text-xs px-3"
-                    >
-                        <Download className="h-3 w-3 mr-1" />
-                        <span>내보내기</span>
-                    </Button>
+                    
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button 
+                                variant="outline"
+                                size="sm" 
+                                className="h-8 rounded-lg bg-white/80 border-gray-300 text-gray-700 hover:bg-gray-100 font-medium text-xs px-3"
+                            >
+                                <Download className="h-3 w-3 mr-1" />
+                                <span>내보내기</span>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-48">
+                            <DropdownMenuItem 
+                                onClick={exportSelectedResults}
+                                disabled={selectedIds.size === 0}
+                                className="cursor-pointer"
+                            >
+                                <Download className="h-4 w-4 mr-2" />
+                                선택 내보내기 ({selectedIds.size}개)
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                                onClick={exportAllResults}
+                                disabled={samples.length === 0}
+                                className="cursor-pointer"
+                            >
+                                <Download className="h-4 w-4 mr-2" />
+                                전체 내보내기 ({samples.length}개)
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </div>
         </CardHeader>
