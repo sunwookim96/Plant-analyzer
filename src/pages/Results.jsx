@@ -5,6 +5,7 @@ import { Calculator, BarChart3, Database, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import _ from "lodash";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPageUrl } from "@/utils";
 
 import ManualInput from "../components/analysis/ManualInput";
 import ExcelUpload from "../components/analysis/ExcelUpload";
@@ -12,9 +13,6 @@ import CalculationEngine from "../components/analysis/CalculationEngine";
 import ChartVisualization from "../components/analysis/ChartVisualization";
 import SampleResults from "../components/analysis/SampleResults";
 import CalculationParams from "../components/analysis/CalculationParams";
-
-// Helper function to get page URL, assuming you have a way to build it
-const createPageUrl = (page) => `/${page.toLowerCase()}`;
 
 export default function Results() {
   const location = useLocation();
@@ -191,13 +189,13 @@ export default function Results() {
   if (!analysisType) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-        <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
           <div className="text-center py-20">
-            <h1 className="text-2xl font-semibold text-gray-900 mb-4">분석 항목을 선택해주세요</h1>
-            <p className="text-gray-600">먼저 분석 프로토콜에서 수행할 분석을 선택하세요.</p>
+            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">분석 항목을 선택해주세요</h1>
+            <p className="text-sm sm:text-base text-gray-600 mb-6">먼저 분석 프로토콜에서 수행할 분석을 선택하세요.</p>
             <Button 
               onClick={handleBackToAnalysis}
-              className="ios-button mt-6 rounded-xl flex items-center space-x-2"
+              className="bg-blue-600 hover:bg-blue-700 mt-6 rounded-xl flex items-center space-x-2 mx-auto"
             >
               <ArrowLeft className="h-4 w-4" />
               <span>분석 프로토콜로 돌아가기</span>
@@ -210,23 +208,23 @@ export default function Results() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 space-y-6 sm:space-y-8">
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="flex items-center justify-between"
+          className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between space-y-4 sm:space-y-0"
         >
-          <div className="text-center flex-1">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">{getAnalysisTitle()}</h1>
-            <p className="text-gray-600">
+          <div className="text-left sm:text-center flex-1">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 leading-tight">{getAnalysisTitle()}</h1>
+            <p className="text-sm sm:text-base text-gray-600">
               데이터를 입력하고 분석 결과를 확인하세요.
             </p>
           </div>
           <Button 
             onClick={handleBackToAnalysis}
             variant="outline"
-            className="ios-button-secondary rounded-xl flex items-center space-x-2 h-12"
+            className="border-gray-300 hover:bg-gray-100 rounded-xl flex items-center space-x-2 h-10 sm:h-12 w-full sm:w-auto"
           >
             <ArrowLeft className="h-4 w-4" />
             <span>분석 선택</span>
@@ -246,48 +244,49 @@ export default function Results() {
           )}
         </AnimatePresence>
         
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 ios-card ios-blur rounded-2xl ios-shadow p-2 border-0 h-14">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
+          <TabsList className="grid w-full grid-cols-2 bg-white/70 backdrop-blur-lg rounded-xl sm:rounded-2xl shadow-xl p-2 border-0 h-12 sm:h-14">
             <TabsTrigger 
               value="data_input_analysis" 
-              className="flex items-center space-x-2 data-[state=active]:bg-white data-[state=active]:ios-shadow data-[state=active]:text-blue-600 text-gray-600 rounded-xl h-10 font-semibold transition-all duration-200"
+              className="flex items-center space-x-1 sm:space-x-2 data-[state=active]:bg-white data-[state=active]:shadow-lg data-[state=active]:text-blue-600 text-gray-600 rounded-lg sm:rounded-xl h-8 sm:h-10 font-semibold transition-all duration-200 text-xs sm:text-sm"
             >
-              <Database className="h-4 w-4" />
-              <span>데이터 입력 및 분석 결과</span>
+              <Database className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">데이터 입력 및 분석 결과</span>
+              <span className="sm:hidden">데이터 분석</span>
             </TabsTrigger>
             <TabsTrigger 
               value="visualization" 
-              className="flex items-center space-x-2 data-[state=active]:bg-white data-[state=active]:ios-shadow data-[state=active]:text-blue-600 text-gray-600 rounded-xl h-10 font-semibold transition-all duration-200"
+              className="flex items-center space-x-1 sm:space-x-2 data-[state=active]:bg-white data-[state=active]:shadow-lg data-[state=active]:text-blue-600 text-gray-600 rounded-lg sm:rounded-xl h-8 sm:h-10 font-semibold transition-all duration-200 text-xs sm:text-sm"
             >
-              <BarChart3 className="h-4 w-4" />
+              <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
               <span>시각화</span>
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="data_input_analysis" className="space-y-8">
+          <TabsContent value="data_input_analysis" className="space-y-6 sm:space-y-8">
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
-              className="grid lg:grid-cols-5 gap-6 items-start"
+              className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6 items-start"
             >
-              <div className="lg:col-span-2 space-y-6">
+              <div className="lg:col-span-2 space-y-4 sm:space-y-6">
                 <Tabs defaultValue="manual" className="w-full">
-                  <TabsList className="ios-card ios-blur rounded-2xl ios-shadow p-2 border-0 h-12">
-                    <TabsTrigger value="manual" className="data-[state=active]:bg-white data-[state=active]:ios-shadow text-gray-600 data-[state=active]:text-blue-600 rounded-xl font-semibold h-8 transition-all duration-200">
+                  <TabsList className="bg-white/70 backdrop-blur-lg rounded-xl sm:rounded-2xl shadow-xl p-2 border-0 h-10 sm:h-12 w-full">
+                    <TabsTrigger value="manual" className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-gray-600 data-[state=active]:text-blue-600 rounded-lg sm:rounded-xl font-semibold h-6 sm:h-8 transition-all duration-200 text-xs sm:text-sm flex-1">
                       직접 입력
                     </TabsTrigger>
-                    <TabsTrigger value="excel" className="data-[state=active]:bg-white data-[state=active]:ios-shadow text-gray-600 data-[state=active]:text-blue-600 rounded-xl font-semibold h-8 transition-all duration-200">
+                    <TabsTrigger value="excel" className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-gray-600 data-[state=active]:text-blue-600 rounded-lg sm:rounded-xl font-semibold h-6 sm:h-8 transition-all duration-200 text-xs sm:text-sm flex-1">
                       파일 업로드
                     </TabsTrigger>
                   </TabsList>
-                  <TabsContent value="manual" className="mt-6">
+                  <TabsContent value="manual" className="mt-4 sm:mt-6">
                     <ManualInput 
                       analysisType={analysisType}
                       onSaveSample={handleAddOrUpdateSample}
                     />
                   </TabsContent>
-                  <TabsContent value="excel" className="mt-6">
+                  <TabsContent value="excel" className="mt-4 sm:mt-6">
                     <ExcelUpload 
                       analysisType={analysisType}
                       onSamplesUploaded={handleSamplesUploaded}

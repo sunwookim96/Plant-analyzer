@@ -5,10 +5,7 @@ import {
   TrendingUp, 
   BarChart, 
   Percent, 
-  Target, 
-  ArrowDown,
-  ArrowUp,
-  Scale 
+  Target
 } from "lucide-react";
 import _ from "lodash";
 
@@ -17,9 +14,7 @@ const StatCard = ({ title, value, unit, icon, color = "blue" }) => {
     blue: "bg-blue-50 border-blue-200 text-blue-800",
     green: "bg-green-50 border-green-200 text-green-800", 
     orange: "bg-orange-50 border-orange-200 text-orange-800",
-    purple: "bg-purple-50 border-purple-200 text-purple-800",
-    red: "bg-red-50 border-red-200 text-red-800",
-    gray: "bg-gray-100 border-gray-300 text-gray-800"
+    purple: "bg-purple-50 border-purple-200 text-purple-800"
   };
 
   return (
@@ -60,17 +55,6 @@ export default function CalculationEngine({ samples }) {
   const variance = stdDev * stdDev;
   const cv = mean !== 0 ? (stdDev / mean) * 100 : 0;
   const unit = samples[0]?.unit;
-  
-  const min = _.min(results) || 0;
-  const max = _.max(results) || 0;
-
-  const calculateMedian = (arr) => {
-    if (!arr || arr.length === 0) return 0;
-    const sorted = [...arr].sort((a, b) => a - b);
-    const mid = Math.floor(sorted.length / 2);
-    return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
-  };
-  const median = calculateMedian(results);
 
   return (
     <Card className="ios-card ios-blur rounded-3xl ios-shadow-lg border-0 h-full">
@@ -106,27 +90,6 @@ export default function CalculationEngine({ samples }) {
           value={`${cv.toFixed(2)}%`} 
           icon={<Percent className="h-4 w-4" />}
           color="purple"
-        />
-        <StatCard 
-          title="최소값 (Min)" 
-          value={min.toFixed(3)} 
-          unit={unit} 
-          icon={<ArrowDown className="h-4 w-4" />}
-          color="red"
-        />
-        <StatCard 
-          title="최대값 (Max)" 
-          value={max.toFixed(3)} 
-          unit={unit} 
-          icon={<ArrowUp className="h-4 w-4" />}
-          color="blue"
-        />
-        <StatCard 
-          title="중앙값 (Median)" 
-          value={median.toFixed(3)} 
-          unit={unit} 
-          icon={<Scale className="h-4 w-4" />}
-          color="gray"
         />
       </CardContent>
     </Card>

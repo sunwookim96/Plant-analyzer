@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TestTube, Beaker, FlaskConical, Microscope, Calculator, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { createPageUrl } from "@/utils";
 
 const analysisProtocols = {
   chlorophyll_a_b: {
@@ -23,7 +24,7 @@ const analysisProtocols = {
       "Carotenoid (μg/ml) = (1000 × A470 - 1.91 × Chl a - 95.15 × Chl b) / 225"
     ],
     unit: "μg/ml",
-    icon: <TestTube className="h-5 w-5" />
+    icon: <TestTube className="h-4 w-4 sm:h-5 sm:w-5" />
   },
   total_phenol: {
     title: "총 페놀 함량",
@@ -41,7 +42,7 @@ const analysisProtocols = {
       "농도 = (흡광도 - b) / a"
     ],
     unit: "mg GAE/g FW",
-    icon: <Beaker className="h-5 w-5" />
+    icon: <Beaker className="h-4 w-4 sm:h-5 sm:w-5" />
   },
   total_flavonoid: {
     title: "총 플라보노이드",
@@ -59,7 +60,7 @@ const analysisProtocols = {
       "농도 = (흡광도 - b) / a"
     ],
     unit: "mg QE/g FW",
-    icon: <FlaskConical className="h-5 w-5" />
+    icon: <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" />
   },
   glucosinolate: {
     title: "글루코시놀레이트",
@@ -76,7 +77,7 @@ const analysisProtocols = {
       "Total glucosinolate (μmol/g) = 1.40 + 118.86 × A425"
     ],
     unit: "μmol/g FW",
-    icon: <Microscope className="h-5 w-5" />
+    icon: <Microscope className="h-4 w-4 sm:h-5 sm:w-5" />
   },
   dpph_scavenging: {
     title: "DPPH 라디칼 소거능",
@@ -92,7 +93,7 @@ const analysisProtocols = {
       "DPPH Inhibition (%) = ((Control - Sample) / Control) × 100%"
     ],
     unit: "% inhibition",
-    icon: <Calculator className="h-5 w-5" />
+    icon: <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />
   },
   anthocyanin: {
     title: "안토시아닌",
@@ -110,7 +111,7 @@ const analysisProtocols = {
       "V = 추출부피(mL), n = 희석배수, Mw = 449.2, ε = 26900, m = 시료무게(g)"
     ],
     unit: "mg/g FW",
-    icon: <TestTube className="h-5 w-5" />
+    icon: <TestTube className="h-4 w-4 sm:h-5 sm:w-5" />
   },
   cat: {
     title: "카탈라아제 활성",
@@ -128,7 +129,7 @@ const analysisProtocols = {
       "CAT activity (μmol/min/mg DW) = unit/mL / enzyme (mg/mL)"
     ],
     unit: "μmol/min/mg DW",
-    icon: <FlaskConical className="h-5 w-5" />
+    icon: <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" />
   },
   pod: {
     title: "퍼옥시다아제 활성",
@@ -146,7 +147,7 @@ const analysisProtocols = {
       "POD activity (μmol/min/mg DW) = unit/mL / enzyme (mg/mL)"
     ],
     unit: "μmol/min/mg DW",
-    icon: <Beaker className="h-5 w-5" />
+    icon: <Beaker className="h-4 w-4 sm:h-5 sm:w-5" />
   },
   sod: {
     title: "슈퍼옥사이드 디스뮤타아제 활성",
@@ -165,7 +166,7 @@ const analysisProtocols = {
       "SOD activity (unit/mg DW) = unit/mL / enzyme (mg/mL)"
     ],
     unit: "unit/mg DW",
-    icon: <Microscope className="h-5 w-5" />
+    icon: <Microscope className="h-4 w-4 sm:h-5 sm:w-5" />
   },
   h2o2: {
     title: "과산화수소 함량",
@@ -184,12 +185,9 @@ const analysisProtocols = {
       "농도 = (흡광도 - b) / a"
     ],
     unit: "μmol/g FW",
-    icon: <Calculator className="h-5 w-5" />
+    icon: <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />
   }
 };
-
-// Helper function to get page URL, assuming you have a way to build it
-const createPageUrl = (page) => `/${page.toLowerCase()}`;
 
 export default function Analysis() {
   const [selectedAnalysis, setSelectedAnalysis] = useState("");
@@ -197,110 +195,112 @@ export default function Analysis() {
 
   const handleAnalyzeClick = () => {
     if (selectedAnalysis) {
-      navigate(`${createPageUrl('Results')}?analysis_type=${selectedAnalysis}`);
+      navigate(createPageUrl("Results") + `?analysis_type=${selectedAnalysis}`);
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">분석 프로토콜 선택</h1>
-          <p className="text-gray-600">수행할 생화학 분석을 선택하세요.</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 space-y-6 sm:space-y-8">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">분석 프로토콜 선택</h1>
+          <p className="text-sm sm:text-base text-gray-600">수행할 생화학 분석을 선택하세요.</p>
         </div>
 
-        <div className="ios-card ios-blur rounded-3xl ios-shadow-lg border-0 p-6 mb-8">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="bg-white/70 backdrop-blur-lg rounded-2xl sm:rounded-3xl shadow-xl border-0 p-4 sm:p-6 mb-6 sm:mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
             {Object.entries(analysisProtocols).map(([key, protocol]) => (
               <button
                 key={key}
                 onClick={() => setSelectedAnalysis(key)}
-                className={`p-4 rounded-2xl border transition-all duration-300 text-left ${
+                className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all duration-300 text-left ${
                   selectedAnalysis === key
-                    ? 'bg-blue-600 text-white border-blue-600 ios-shadow-lg'
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-xl'
                     : 'bg-white/80 text-gray-700 border-gray-200 hover:bg-blue-50 hover:border-blue-300'
                 }`}
               >
                 <div className="flex items-center space-x-2 mb-2">
-                  <div className="w-8 h-8 flex items-center justify-center">{protocol.icon}</div>
-                  <span className="font-bold text-base">{protocol.title}</span>
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center">{protocol.icon}</div>
+                  <span className="font-bold text-sm sm:text-base leading-tight">{protocol.title}</span>
                 </div>
-                <p className="text-sm opacity-80">{protocol.subtitle}</p>
+                <p className="text-xs sm:text-sm opacity-80 leading-relaxed">{protocol.subtitle}</p>
               </button>
             ))}
           </div>
         </div>
 
         {selectedAnalysis && (
-          <div className="space-y-8">
-            <Card className="ios-card ios-blur rounded-3xl ios-shadow-lg border-0">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
+          <div className="space-y-6 sm:space-y-8">
+            <Card className="bg-white/80 backdrop-blur-lg rounded-2xl sm:rounded-3xl shadow-xl border-0">
+              <CardHeader className="p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0">
                        {analysisProtocols[selectedAnalysis].icon}
                     </div>
-                    <div>
-                      <CardTitle className="text-gray-900 text-xl font-bold">
+                    <div className="min-w-0 flex-1">
+                      <CardTitle className="text-gray-900 text-lg sm:text-xl font-bold leading-tight">
                         {analysisProtocols[selectedAnalysis].title}
                       </CardTitle>
-                      <p className="text-gray-600 text-base mt-1">
+                      <p className="text-gray-600 text-sm sm:text-base mt-1 leading-relaxed">
                         {analysisProtocols[selectedAnalysis].subtitle}
                       </p>
                     </div>
                   </div>
-                  <Button onClick={handleAnalyzeClick} className="ios-button h-12 text-base rounded-xl">
-                    분석하기 <ArrowRight className="ml-2 h-5 w-5" />
+                  <Button onClick={handleAnalyzeClick} className="bg-blue-600 hover:bg-blue-700 h-10 sm:h-12 text-sm sm:text-base rounded-xl w-full sm:w-auto">
+                    분석하기 <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent className="grid md:grid-cols-2 gap-8">
-                 <div className="ios-card bg-white/50 rounded-2xl p-6 border-0">
-                  <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2">
-                    <TestTube className="h-4 w-4" />
-                    <span>실험 프로토콜</span>
-                  </h3>
-                  <ol className="space-y-3">
-                    {analysisProtocols[selectedAnalysis].protocol.map((step, index) => (
-                      <li key={index} className="flex items-start space-x-3">
-                        <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-semibold">
-                          {index + 1}
-                        </span>
-                        <span className="text-gray-700 text-sm leading-relaxed">{step}</span>
-                      </li>
-                    ))}
-                  </ol>
-                </div>
+              <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+                   <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                    <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
+                      <TestTube className="h-4 w-4" />
+                      <span>실험 프로토콜</span>
+                    </h3>
+                    <ol className="space-y-3">
+                      {analysisProtocols[selectedAnalysis].protocol.map((step, index) => (
+                        <li key={index} className="flex items-start space-x-3">
+                          <span className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold">
+                            {index + 1}
+                          </span>
+                          <span className="text-gray-700 text-xs sm:text-sm leading-relaxed">{step}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
 
-                <div className="space-y-6">
-                    <div className="ios-card bg-white/50 rounded-2xl p-6 border-0">
-                        <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2">
-                            <Calculator className="h-4 w-4" />
-                            <span>계산 공식</span>
-                        </h3>
-                        <div className="space-y-4">
-                            {analysisProtocols[selectedAnalysis].formulas.map((formula, index) => (
-                            <div key={index} className="p-4 bg-gray-50 rounded-xl border border-gray-200">
-                                <code className="text-gray-800 text-sm font-mono leading-relaxed">
-                                {formula}
-                                </code>
-                            </div>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="ios-card bg-white/50 rounded-2xl p-6 border-0">
-                        <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2">
-                            <Microscope className="h-4 w-4" />
-                            <span>측정 파장</span>
-                        </h3>
-                        <div className="flex flex-wrap gap-2">
-                            {analysisProtocols[selectedAnalysis].wavelengths.map((wavelength) => (
-                            <Badge key={wavelength} variant="default" className="bg-blue-600 hover:bg-blue-700 text-base">
-                                {wavelength} nm
-                            </Badge>
-                            ))}
-                        </div>
-                    </div>
+                  <div className="space-y-4 sm:space-y-6">
+                      <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                          <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
+                              <Calculator className="h-4 w-4" />
+                              <span>계산 공식</span>
+                          </h3>
+                          <div className="space-y-3 sm:space-y-4">
+                              {analysisProtocols[selectedAnalysis].formulas.map((formula, index) => (
+                              <div key={index} className="p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl border border-gray-200">
+                                  <code className="text-gray-800 text-xs sm:text-sm font-mono leading-relaxed break-all">
+                                  {formula}
+                                  </code>
+                              </div>
+                              ))}
+                          </div>
+                      </div>
+                      <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                          <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
+                              <Microscope className="h-4 w-4" />
+                              <span>측정 파장</span>
+                          </h3>
+                          <div className="flex flex-wrap gap-2">
+                              {analysisProtocols[selectedAnalysis].wavelengths.map((wavelength) => (
+                              <Badge key={wavelength} variant="default" className="bg-blue-600 hover:bg-blue-700 text-xs sm:text-sm">
+                                  {wavelength} nm
+                              </Badge>
+                              ))}
+                          </div>
+                      </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>

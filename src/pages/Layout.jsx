@@ -3,17 +3,14 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Leaf, FlaskConical, BarChart3 } from "lucide-react";
 
-// Helper function to get page URL
-const createPageUrl = (page) => `/${page.toLowerCase()}`;
-
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
 
   const getPageTitle = () => {
-    if (location.pathname.startsWith(createPageUrl("Results"))) {
+    if (location.pathname.startsWith("/results")) {
       return "데이터 분석 및 결과";
     }
-    if (location.pathname.startsWith(createPageUrl("Analysis"))) {
+    if (location.pathname.startsWith("/analysis")) {
       return "분석 프로토콜";
     }
     return "Plant Biochemical Analysis";
@@ -84,20 +81,28 @@ export default function Layout({ children, currentPageName }) {
         input[type=number] {
           -moz-appearance: textfield;
         }
+
+        /* Mobile responsive improvements */
+        @media (max-width: 640px) {
+          .ios-input {
+            font-size: 16px; /* Prevents zoom on iOS */
+            padding: 12px;
+          }
+        }
       `}</style>
 
       <div className="relative z-10">
         <header className="sticky top-0 z-50 ios-blur bg-white/80 border-b border-gray-200/60 ios-shadow">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center space-x-3">
-                <Link to={createPageUrl("Analysis")} className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center ios-shadow">
-                    <Leaf className="h-5 w-5 text-white" />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="flex justify-between items-center h-14 sm:h-16">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <Link to="/analysis" className="flex items-center space-x-2 sm:space-x-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center ios-shadow">
+                    <Leaf className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                   </div>
-                  <div>
-                    <h1 className="text-lg font-semibold text-gray-900 tracking-tight">PlantAnalyzer</h1>
-                    <p className="text-xs text-gray-500 font-medium">{getPageTitle()}</p>
+                  <div className="min-w-0">
+                    <h1 className="text-base sm:text-lg font-semibold text-gray-900 tracking-tight">PlantAnalyzer</h1>
+                    <p className="text-xs text-gray-500 font-medium truncate">{getPageTitle()}</p>
                   </div>
                 </Link>
               </div>
