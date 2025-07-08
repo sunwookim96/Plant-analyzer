@@ -1,7 +1,9 @@
 
+
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Leaf, FlaskConical, BarChart3 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
@@ -111,9 +113,20 @@ export default function Layout({ children, currentPageName }) {
         </header>
 
         <main className="relative">
-          {children}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, x: -15 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 15 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
     </div>
   );
 }
+

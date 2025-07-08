@@ -2,17 +2,9 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Download, Edit, Trash2 } from "lucide-react";
+import { FileText, Download, Edit, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter
-} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,10 +13,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { motion, AnimatePresence } from "framer-motion";
 
 const getWavelengthsForAnalysis = (analysisType) => {
   const wavelengths = {
-    chlorophyll_a_b: ["665.2", "652.4"],
+    chlorophyll_a_b: ["665.2", "652.4", "470"], // Added "470" here
     carotenoid: ["470", "665.2", "652.4"],
     total_phenol: ["765"],
     total_flavonoid: ["415"],
@@ -77,59 +70,98 @@ const SampleEditForm = ({ sample, onSave, onCancel }) => {
     onCancel(); // 저장 후 다이얼로그 닫기
   };
 
+  // 흡광도 값 개수에 따른 그리드 클래스 결정
+  const getGridCols = (count) => {
+    if (count === 1) return "grid-cols-1";
+    if (count === 2) return "grid-cols-2";
+    if (count === 3) return "grid-cols-3";
+    if (count === 4) return "grid-cols-4";
+    // Add more conditions if needed for other counts, or default
+    return "grid-cols-3"; // 기본값
+  };
+
   return (
-    <DialogContent className="ios-card ios-blur rounded-3xl ios-shadow-lg border-0 p-4 sm:p-6 max-w-lg max-h-[90vh] overflow-y-auto">
-      <DialogHeader>
-        <DialogTitle className="text-gray-900 text-lg sm:text-xl font-semibold">샘플 수정</DialogTitle>
-      </DialogHeader>
-      <div className="space-y-4 py-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">처리구 이름</Label>
-            <Input 
-              value={formData.treatment_name || ''} 
-              onChange={e => setFormData({...formData, treatment_name: e.target.value})} 
-              className="ios-input border-0 h-10" 
-            />
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4" style={{ marginLeft: '520px' }}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: -20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: -20 }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 300, 
+          damping: 30,
+          duration: 0.3 
+        }}
+        className="w-full max-w-lg bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 p-6"
+      >
+        <div className="mb-6">
+          <h3 className="text-xl font-bold text-gray-900 text-center">샘플 수정</h3>
+        </div>
+        
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold text-gray-700">처리구 이름</Label>
+              <Input 
+                value={formData.treatment_name || ''} 
+                onChange={e => setFormData({...formData, treatment_name: e.target.value})} 
+                className="h-12 text-base font-medium rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500/20" 
+                placeholder="예: Control"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold text-gray-700">샘플 이름</Label>
+              <Input 
+                value={formData.sample_name || ''} 
+                onChange={e => setFormData({...formData, sample_name: e.target.value})} 
+                className="h-12 text-base font-medium rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500/20" 
+                placeholder="예: Rep1"
+              />
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">샘플 이름</Label>
-            <Input 
-              value={formData.sample_name || ''} 
-              onChange={e => setFormData({...formData, sample_name: e.target.value})} 
-              className="ios-input border-0 h-10" 
-            />
+          
+          <div className="space-y-4">
+            <Label className="text-base font-semibold text-gray-700">흡광도 값</Label>
+            <div className={`grid ${getGridCols(wavelengths.length)} gap-4`}>
+              {wavelengths.map(wl => (
+                <div key={wl} className="space-y-3">
+                  <div className="text-center">
+                    <Label className="text-sm font-medium text-gray-700">
+                      {wl} nm
+                    </Label>
+                  </div>
+                  <Input 
+                    type="number" 
+                    inputMode="decimal"
+                    step="any"
+                    value={formData.absorbance_values[wl] ?? ''} 
+                    onChange={e => handleAbsorbanceChange(wl, e.target.value)} 
+                    className="h-14 text-center font-mono text-lg rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500/20" 
+                    placeholder="0.000"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div className="flex gap-3 pt-4">
+            <Button 
+              onClick={onCancel} 
+              variant="outline" 
+              className="flex-1 h-12 rounded-xl border-gray-300 text-gray-600 hover:bg-gray-50 font-semibold transition-colors"
+            >
+              취소
+            </Button>
+            <Button 
+              onClick={handleSave} 
+              className="flex-1 h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+            >
+              저장
+            </Button>
           </div>
         </div>
-        <div className="space-y-3">
-          <Label className="text-sm font-medium">흡광도 값</Label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {wavelengths.map(wl => (
-              <div key={wl} className="space-y-1">
-                <Label className="text-xs text-gray-600">{wl} nm</Label>
-                <Input 
-                  type="number" 
-                  inputMode="decimal"
-                  step="any"
-                  value={formData.absorbance_values[wl] ?? ''} 
-                  onChange={e => handleAbsorbanceChange(wl, e.target.value)} 
-                  className="ios-input border-0 h-9 text-center text-sm" 
-                  placeholder="0.000"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      <DialogFooter className="flex-col-reverse sm:flex-row gap-2">
-        <Button onClick={onCancel} variant="ghost" className="rounded-xl w-full sm:w-auto h-10">
-          취소
-        </Button>
-        <Button onClick={handleSave} className="ios-button rounded-xl w-full sm:w-auto h-10">
-          저장
-        </Button>
-      </DialogFooter>
-    </DialogContent>
+      </motion.div>
+    </div>
   );
 };
 
@@ -141,17 +173,33 @@ export default function SampleResults({ samples, selectedIds, onSelectionChange,
     const selectedSamples = samples.filter(sample => selectedIds.has(sample.id));
     if (selectedSamples.length === 0) return;
     
-    const headers = ['처리구명', '샘플명', '분석결과', '단위', '등록일'];
-    const csvRows = [
-      headers.join(','),
-      ...selectedSamples.map(sample => [
-        `"${sample.treatment_name}"`,
-        `"${sample.sample_name}"`,
-        sample.result.toFixed(4),
-        `"${sample.unit}"`,
-        `"${new Date(sample.created_date).toLocaleDateString()}"`
-      ].join(','))
-    ];
+    // Adjust headers and rows based on analysis_type for chlorophyll
+    const csvRows = [];
+    if (selectedSamples[0]?.analysis_type === "chlorophyll_a_b") {
+      csvRows.push(['처리구명', '샘플명', 'Chl a', 'Chl b', 'Carotenoid', '단위', '등록일'].join(','));
+      selectedSamples.forEach(sample => {
+        csvRows.push([
+          `"${sample.treatment_name}"`,
+          `"${sample.sample_name}"`,
+          (sample.chl_a || 0).toFixed(4),
+          (sample.chl_b || 0).toFixed(4),
+          (sample.carotenoid || 0).toFixed(4),
+          `"${sample.unit}"`,
+          `"${new Date(sample.created_date).toLocaleDateString()}"`
+        ].join(','));
+      });
+    } else {
+      csvRows.push(['처리구명', '샘플명', '분석결과', '단위', '등록일'].join(','));
+      selectedSamples.forEach(sample => {
+        csvRows.push([
+          `"${sample.treatment_name}"`,
+          `"${sample.sample_name}"`,
+          sample.result.toFixed(4),
+          `"${sample.unit}"`,
+          `"${new Date(sample.created_date).toLocaleDateString()}"`
+        ].join(','));
+      });
+    }
 
     const csvContent = csvRows.join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -167,17 +215,33 @@ export default function SampleResults({ samples, selectedIds, onSelectionChange,
   // 전체 샘플 내보내기
   const exportAllResults = () => {
     if (samples.length === 0) return;
-    const headers = ['처리구명', '샘플명', '분석결과', '단위', '등록일'];
-    const csvRows = [
-      headers.join(','),
-      ...samples.map(sample => [
-        `"${sample.treatment_name}"`,
-        `"${sample.sample_name}"`,
-        sample.result.toFixed(4),
-        `"${sample.unit}"`,
-        `"${new Date(sample.created_date).toLocaleDateString()}"`
-      ].join(','))
-    ];
+    
+    const csvRows = [];
+    if (samples[0]?.analysis_type === "chlorophyll_a_b") {
+      csvRows.push(['처리구명', '샘플명', 'Chl a', 'Chl b', 'Carotenoid', '단위', '등록일'].join(','));
+      samples.forEach(sample => {
+        csvRows.push([
+          `"${sample.treatment_name}"`,
+          `"${sample.sample_name}"`,
+          (sample.chl_a || 0).toFixed(4),
+          (sample.chl_b || 0).toFixed(4),
+          (sample.carotenoid || 0).toFixed(4),
+          `"${sample.unit}"`,
+          `"${new Date(sample.created_date).toLocaleDateString()}"`
+        ].join(','));
+      });
+    } else {
+      csvRows.push(['처리구명', '샘플명', '분석결과', '단위', '등록일'].join(','));
+      samples.forEach(sample => {
+        csvRows.push([
+          `"${sample.treatment_name}"`,
+          `"${sample.sample_name}"`,
+          sample.result.toFixed(4),
+          `"${sample.unit}"`,
+          `"${new Date(sample.created_date).toLocaleDateString()}"`
+        ].join(','));
+      });
+    }
 
     const csvContent = csvRows.join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -221,7 +285,7 @@ export default function SampleResults({ samples, selectedIds, onSelectionChange,
   };
 
   return (
-    <Dialog open={!!editingSample} onOpenChange={(isOpen) => !isOpen && setEditingSample(null)}>
+    <>
       <Card className="ios-card ios-blur rounded-3xl ios-shadow-lg border-0 h-full">
         <CardHeader className="pb-3">
             <div className="flex flex-col space-y-3">
@@ -308,29 +372,58 @@ export default function SampleResults({ samples, selectedIds, onSelectionChange,
                     </Badge>
                     <span className="text-gray-800 font-medium text-sm truncate">{sample.sample_name}</span>
                   </div>
-                   <div className="text-xs text-gray-400 truncate">
-                    흡광도: {Object.entries(sample.absorbance_values).map(([wl, val]) => 
-                      `${wl}=${Number(val).toFixed(3)}`
-                    ).join(", ")}
+                  <div className="flex items-center flex-wrap gap-x-2 gap-y-1 mt-1">
+                    {Object.entries(sample.absorbance_values).map(([wl, val]) => (
+                      <div key={wl} className="text-xs font-mono bg-gray-100 px-1.5 py-0.5 rounded">
+                          <span className="text-gray-500">{wl}:</span>
+                          <span className="font-medium text-gray-800 ml-1">{Number(val).toFixed(3)}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
                 <div className="text-right flex-shrink-0 px-2">
-                    <p className="text-gray-900 font-bold text-sm">
+                  {sample.analysis_type === "chlorophyll_a_b" ? (
+                    <div className="flex space-x-4">
+                      <div className="text-center">
+                        <div className="text-xs text-gray-500">Chl a</div>
+                        <p className="text-gray-900 font-bold text-sm">
+                          {Number(sample.chl_a || 0).toFixed(3)}
+                        </p>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-gray-500">Chl b</div>
+                        <p className="text-gray-900 font-bold text-sm">
+                          {Number(sample.chl_b || 0).toFixed(3)}
+                        </p>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-gray-500">Car</div>
+                        <p className="text-gray-900 font-bold text-sm">
+                          {Number(sample.carotenoid || 0).toFixed(3)}
+                        </p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-gray-500 text-xs">{sample.unit}</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-gray-900 font-bold text-sm">
                         {Number(sample.result).toFixed(3)}
-                    </p>
-                    <p className="text-gray-500 text-xs">{sample.unit}</p>
+                      </p>
+                      <p className="text-gray-500 text-xs">{sample.unit}</p>
+                    </>
+                  )}
                 </div>
                 <div className="flex items-center space-x-1 flex-shrink-0">
-                  <DialogTrigger asChild>
-                    <Button 
-                      onClick={() => setEditingSample(sample)} 
-                      variant="ghost" 
-                      size="icon" 
-                      className="w-7 h-7 p-0 rounded-full text-blue-600 hover:bg-blue-50"
-                    >
-                      <Edit className="h-3 w-3" />
-                    </Button>
-                  </DialogTrigger>
+                  <Button 
+                    onClick={() => setEditingSample(sample)} 
+                    variant="ghost" 
+                    size="icon" 
+                    className="w-7 h-7 p-0 rounded-full text-blue-600 hover:bg-blue-50"
+                  >
+                    <Edit className="h-3 w-3" />
+                  </Button>
                   <Button 
                     onClick={() => onRemove(sample.id)} 
                     variant="ghost" 
@@ -350,13 +443,16 @@ export default function SampleResults({ samples, selectedIds, onSelectionChange,
           </div>
         </CardContent>
       </Card>
-      {editingSample && (
-        <SampleEditForm 
-          sample={editingSample} 
-          onSave={onEdit} 
-          onCancel={() => setEditingSample(null)} 
-        />
-      )}
-    </Dialog>
+      
+      <AnimatePresence>
+        {editingSample && (
+          <SampleEditForm 
+            sample={editingSample} 
+            onSave={onEdit} 
+            onCancel={() => setEditingSample(null)} 
+          />
+        )}
+      </AnimatePresence>
+    </>
   );
 }

@@ -8,7 +8,7 @@ import { Plus } from "lucide-react";
 
 const getWavelengthsForAnalysis = (analysisType) => {
   const wavelengths = {
-    chlorophyll_a_b: ["665.2", "652.4"],
+    chlorophyll_a_b: ["665.2", "652.4", "470"], // Added "470" here as per the outline
     carotenoid: ["470", "665.2", "652.4"],
     total_phenol: ["765"],
     total_flavonoid: ["510"],

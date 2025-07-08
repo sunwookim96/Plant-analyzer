@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,7 +7,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const getWavelengthsForAnalysis = (analysisType) => {
   const wavelengths = {
-    chlorophyll_a_b: ["665.2", "652.4"],
+    chlorophyll_a_b: ["665.2", "652.4", "470"], // Added 470nm for chlorophyll_a_b
     carotenoid: ["470", "665.2", "652.4"],
     total_phenol: ["765"],
     total_flavonoid: ["415"],
@@ -199,12 +200,10 @@ export default function ExcelUpload({ analysisType, onSamplesUploaded }) {
     );
   }
 
-  const wavelengths = getWavelengthsForAnalysis(analysisType);
-
   return (
     <div 
         className={`ios-card ios-blur rounded-3xl ios-shadow-lg border-0 p-8 transition-all duration-300 ${
-          isDragOver ? 'border-2 border-dashed border-blue-400 bg-blue-50/50' : ''
+          isDragOver ? 'border-2 border-dashed border-blue-400 bg-blue-50/50' : 'border-2 border-dashed border-gray-200'
         }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -215,18 +214,10 @@ export default function ExcelUpload({ analysisType, onSamplesUploaded }) {
             <FileSpreadsheet className="h-8 w-8 text-green-600" />
           </div>
           <h3 className="text-xl font-semibold text-gray-900 mb-2">파일 업로드</h3>
-          <p className="text-gray-500 mb-6">CSV 파일을 드래그하거나 버튼을 클릭하여 업로드하세요</p>
+          <p className="text-gray-500 mb-2 whitespace-nowrap">템플릿을 다운로드하여 데이터를 입력한 후, 파일을 업로드해주세요.</p>
+          <p className="text-gray-400 text-sm mb-6">파일을 여기로 드래그하거나 버튼을 클릭하여 업로드하세요.</p>
           
           <div className="flex flex-col sm:flex-row gap-3 w-full mb-6">
-            <Button 
-              onClick={() => fileInputRef.current?.click()} 
-              disabled={uploading} 
-              className="ios-button bg-green-600 hover:bg-green-700 h-14 flex-1 text-base rounded-2xl"
-            >
-              <Upload className="h-5 w-5 mr-2" />
-              {uploading ? "업로드 중..." : "파일 선택"}
-            </Button>
-            
             <Button 
               onClick={downloadSampleTemplate}
               variant="outline"
@@ -234,6 +225,14 @@ export default function ExcelUpload({ analysisType, onSamplesUploaded }) {
             >
               <Download className="h-5 w-5 mr-2" />
               템플릿 다운로드
+            </Button>
+            <Button 
+              onClick={() => fileInputRef.current?.click()} 
+              disabled={uploading} 
+              className="ios-button bg-green-600 hover:bg-green-700 h-14 flex-1 text-base rounded-2xl"
+            >
+              <Upload className="h-5 w-5 mr-2" />
+              {uploading ? "업로드 중..." : "파일 선택"}
             </Button>
           </div>
           
@@ -244,29 +243,6 @@ export default function ExcelUpload({ analysisType, onSamplesUploaded }) {
             onChange={handleFileUpload} 
             className="hidden" 
           />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-            <div className="text-left space-y-3 p-4 bg-gray-50/80 rounded-xl">
-              <h4 className="text-gray-800 font-semibold">파일 형식 안내</h4>
-              <div className="space-y-1 text-sm text-gray-600">
-                <p><strong>• A1:</strong> treatment_name</p>
-                <p><strong>• B1:</strong> sample_name</p>
-                <p><strong>• C1 이후:</strong> 파장값 (예: 665.2, 652.4)</p>
-                <p className="text-xs text-gray-500 mt-2">※ 1행부터 데이터가 시작됩니다</p>
-              </div>
-            </div>
-            
-            <div className="text-left space-y-3 p-4 bg-blue-50/80 rounded-xl">
-              <h4 className="text-blue-800 font-semibold">필요한 파장</h4>
-              <div className="flex flex-wrap gap-1">
-                {wavelengths.map(wl => (
-                  <span key={wl} className="px-2 py-0.5 bg-blue-600 text-white text-xs rounded-full">
-                    {wl} nm
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
 
           {uploadResult && (
             <Alert className={`mt-4 w-full ${uploadResult.success ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>

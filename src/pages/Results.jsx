@@ -115,7 +115,19 @@ export default function Results() {
         case "chlorophyll_a_b": {
             const a665 = values["665.2"] || 0;
             const a652 = values["652.4"] || 0;
-            return { result: 16.82 * a665 - 9.28 * a652, unit: "μg/ml" };
+            const a470 = values["470"] || 0;
+            
+            const chl_a = 16.82 * a665 - 9.28 * a652;
+            const chl_b = 36.92 * a652 - 16.54 * a665;
+            const carotenoid = (1000 * a470 - 1.91 * chl_a - 95.15 * chl_b) / 225;
+            
+            return { 
+                result: chl_a, // 기본 표시값은 엽록소 a
+                unit: "μg/ml",
+                chl_a: chl_a,
+                chl_b: chl_b,
+                carotenoid: carotenoid
+            };
         }
         case "carotenoid": {
             const a470 = values["470"] || 0;
@@ -199,7 +211,7 @@ export default function Results() {
   const getTemplateHeaders = (type) => {
     const commonHeaders = ["Sample Name", "Description", "Replicate"];
     const typeSpecificAbsorbanceHeaders = {
-        chlorophyll_a_b: ["665.2", "652.4"],
+        chlorophyll_a_b: ["665.2", "652.4", "470"], // Added 470 for carotenoid in combined template
         carotenoid: ["470", "665.2", "652.4"],
         total_phenol: ["Absorbance"], // For single absorbance inputs for standard curves
         total_flavonoid: ["Absorbance"],
@@ -300,19 +312,6 @@ export default function Results() {
             <span>분석 선택</span>
           </Button>
         </motion.div>
-
-        <AnimatePresence>
-          {activeTab === 'data_input_analysis' && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-            >
-              <CalculationParams analysisType={analysisType} onParamsChange={setCalculationParams} />
-            </motion.div>
-          )}
-        </AnimatePresence>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
           <TabsList className="grid w-full grid-cols-2 bg-white/70 backdrop-blur-lg rounded-xl sm:rounded-2xl shadow-xl p-2 border-0 h-12 sm:h-14">
@@ -334,10 +333,18 @@ export default function Results() {
           </TabsList>
 
           <TabsContent value="data_input_analysis" className="space-y-6 sm:space-y-8">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <CalculationParams analysisType={analysisType} onParamsChange={setCalculationParams} />
+            </motion.div>
+
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
               className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6 items-start"
             >
               <div className="lg:col-span-2 space-y-4 sm:space-y-6">
