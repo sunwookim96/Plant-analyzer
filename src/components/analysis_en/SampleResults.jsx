@@ -17,7 +17,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const getWavelengthsForAnalysis = (analysisType) => {
   const wavelengths = {
-    chlorophyll_a_b: ["665.2", "652.4", "470"], // Added "470" here
+    chlorophyll_a_b: ["665.2", "652.4", "470"],
     carotenoid: ["470", "665.2", "652.4"],
     total_phenol: ["765"],
     total_flavonoid: ["415"],
@@ -50,7 +50,6 @@ const SampleEditForm = ({ sample, onSave, onCancel }) => {
   };
 
   const handleSave = () => {
-    // 빈 문자열은 0으로, 유효한 숫자는 그대로 변환
     const processedValues = {};
     Object.entries(formData.absorbance_values).forEach(([key, value]) => {
       if (value === '' || value === null || value === undefined) {
@@ -67,17 +66,15 @@ const SampleEditForm = ({ sample, onSave, onCancel }) => {
     };
     
     onSave(processedFormData, true);
-    onCancel(); // 저장 후 다이얼로그 닫기
+    onCancel();
   };
 
-  // 흡광도 값 개수에 따른 그리드 클래스 결정
   const getGridCols = (count) => {
     if (count === 1) return "grid-cols-1";
     if (count === 2) return "grid-cols-2";
     if (count === 3) return "grid-cols-3";
     if (count === 4) return "grid-cols-4";
-    // Add more conditions if needed for other counts, or default
-    return "grid-cols-3"; // 기본값
+    return "grid-cols-3";
   };
 
   return (
@@ -95,33 +92,33 @@ const SampleEditForm = ({ sample, onSave, onCancel }) => {
         className="w-full max-w-lg bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 p-6"
       >
         <div className="mb-6">
-          <h3 className="text-xl font-bold text-gray-900 text-center">샘플 수정</h3>
+          <h3 className="text-xl font-bold text-gray-900 text-center">Edit Sample</h3>
         </div>
         
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-gray-700">처리구 이름</Label>
+              <Label className="text-sm font-semibold text-gray-700">Treatment Name</Label>
               <Input 
                 value={formData.treatment_name || ''} 
                 onChange={e => setFormData({...formData, treatment_name: e.target.value})} 
                 className="h-12 text-base font-medium rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500/20" 
-                placeholder="예: Control"
+                placeholder="e.g., Control"
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-gray-700">샘플 이름</Label>
+              <Label className="text-sm font-semibold text-gray-700">Sample Name</Label>
               <Input 
                 value={formData.sample_name || ''} 
                 onChange={e => setFormData({...formData, sample_name: e.target.value})} 
                 className="h-12 text-base font-medium rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500/20" 
-                placeholder="예: Rep1"
+                placeholder="e.g., Rep1"
               />
             </div>
           </div>
           
           <div className="space-y-4">
-            <Label className="text-base font-semibold text-gray-700">흡광도 값</Label>
+            <Label className="text-base font-semibold text-gray-700">Absorbance Values</Label>
             <div className={`grid ${getGridCols(wavelengths.length)} gap-4`}>
               {wavelengths.map(wl => (
                 <div key={wl} className="space-y-3">
@@ -150,13 +147,13 @@ const SampleEditForm = ({ sample, onSave, onCancel }) => {
               variant="outline" 
               className="flex-1 h-12 rounded-xl border-gray-300 text-gray-600 hover:bg-gray-50 font-semibold transition-colors"
             >
-              취소
+              Cancel
             </Button>
             <Button 
               onClick={handleSave} 
               className="flex-1 h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
             >
-              저장
+              Save
             </Button>
           </div>
         </div>
@@ -168,15 +165,13 @@ const SampleEditForm = ({ sample, onSave, onCancel }) => {
 export default function SampleResults({ samples, selectedIds, onSelectionChange, onEdit, onRemove, onRemoveMultiple, analysisType }) {
   const [editingSample, setEditingSample] = useState(null);
 
-  // 선택된 샘플만 내보내기
   const exportSelectedResults = () => {
     const selectedSamples = samples.filter(sample => selectedIds.has(sample.id));
     if (selectedSamples.length === 0) return;
     
-    // Adjust headers and rows based on analysis_type for chlorophyll
     const csvRows = [];
     if (selectedSamples[0]?.analysis_type === "chlorophyll_a_b") {
-      csvRows.push(['처리구명', '샘플명', 'Chl a', 'Chl b', 'Carotenoid', '단위'].join(','));
+      csvRows.push(['Treatment Name', 'Sample Name', 'Chl a', 'Chl b', 'Carotenoid', 'Unit'].join(','));
       selectedSamples.forEach(sample => {
         csvRows.push([
           `"${sample.treatment_name}"`,
@@ -188,7 +183,7 @@ export default function SampleResults({ samples, selectedIds, onSelectionChange,
         ].join(','));
       });
     } else {
-      csvRows.push(['처리구명', '샘플명', '분석결과', '단위'].join(','));
+      csvRows.push(['Treatment Name', 'Sample Name', 'Result', 'Unit'].join(','));
       selectedSamples.forEach(sample => {
         csvRows.push([
           `"${sample.treatment_name}"`,
@@ -210,13 +205,12 @@ export default function SampleResults({ samples, selectedIds, onSelectionChange,
     document.body.removeChild(link);
   };
 
-  // 전체 샘플 내보내기
   const exportAllResults = () => {
     if (samples.length === 0) return;
     
     const csvRows = [];
     if (samples[0]?.analysis_type === "chlorophyll_a_b") {
-      csvRows.push(['처리구명', '샘플명', 'Chl a', 'Chl b', 'Carotenoid', '단위'].join(','));
+      csvRows.push(['Treatment Name', 'Sample Name', 'Chl a', 'Chl b', 'Carotenoid', 'Unit'].join(','));
       samples.forEach(sample => {
         csvRows.push([
           `"${sample.treatment_name}"`,
@@ -228,7 +222,7 @@ export default function SampleResults({ samples, selectedIds, onSelectionChange,
         ].join(','));
       });
     } else {
-      csvRows.push(['처리구명', '샘플명', '분석결과', '단위'].join(','));
+      csvRows.push(['Treatment Name', 'Sample Name', 'Result', 'Unit'].join(','));
       samples.forEach(sample => {
         csvRows.push([
           `"${sample.treatment_name}"`,
@@ -293,7 +287,7 @@ export default function SampleResults({ samples, selectedIds, onSelectionChange,
                     />
                     <CardTitle className="text-gray-900 text-base sm:text-lg font-semibold flex items-center space-x-2">
                         <FileText className="h-4 w-4 sm:h-5 sm:w-5" />
-                        <span>등록된 샘플 ({samples.length})</span>
+                        <span>Registered Samples ({samples.length})</span>
                     </CardTitle>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
@@ -305,7 +299,7 @@ export default function SampleResults({ samples, selectedIds, onSelectionChange,
                             className="h-8 rounded-lg bg-red-50 border-red-200 text-red-600 hover:bg-red-100 font-medium text-xs px-3"
                         >
                             <Trash2 className="h-3 w-3 mr-1" />
-                            <span>선택 삭제 ({selectedIds.size})</span>
+                            <span>Delete Selected ({selectedIds.size})</span>
                         </Button>
                     )}
                     <Button 
@@ -316,7 +310,7 @@ export default function SampleResults({ samples, selectedIds, onSelectionChange,
                         disabled={samples.length === 0}
                     >
                         <Trash2 className="h-3 w-3 mr-1" />
-                        <span>전체 삭제</span>
+                        <span>Delete All</span>
                     </Button>
                     
                     <DropdownMenu>
@@ -327,7 +321,7 @@ export default function SampleResults({ samples, selectedIds, onSelectionChange,
                                 className="h-8 rounded-lg bg-white/80 border-gray-300 text-gray-700 hover:bg-gray-100 font-medium text-xs px-3"
                             >
                                 <Download className="h-3 w-3 mr-1" />
-                                <span>내보내기</span>
+                                <span>Export</span>
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="w-48">
@@ -337,7 +331,7 @@ export default function SampleResults({ samples, selectedIds, onSelectionChange,
                                 className="cursor-pointer"
                             >
                                 <Download className="h-4 w-4 mr-2" />
-                                선택 내보내기 ({selectedIds.size}개)
+                                Export Selected ({selectedIds.size})
                             </DropdownMenuItem>
                             <DropdownMenuItem 
                                 onClick={exportAllResults}
@@ -345,7 +339,7 @@ export default function SampleResults({ samples, selectedIds, onSelectionChange,
                                 className="cursor-pointer"
                             >
                                 <Download className="h-4 w-4 mr-2" />
-                                전체 내보내기 ({samples.length}개)
+                                Export All ({samples.length})
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
@@ -433,7 +427,7 @@ export default function SampleResults({ samples, selectedIds, onSelectionChange,
             ))}
             {samples.length === 0 && (
               <div className="text-center py-8 text-gray-500 text-sm">
-                등록된 샘플이 없습니다
+                No registered samples found.
               </div>
             )}
           </div>

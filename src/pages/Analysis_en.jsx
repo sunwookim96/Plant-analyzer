@@ -10,15 +10,15 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const analysisProtocols = {
   chlorophyll_a_b: {
-    title: "엽록소 및 카로티노이드",
+    title: "Chlorophyll & Carotenoid",
     subtitle: "Total Chlorophyll & Total Carotenoid",
     wavelengths: ["652.4", "665.2", "470"],
     protocol: [
-      "2 mL 튜브에 2 mL의 90% MeOH과 시료 20 mg 넣기",
-      "20℃에서 중간 강도로 sonication 20분간 추출",
-      "15,000 RPM, 4℃, 10 min 조건으로 centrifuge",
-      "상층액 1.5 mL 추출 후 냉장보관",
-      "96-well에 추출물 200 μL 분주하여 흡광도 측정"
+      <span>Add 20 mg sample and 2 mL of 90% MeOH to a 2 mL tube</span>,
+      <span>Extract by sonication for 20 minutes at 20℃ (medium intensity)</span>,
+      <span>Centrifuge at 15,000 RPM, 4℃ for 10 min</span>,
+      <span>Extract 1.5 mL of the supernatant and store refrigerated</span>,
+      <span>Dispense 200 μL of the extract into a 96-well plate and measure absorbance</span>
     ],
     formulas: [
       <span>Chl a (μg/mL) = 16.82 × A<sub>665.2</sub> - 9.28 × A<sub>652.4</sub></span>,
@@ -29,51 +29,51 @@ const analysisProtocols = {
     icon: <TestTube className="h-4 w-4 sm:h-5 sm:w-5" />
   },
   total_phenol: {
-    title: "총 페놀 함량",
+    title: "Total Phenolic Content",
     subtitle: "Total Phenolic Content",
     wavelengths: ["765"],
     protocol: [
-      "엽록소 분석 후 남은 aliquot 100 μL 사용",
-      "Folin-Ciocalteu reagent 100 μL + 증류수 1500 μL 넣기",
-      <span>5분간 방치 후 7.5% Na<sub>2</sub>CO<sub>3</sub> 용액 300 μL 넣기</span>,
-      "40분간 상온에서 반응",
-      "765 nm에서 흡광도 측정"
+      <span>Use 100 μL of aliquot remaining from chlorophyll analysis</span>,
+      <span>Add 100 μL of Folin-Ciocalteu reagent + 1500 μL of distilled water</span>,
+      <span>Let it stand for 5 minutes, then add 300 μL of 7.5% Na<sub>2</sub>CO<sub>3</sub> solution</span>,
+      <span>React for 40 minutes at room temperature</span>,
+      <span>Measure absorbance at 765 nm</span>
     ],
     formulas: [
-      "Gallic acid standard curve 사용하여 함량 계산",
-      "농도 = (흡광도 - b) / a"
+      <span>Calculate content using a Gallic acid standard curve</span>,
+      <span>Concentration = (Absorbance - b) / a</span>
     ],
     unit: "mg GAE/g FW",
     icon: <Beaker className="h-4 w-4 sm:h-5 sm:w-5" />
   },
   total_flavonoid: {
-    title: "총 플라보노이드",
+    title: "Total Flavonoid",
     subtitle: "Total Flavonoid",
     wavelengths: ["415"],
     protocol: [
-      "엽록소 분석 후 남은 aliquot 100 μL 사용",
-      <span>95% EtOH 300 μL + 10% AlCl<sub>3</sub> 20 μL 넣기</span>,
-      "1 M potassium acetate 20 μL + 증류수 600 μL 넣기",
-      "상온에서 40분간 반응",
-      "415 nm에서 흡광도 측정"
+      <span>Use 100 μL of aliquot remaining from chlorophyll analysis</span>,
+      <span>Add 300 μL of 95% EtOH + 20 μL of 10% AlCl<sub>3</sub></span>,
+      <span>Add 20 μL of 1 M potassium acetate + 600 μL of distilled water</span>,
+      <span>React for 40 minutes at room temperature</span>,
+      <span>Measure absorbance at 415 nm</span>
     ],
     formulas: [
-      "Quercetin standard curve 사용하여 함량 계산",
-      "농도 = (흡광도 - b) / a"
+      <span>Calculate content using a Quercetin standard curve</span>,
+      <span>Concentration = (Absorbance - b) / a</span>
     ],
     unit: "mg QE/g FW",
     icon: <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" />
   },
   glucosinolate: {
-    title: "글루코시놀레이트",
+    title: "Total Glucosinolate",
     subtitle: "Total Glucosinolate",
     wavelengths: ["425"],
     protocol: [
-      "엽록소 분석 후 남은 aliquot 50 μL 사용",
-      "2 mM sodium tetrachloropalladate 1.5 mL 넣기",
-      "증류수 150 μL 넣기 후 혼합",
-      "1시간 동안 상온에서 반응",
-      "425 nm에서 흡광도 측정"
+      <span>Use 50 μL of aliquot remaining from chlorophyll analysis</span>,
+      <span>Add 1.5 mL of 2 mM sodium tetrachloropalladate</span>,
+      <span>Add 150 μL of distilled water and mix</span>,
+      <span>React for 1 hour at room temperature</span>,
+      <span>Measure absorbance at 425 nm</span>
     ],
     formulas: [
       <span>Total glucosinolate (μmol/g) = 1.40 + 118.86 × A<sub>425</sub></span>
@@ -82,126 +82,126 @@ const analysisProtocols = {
     icon: <Microscope className="h-4 w-4 sm:h-5 sm:w-5" />
   },
   dpph_scavenging: {
-    title: "DPPH 라디칼 소거능",
+    title: "DPPH Radical Scavenging",
     subtitle: "DPPH Radical Scavenging",
     wavelengths: ["517"],
     protocol: [
-      "DPPH 용액: DPPH 200 mg + 90% MeOH 50 mL (호일로 포장 후 냉장보관)",
-      "96-well plate에 90% MeOH 170 μL + DPPH 용액 10 μL + Sample 20 μL 넣기",
-      "Parafilm으로 밀봉 후 암조건에서 1시간 반응",
-      "517 nm에서 흡광도 측정"
+      <span>DPPH solution: 200 mg DPPH + 50 mL 90% MeOH (wrap in foil and refrigerate)</span>,
+      <span>In a 96-well plate, add 170 μL 90% MeOH + 10 μL DPPH solution + 20 μL Sample</span>,
+      <span>Seal with Parafilm and react for 1 hour in the dark</span>,
+      <span>Measure absorbance at 517 nm</span>
     ],
     formulas: [
-      "DPPH Inhibition (%) = ((Control - Sample) / Control) × 100%"
+      <span>DPPH Inhibition (%) = ((Control - Sample) / Control) × 100%</span>
     ],
     unit: "% inhibition",
     icon: <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />
   },
   anthocyanin: {
-    title: "안토시아닌",
+    title: "Total Anthocyanin",
     subtitle: "Total Anthocyanin",
     wavelengths: ["530", "600"],
     protocol: [
-      <span>2 mL 튜브에 1% HCl (90% MeOH + 10% HCl) 2 mL + 시료 20 mg 넣기</span>,
-      "40℃에서 중간 강도로 sonication 1시간 추출",
-      "15,000 RPM, 4℃, 10 min 조건으로 centrifuge",
-      "상층액 1.5 mL 추출 후 냉장보관",
-      "530 nm, 600 nm에서 흡광도 측정"
+      <span>Add 20 mg sample and 2 mL of 1% HCl (90% MeOH + 10% HCl) to a 2 mL tube</span>,
+      <span>Extract by sonication for 1 hour at 40℃ (medium intensity)</span>,
+      <span>Centrifuge at 15,000 RPM, 4℃ for 10 min</span>,
+      <span>Extract 1.5 mL of the supernatant and store refrigerated</span>,
+      <span>Measure absorbance at 530 nm and 600 nm</span>
     ],
     formulas: [
       <span>Anthocyanin (mg/g) = (A<sub>530</sub> - A<sub>600</sub>) × V × n × Mw / (ε × m)</span>,
-      "V = 추출부피(mL), n = 희석배수, Mw = 449.2, ε = 26900, m = 시료무게(g)"
+      <span>V = extraction vol(mL), n = dilution factor, Mw = 449.2, ε = 26900, m = sample weight(g)</span>
     ],
     unit: "mg/g FW",
     icon: <TestTube className="h-4 w-4 sm:h-5 sm:w-5" />
   },
   cat: {
-    title: "카탈라아제 활성",
+    title: "Catalase (CAT) Activity",
     subtitle: "Catalase (CAT) Activity",
     wavelengths: ["240"],
     protocol: [
-      "시료 20 mg + pH 7.0 50 mM PBS 2 mL로 효소 추출",
-      "액체질소 5분 + sonication 10분 (3회 반복)",
-      "15,000 RPM, 4℃, 10 min centrifuge",
-      "Centrifuge 후 상층액 (1.5 mL) 뽑고 박스에 넣어 deep freezer에 보관",
-      <span>3% H<sub>2</sub>O<sub>2</sub> 3.4 μL + 50 mM phosphate buffer 193.6 μL + enzyme 3 μL 넣기</span>,
-      "240 nm에서 10초마다 10분간 흡광도 측정"
+      <span>Extract enzyme with 20 mg sample + 2 mL of 50 mM PBS (pH 7.0)</span>,
+      <span>Repeat 3 cycles of: 5 min in liquid nitrogen + 10 min sonication</span>,
+      <span>Centrifuge at 15,000 RPM, 4℃ for 10 min</span>,
+      <span>Collect 1.5 mL supernatant and store in a deep freezer</span>,
+      <span>Add 3.4 μL of 3% H<sub>2</sub>O<sub>2</sub> + 193.6 μL of 50 mM phosphate buffer + 3 μL enzyme</span>,
+      <span>Measure absorbance at 240 nm every 10 seconds for 10 min</span>
     ],
     formulas: [
       <span>CAT activity (μmol/min/mL) = (ΔA<sub>240</sub>/min) × total volume × 1000 / (39.4 × enzyme volume)</span>,
-      "CAT activity (μmol/min/mg DW) = unit/mL / enzyme (mg/mL)"
+      <span>CAT activity (μmol/min/mg DW) = unit/mL / enzyme (mg/mL)</span>
     ],
     unit: "μmol/min/mg DW",
     icon: <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" />
   },
   pod: {
-    title: "퍼옥시다아제 활성",
+    title: "Peroxidase (POD) Activity",
     subtitle: "Peroxidase (POD) Activity",
     wavelengths: ["470"],
     protocol: [
-      "시료 20 mg + pH 7.0 50 mM PBS 2 mL로 효소 추출",
-      "액체질소 5분 + sonication 10분 (3회 반복)",
-      "15,000 RPM, 4℃, 10 min centrifuge",
-      "Centrifuge 후 상층액 (1.5 mL) 뽑고 박스에 넣어 deep freezer에 보관",
-      <span>40 mM phosphate buffer 66.6 μL + 20 mM guaiacol 80 μL + 3% H<sub>2</sub>O<sub>2</sub> 33.3 μL + sample 20 μL 넣기</span>,
-      "470 nm에서 10초마다 흡광도 측정"
+      <span>Extract enzyme with 20 mg sample + 2 mL of 50 mM PBS (pH 7.0)</span>,
+      <span>Repeat 3 cycles of: 5 min in liquid nitrogen + 10 min sonication</span>,
+      <span>Centrifuge at 15,000 RPM, 4℃ for 10 min</span>,
+      <span>Collect 1.5 mL supernatant and store in a deep freezer</span>,
+      <span>Add 66.6 μL 40 mM phosphate buffer + 80 μL 20 mM guaiacol + 33.3 μL 3% H<sub>2</sub>O<sub>2</sub> + 20 μL sample</span>,
+      <span>Measure absorbance at 470 nm every 10 seconds</span>
     ],
     formulas: [
       <span>POD activity (μmol/min/mL) = (ΔA<sub>470</sub>/min) × total volume × 1000 / (26.6 × enzyme volume)</span>,
-      "POD activity (μmol/min/mg DW) = unit/mL / enzyme (mg/mL)"
+      <span>POD activity (μmol/min/mg DW) = unit/mL / enzyme (mg/mL)</span>
     ],
     unit: "μmol/min/mg DW",
     icon: <Beaker className="h-4 w-4 sm:h-5 sm:w-5" />
   },
   sod: {
-    title: "슈퍼옥사이드 디스뮤타아제 활성",
+    title: "Superoxide Dismutase (SOD) Activity",
     subtitle: "Superoxide Dismutase (SOD) Activity",
     wavelengths: ["560"],
     protocol: [
-      "시료 20 mg + pH 7.0 50 mM PBS 2 mL로 효소 추출",
-      "액체질소 5분 + sonication 10분 (3회 반복)",
-      "15,000 RPM, 4℃, 10 min centrifuge",
-      "Centrifuge 후 상층액 (1.5 mL) 뽑고 박스에 넣어 deep freezer에 보관",
-      "순서대로 50 mM phosphate buffer 93.5 μL, 0.1 M methionine 52 μL, 2.5 mM NBT 24.5 μL, 10 mM EDTA 2 μL, 0.5 mM riboflavin 8 μL 넣기",
-      <span>PPFD 50 μmol m<sup>-2</sup>s<sup>-1</sup>의 LED 광에 15분간 노출시킨 후 빛을 차단</span>,
-      "560 nm에서 흡광도 측정"
+      <span>Extract enzyme with 20 mg sample + 2 mL of 50 mM PBS (pH 7.0)</span>,
+      <span>Repeat 3 cycles of: 5 min in liquid nitrogen + 10 min sonication</span>,
+      <span>Centrifuge at 15,000 RPM, 4℃ for 10 min</span>,
+      <span>Collect 1.5 mL supernatant and store in a deep freezer</span>,
+      <span>In order, add 93.5 μL 50 mM phosphate buffer, 52 μL 0.1 M methionine, 24.5 μL 2.5 mM NBT, 2 μL 10 mM EDTA, 8 μL 0.5 mM riboflavin</span>,
+      <span>Expose to LED light at PPFD 50 μmol m<sup>-2</sup>s<sup>-1</sup> for 15 min, then block light</span>,
+      <span>Measure absorbance at 560 nm</span>
     ],
     formulas: [
-      "SOD inhibition (%) = ((Control - Sample) / Control) × 100%",
-      "SOD activity (unit/mL) = (inhibition × total volume) / (50 × enzyme volume)",
-      "SOD activity (unit/mg DW) = unit/mL / enzyme (mg/mL)"
+      <span>SOD inhibition (%) = ((Control - Sample) / Control) × 100%</span>,
+      <span>SOD activity (unit/mL) = (inhibition × total volume) / (50 × enzyme volume)</span>,
+      <span>SOD activity (unit/mg DW) = unit/mL / enzyme (mg/mL)</span>
     ],
     unit: "unit/mg DW",
     icon: <Microscope className="h-4 w-4 sm:h-5 sm:w-5" />
   },
   h2o2: {
-    title: "과산화수소 함량",
+    title: "Hydrogen Peroxide (H₂O₂) Content",
     subtitle: "Hydrogen Peroxide (H₂O₂) Content",
     wavelengths: ["390"],
     protocol: [
-      "시료 20 mg + 0.1% TCA 2 mL 혼합 후 vortex",
-      "액체질소 5분 + sonication 10분 (3회 반복)",
-      "15,000 RPM, 4℃, 10 min centrifuge",
-      "상등액 1.5 mL 추출",
-      "10 mM potassium phosphate buffer + 1 M KI 사용하여 반응",
-      "암실에서 10분 반응 후 390 nm에서 측정"
+      <span>Mix 20 mg sample + 2 mL of 0.1% TCA and vortex</span>,
+      <span>Repeat 3 cycles of: 5 min in liquid nitrogen + 10 min sonication</span>,
+      <span>Centrifuge at 15,000 RPM, 4℃ for 10 min</span>,
+      <span>Extract 1.5 mL of supernatant</span>,
+      <span>React using 10 mM potassium phosphate buffer + 1 M KI</span>,
+      <span>React in the dark for 10 min, then measure at 390 nm</span>
     ],
     formulas: [
-      <span>H<sub>2</sub>O<sub>2</sub> standard curve 사용하여 함량 계산</span>,
-      "농도 = (흡광도 - b) / a"
+      <span>Calculate content using H<sub>2</sub>O<sub>2</sub> standard curve</span>,
+      <span>Concentration = (Absorbance - b) / a</span>
     ],
     unit: "μmol/g DW",
     icon: <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />
   }
 };
 
-export default function Analysis() {
+export default function AnalysisEn() {
   const [selectedAnalysis, setSelectedAnalysis] = useState("");
   const navigate = useNavigate();
 
   const handleAnalyzeClick = () => {
     if (selectedAnalysis) {
-      navigate(createPageUrl("Results") + `?analysis_type=${selectedAnalysis}`);
+      navigate(createPageUrl("Results_en") + `?analysis_type=${selectedAnalysis}`);
     }
   };
 
@@ -209,8 +209,8 @@ export default function Analysis() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 space-y-6 sm:space-y-8">
         <div className="text-center mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">분석 프로토콜 선택</h1>
-          <p className="text-sm sm:text-base text-gray-600">수행할 생화학 분석을 선택하세요.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Select Analysis Protocol</h1>
+          <p className="text-sm sm:text-base text-gray-600">Please select the biochemical analysis to perform.</p>
         </div>
 
         <div className="bg-white/70 backdrop-blur-lg rounded-2xl sm:rounded-3xl shadow-xl border-0 p-4 sm:p-6 mb-6 sm:mb-8">
@@ -263,7 +263,7 @@ export default function Analysis() {
                       </div>
                     </div>
                     <Button onClick={handleAnalyzeClick} className="bg-blue-600 hover:bg-blue-700 h-10 sm:h-12 text-sm sm:text-base rounded-xl w-full sm:w-auto">
-                      분석하기 <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+                      Analyze <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                     </Button>
                   </div>
                 </CardHeader>
@@ -272,7 +272,7 @@ export default function Analysis() {
                     <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
                       <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                         <TestTube className="h-4 w-4" />
-                        <span>실험 프로토콜</span>
+                        <span>Protocol</span>
                       </h3>
                       <ol className="space-y-3">
                         {analysisProtocols[selectedAnalysis].protocol.map((step, index) => (
@@ -290,7 +290,7 @@ export default function Analysis() {
                       <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
                         <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                           <Calculator className="h-4 w-4" />
-                          <span>계산 공식</span>
+                          <span>Formulas</span>
                         </h3>
                         <div className="space-y-3 sm:space-y-4">
                           {analysisProtocols[selectedAnalysis].formulas.map((formula, index) => (
@@ -305,7 +305,7 @@ export default function Analysis() {
                       <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
                         <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                           <Microscope className="h-4 w-4" />
-                          <span>측정 파장</span>
+                          <span>Wavelengths</span>
                         </h3>
                         <div className="flex flex-wrap gap-2">
                           {analysisProtocols[selectedAnalysis].wavelengths.map((wavelength) => (

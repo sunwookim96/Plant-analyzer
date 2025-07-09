@@ -41,17 +41,16 @@ export default function CalculationEngine({ samples }) {
         <CardHeader>
           <CardTitle className="text-gray-900 text-xl font-semibold flex items-center space-x-2">
             <Calculator className="h-5 w-5" />
-            <span>통계 결과</span>
+            <span>Statistical Results</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-8 text-center">
-          <p className="text-gray-500 font-medium text-base">분석할 샘플을 선택해주세요.</p>
+          <p className="text-gray-500 font-medium text-base">Please select samples to analyze.</p>
         </CardContent>
       </Card>
     );
   }
 
-  // 엽록소 및 카로티노이드 분석인 경우 다중 값 표시
   if (samples[0]?.analysis_type === "chlorophyll_a_b") {
     const chlAResults = samples.map(s => s.chl_a || 0);
     const chlBResults = samples.map(s => s.chl_b || 0);
@@ -73,20 +72,20 @@ export default function CalculationEngine({ samples }) {
         <CardHeader>
           <CardTitle className="text-gray-900 text-xl font-semibold flex items-center space-x-2">
             <Calculator className="h-5 w-5" />
-            <span>통계 결과 ({samples.length}개 선택)</span>
+            <span>Statistical Results ({samples.length} selected)</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <StatCard
-              title="엽록소 a 평균"
+              title="Chl a Mean"
               value={chlAMean.toFixed(3)}
               unit="μg/ml"
               icon={<Target className="h-4 w-4" />}
               color="blue"
             />
             <StatCard
-              title="엽록소 a 표준오차"
+              title="Chl a Std. Error"
               value={chlAStdErr.toFixed(3)}
               unit="μg/ml"
               icon={<TrendingUp className="h-4 w-4" />}
@@ -95,14 +94,14 @@ export default function CalculationEngine({ samples }) {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <StatCard
-              title="엽록소 b 평균"
+              title="Chl b Mean"
               value={chlBMean.toFixed(3)}
               unit="μg/ml"
               icon={<Target className="h-4 w-4" />}
               color="green"
             />
             <StatCard
-              title="엽록소 b 표준오차"
+              title="Chl b Std. Error"
               value={chlBStdErr.toFixed(3)}
               unit="μg/ml"
               icon={<TrendingUp className="h-4 w-4" />}
@@ -111,14 +110,14 @@ export default function CalculationEngine({ samples }) {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <StatCard
-              title="총 엽록소 평균"
+              title="Total Chl Mean"
               value={totalChlMean.toFixed(3)}
               unit="μg/ml"
               icon={<Target className="h-4 w-4" />}
               color="orange"
             />
             <StatCard
-              title="총 엽록소 표준오차"
+              title="Total Chl Std. Error"
               value={totalChlStdErr.toFixed(3)}
               unit="μg/ml"
               icon={<TrendingUp className="h-4 w-4" />}
@@ -127,14 +126,14 @@ export default function CalculationEngine({ samples }) {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <StatCard
-              title="카로티노이드 평균"
+              title="Carotenoid Mean"
               value={carotenoidMean.toFixed(3)}
               unit="μg/ml"
               icon={<Target className="h-4 w-4" />}
               color="purple"
             />
             <StatCard
-              title="카로티노이드 표준오차"
+              title="Carotenoid Std. Error"
               value={carotenoidStdErr.toFixed(3)}
               unit="μg/ml"
               icon={<TrendingUp className="h-4 w-4" />}
@@ -146,7 +145,6 @@ export default function CalculationEngine({ samples }) {
     );
   }
 
-  // 기존 단일 값 분석
   const results = samples.map(s => s.result);
   const mean = _.mean(results) || 0;
   const stdDev = samples.length > 1 ? Math.sqrt(_.sumBy(results, r => Math.pow(r - mean, 2)) / (samples.length - 1)) : 0;
@@ -160,32 +158,32 @@ export default function CalculationEngine({ samples }) {
       <CardHeader>
         <CardTitle className="text-gray-900 text-xl font-semibold flex items-center space-x-2">
           <Calculator className="h-5 w-5" />
-          <span>통계 결과 ({samples.length}개 선택)</span>
+          <span>Statistical Results ({samples.length} selected)</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <StatCard
-          title="평균 (Mean)"
+          title="Mean"
           value={mean.toFixed(3)}
           unit={unit}
           icon={<Target className="h-4 w-4" />}
           color="blue"
         />
         <StatCard
-          title="표준오차 (SE)"
+          title="Std. Error (SE)"
           value={stdErr.toFixed(3)}
           unit={unit}
           icon={<TrendingUp className="h-4 w-4" />}
           color="green"
         />
         <StatCard
-          title="분산 (Variance)"
+          title="Variance"
           value={variance.toFixed(3)}
           icon={<BarChart className="h-4 w-4" />}
           color="orange"
         />
         <StatCard
-          title="변동계수 (CV)"
+          title="CV (%)"
           value={`${cv.toFixed(2)}%`}
           icon={<Percent className="h-4 w-4" />}
           color="purple"

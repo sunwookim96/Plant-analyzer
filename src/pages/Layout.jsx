@@ -1,23 +1,34 @@
 
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Leaf, FlaskConical, BarChart3 } from "lucide-react";
+import { Leaf } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPageUrl } from "@/utils";
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
 
-  const getPageTitle = () => {
-    if (location.pathname.startsWith("/results")) {
-      return "데이터 분석 및 결과";
+  const isEnglish = location.pathname.includes('_en');
+
+  useEffect(() => {
+    if (isEnglish) {
+      document.documentElement.lang = 'en';
+    } else {
+      document.documentElement.lang = 'ko';
     }
-    if (location.pathname.startsWith("/analysis")) {
-      return "분석 프로토콜";
+  }, [isEnglish]);
+
+  const getPageTitle = () => {
+    if (currentPageName.includes("Results")) {
+      return location.pathname.includes('_en') ? "Data Analysis & Results" : "데이터 분석 및 결과";
+    }
+    if (currentPageName.includes("Analysis")) {
+      return location.pathname.includes('_en') ? "Analysis Protocols" : "분석 프로토콜";
     }
     return "Plant Biochemical Analysis";
   };
-
+  
   return (
     <div className="min-h-screen bg-gray-50">
       <style>{`
@@ -98,7 +109,7 @@ export default function Layout({ children, currentPageName }) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex justify-between items-center h-14 sm:h-16">
               <div className="flex items-center space-x-2 sm:space-x-3">
-                <Link to="/analysis" className="flex items-center space-x-2 sm:space-x-3">
+                <Link to={createPageUrl(isEnglish ? "Analysis_en" : "Analysis")} className="flex items-center space-x-2 sm:space-x-3">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center ios-shadow">
                     <Leaf className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                   </div>
@@ -108,6 +119,30 @@ export default function Layout({ children, currentPageName }) {
                   </div>
                 </Link>
               </div>
+              
+              <div className="flex items-center bg-gray-200/80 rounded-full p-1">
+                <Link 
+                  to={createPageUrl("Analysis")}
+                  className={`px-4 py-1.5 text-xs font-bold rounded-full transition-all duration-300 ${
+                    !isEnglish 
+                      ? 'bg-white shadow-md text-gray-900' 
+                      : 'bg-transparent text-gray-500 hover:bg-gray-300/50'
+                  }`}
+                >
+                  KO
+                </Link>
+                <Link 
+                  to={createPageUrl("Analysis_en")}
+                  className={`px-4 py-1.5 text-xs font-bold rounded-full transition-all duration-300 ${
+                    isEnglish 
+                      ? 'bg-white shadow-md text-gray-900' 
+                      : 'bg-transparent text-gray-500 hover:bg-gray-300/50'
+                  }`}
+                >
+                  EN
+                </Link>
+              </div>
+
             </div>
           </div>
         </header>
