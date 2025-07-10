@@ -20,13 +20,22 @@ const analysisProtocols = {
       "상층액 1.5 mL 추출 후 냉장보관",
       "96-well에 추출물 200 μL 분주하여 흡광도 측정"
     ],
+    reagents: [
+      "90% MeOH: 90 mL 메탄올 + 10 mL 증류수"
+    ],
     formulas: [
       <span>Chl a (μg/mL) = 16.82 × A<sub>665.2</sub> - 9.28 × A<sub>652.4</sub></span>,
       <span>Chl b (μg/mL) = 36.92 × A<sub>652.4</sub> - 16.54 × A<sub>665.2</sub></span>,
       <span>Carotenoid (μg/mL) = (1000 × A<sub>470</sub> - 1.91 × Chl a - 95.15 × Chl b) / 225</span>
     ],
     unit: "μg/mL",
-    icon: <TestTube className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <TestTube className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: "Lichtenthaler, H.K.; Buschmann, C. Chlorophylls and carotenoids: Measurement and characterization by UV-VIS spectroscopy. Curr. Protoc. Food Anal. Chem. 2001, 1, F4.3.1–F4.3.8.",
+        doi: "10.1002/0471142913.faf0403s01"
+      }
+    ]
   },
   total_phenol: {
     title: "총 페놀 함량",
@@ -39,12 +48,22 @@ const analysisProtocols = {
       "40분간 상온에서 반응",
       "765 nm에서 흡광도 측정"
     ],
+    reagents: [
+      "7.5% Na₂CO₃: 100 mL 증류수에 7.5 g Sodium Carbonate 용해",
+      "Folin-Ciocalteu reagent: 상업적으로 구입 (Sigma-Aldrich 등)"
+    ],
     formulas: [
       "Gallic acid standard curve 사용하여 함량 계산",
       "농도 = (흡광도 - b) / a"
     ],
     unit: "mg GAE/g FW",
-    icon: <Beaker className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <Beaker className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: "Severo, J.; Tiecher, A.; Chaves, F.C.; Silva, J.A.; Rombaldi, C.V. Gene transcript accumulation associated with physiological and chemical changes during developmental stages of strawberry cv. Camarosa. Food Chem. 2011, 126, 995–1000.",
+        doi: "10.1016/j.foodchem.2010.11.107"
+      }
+    ]
   },
   total_flavonoid: {
     title: "총 플라보노이드",
@@ -57,12 +76,23 @@ const analysisProtocols = {
       "상온에서 40분간 반응",
       "415 nm에서 흡광도 측정"
     ],
+    reagents: [
+      "95% EtOH: 95 mL 에탄올 + 5 mL 증류수",
+      "10% AlCl₃: 100 mL 증류수에 10 g Aluminum Chloride 용해",
+      "1 M Potassium acetate: 100 mL 증류수에 9.82 g CH₃COOK 용해"
+    ],
     formulas: [
       "Quercetin standard curve 사용하여 함량 계산",
       "농도 = (흡광도 - b) / a"
     ],
     unit: "mg QE/g FW",
-    icon: <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: "Chang, C.-C.; Yang, M.-H.; Wen, H.-M.; Chern, J.-C. Estimation of total flavonoid content in propolis by two complementary colometric methods. J. Food Drug Anal. 2002, 10, 3.",
+        doi: "10.38212/2224-6614.2748"
+      }
+    ]
   },
   glucosinolate: {
     title: "글루코시놀레이트",
@@ -75,45 +105,74 @@ const analysisProtocols = {
       "1시간 동안 상온에서 반응",
       "425 nm에서 흡광도 측정"
     ],
+    reagents: [
+      "2 mM Sodium tetrachloropalladate: 100 mL 증류수에 36.5 mg Na₂PdCl₄ 용해"
+    ],
     formulas: [
       <span>Total glucosinolate (μmol/g) = 1.40 + 118.86 × A<sub>425</sub></span>
     ],
     unit: "μmol/g FW",
-    icon: <Microscope className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <Microscope className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: "Mawlong, I., M. Sujith Kumar, B. Gurung, K. Singh, and D. Singh. 2017. “A Simple Spectrophotometric Method for Estimating Total Glucosinolates in Mustard de-Oiled Cake.” International Journal of Food Properties 20 (12): 3274–81",
+        doi: "10.1080/10942912.2017.1286353"
+      }
+    ]
   },
   dpph_scavenging: {
     title: "DPPH 라디칼 소거능",
     subtitle: "DPPH Radical Scavenging",
     wavelengths: ["517"],
     protocol: [
-      "DPPH 용액: DPPH 200 mg + 90% MeOH 50 mL (호일로 포장 후 냉장보관)",
+      "DPPH 용액 제조 후 냉장보관",
       "96-well plate에 90% MeOH 170 μL + DPPH 용액 10 μL + Sample 20 μL 넣기",
       "Parafilm으로 밀봉 후 암조건에서 1시간 반응",
       "517 nm에서 흡광도 측정"
+    ],
+    reagents: [
+      "90% MeOH: 90 mL 메탄올 + 10 mL 증류수",
+      "DPPH 용액: 50 mL 90% MeOH에 200 mg DPPH 용해 후 호일로 포장하여 냉장보관"
     ],
     formulas: [
       "DPPH Inhibition (%) = ((Control - Sample) / Control) × 100%"
     ],
     unit: "% inhibition",
-    icon: <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: "Blois, M.S. Antioxidant determinations by the use of a stable free radical. Nature 1958, 181, 1199–1200.",
+        doi: "10.1038/1811199a0"
+      }
+    ]
   },
   anthocyanin: {
     title: "안토시아닌",
     subtitle: "Total Anthocyanin",
     wavelengths: ["530", "600"],
     protocol: [
-      <span>2 mL 튜브에 1% HCl (90% MeOH + 10% HCl) 2 mL + 시료 20 mg 넣기</span>,
+      <span>2 mL 튜브에 1% HCl-MeOH 용액 2 mL + 시료 20 mg 넣기</span>,
       "40℃에서 중간 강도로 sonication 1시간 추출",
       "15,000 RPM, 4℃, 10 min 조건으로 centrifuge",
       "상층액 1.5 mL 추출 후 냉장보관",
       "530 nm, 600 nm에서 흡광도 측정"
+    ],
+    reagents: [
+      "1% HCl-MeOH: 90 mL 메탄올 + 10 mL 1 M HCl",
+      "1 M HCl: 100 mL 증류수에 8.3 mL 진한 염산(37%) 첨가"
     ],
     formulas: [
       <span>Anthocyanin (mg/g) = (A<sub>530</sub> - A<sub>600</sub>) × V × n × Mw / (ε × m)</span>,
       "V = 추출부피(mL), n = 희석배수, Mw = 449.2, ε = 26900, m = 시료무게(g)"
     ],
     unit: "mg/g FW",
-    icon: <TestTube className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <TestTube className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: "Yang, Y.-C., D.-W. Sun, H. Pu, N.-N. Wang, and Z. Zhu. 2015. “Rapid Detection of Anthocyanin Content in Lychee Pericarp During Storage Using Hyperspectral Imaging Coupled with Model Fusion.” Postharvest Biology and Technology 103: 55–65.",
+        doi: "10.1016/j.postharvbio.2015.02.008"
+      }
+    ]
   },
   cat: {
     title: "카탈라아제 활성",
@@ -124,15 +183,26 @@ const analysisProtocols = {
       "액체질소 5분 + sonication 10분 (3회 반복)",
       "15,000 RPM, 4℃, 10 min centrifuge",
       "Centrifuge 후 상층액 (1.5 mL) 뽑고 박스에 넣어 deep freezer에 보관",
-      <span>3% H<sub>2</sub>O<sub>2</sub> 3.4 μL + 50 mM phosphate buffer 193.6 μL + enzyme 3 μL 넣기</span>,
+      <span>반응 혼합물 제조 후 효소 3 μL 넣기</span>,
       "240 nm에서 10초마다 10분간 흡광도 측정"
+    ],
+    reagents: [
+      "50 mM PBS (pH 7.0): 100 mL 증류수에 0.68 g KH₂PO₄ + 0.87 g K₂HPO₄ 용해",
+      "3% H₂O₂: 30% H₂O₂ 1 mL + 증류수 9 mL",
+      "반응 혼합물: 3% H₂O₂ 3.4 μL + 50 mM PBS 193.6 μL"
     ],
     formulas: [
       <span>CAT activity (μmol/min/mL) = (ΔA<sub>240</sub>/min) × total volume × 1000 / (39.4 × enzyme volume)</span>,
       "CAT activity (μmol/min/mg DW) = unit/mL / enzyme (mg/mL)"
     ],
     unit: "μmol/min/mg DW",
-    icon: <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: "Aebi H. Catalase in vitro. Meth Enzymol. 1984;105:121–6.",
+        doi: "10.1016/S0076-6879(84)05016-3"
+      }
+    ]
   },
   pod: {
     title: "퍼옥시다아제 활성",
@@ -143,15 +213,28 @@ const analysisProtocols = {
       "액체질소 5분 + sonication 10분 (3회 반복)",
       "15,000 RPM, 4℃, 10 min centrifuge",
       "Centrifuge 후 상층액 (1.5 mL) 뽑고 박스에 넣어 deep freezer에 보관",
-      <span>40 mM phosphate buffer 66.6 μL + 20 mM guaiacol 80 μL + 3% H<sub>2</sub>O<sub>2</sub> 33.3 μL + sample 20 μL 넣기</span>,
+      <span>반응 혼합물 제조 후 sample 20 μL 넣기</span>,
       "470 nm에서 10초마다 흡광도 측정"
+    ],
+    reagents: [
+      "50 mM PBS (pH 7.0): 100 mL 증류수에 0.68 g KH₂PO₄ + 0.87 g K₂HPO₄ 용해",
+      "40 mM Phosphate buffer: 100 mL 증류수에 0.54 g KH₂PO₄ + 0.70 g K₂HPO₄ 용해",
+      "20 mM Guaiacol: 100 mL 증류수에 248 mg guaiacol 용해",
+      "3% H₂O₂: 30% H₂O₂ 1 mL + 증류수 9 mL",
+      "반응 혼합물: 40 mM phosphate buffer 66.6 μL + 20 mM guaiacol 80 μL + 3% H₂O₂ 33.3 μL"
     ],
     formulas: [
       <span>POD activity (μmol/min/mL) = (ΔA<sub>470</sub>/min) × total volume × 1000 / (26.6 × enzyme volume)</span>,
       "POD activity (μmol/min/mg DW) = unit/mL / enzyme (mg/mL)"
     ],
     unit: "μmol/min/mg DW",
-    icon: <Beaker className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <Beaker className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: "Rao, M.V.; Paliyath, G.; Ormrod, D.P. Ultraviolet-B-and ozone-induced biochemical changes in antioxidant enzymes of Arabidopsis thaliana. Plant Physiol. 1996, 110, 125–136.",
+        doi: "10.1104/pp.110.1.125"
+      }
+    ]
   },
   sod: {
     title: "슈퍼옥사이드 디스뮤타아제 활성",
@@ -162,9 +245,16 @@ const analysisProtocols = {
       "액체질소 5분 + sonication 10분 (3회 반복)",
       "15,000 RPM, 4℃, 10 min centrifuge",
       "Centrifuge 후 상층액 (1.5 mL) 뽑고 박스에 넣어 deep freezer에 보관",
-      "순서대로 50 mM phosphate buffer 93.5 μL, 0.1 M methionine 52 μL, 2.5 mM NBT 24.5 μL, 10 mM EDTA 2 μL, 0.5 mM riboflavin 8 μL 넣기",
+      "반응 혼합물을 순서대로 넣고 마지막에 riboflavin 첨가",
       <span>PPFD 50 μmol m<sup>-2</sup>s<sup>-1</sup>의 LED 광에 15분간 노출시킨 후 빛을 차단</span>,
       "560 nm에서 흡광도 측정"
+    ],
+    reagents: [
+      "50 mM PBS (pH 7.0): 100 mL 증류수에 0.68 g KH₂PO₄ + 0.87 g K₂HPO₄ 용해",
+      "0.1 M Methionine: 100 mL 증류수에 1.49 g methionine 용해",
+      "2.5 mM NBT: 100 mL 증류수에 205 mg nitro blue tetrazolium 용해",
+      "10 mM EDTA: 100 mL 증류수에 372 mg EDTA 용해",
+      "0.5 mM Riboflavin: 100 mL 증류수에 18.8 mg riboflavin 용해"
     ],
     formulas: [
       "SOD inhibition (%) = ((Control - Sample) / Control) × 100%",
@@ -172,7 +262,13 @@ const analysisProtocols = {
       "SOD activity (unit/mg DW) = unit/mL / enzyme (mg/mL)"
     ],
     unit: "unit/mg DW",
-    icon: <Microscope className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <Microscope className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: "Gupta, A.S.; Webb, R.P.; Holaday, A.S.; Allen, R.D. Overexpression of superoxide dismutase protects plants from oxidative stress (induction of ascorbate peroxidase in superoxide dismutase-overexpressing plants). Plant Physiol. 1993, 103, 1067–1073.",
+        doi: "10.1104/pp.103.4.1067"
+      }
+    ]
   },
   h2o2: {
     title: "과산화수소 함량",
@@ -183,15 +279,34 @@ const analysisProtocols = {
       "액체질소 5분 + sonication 10분 (3회 반복)",
       "15,000 RPM, 4℃, 10 min centrifuge",
       "상등액 1.5 mL 추출",
-      "10 mM potassium phosphate buffer + 1 M KI 사용하여 반응",
+      "반응 혼합물 제조 후 10분 반응",
       "암실에서 10분 반응 후 390 nm에서 측정"
+    ],
+    reagents: [
+      "0.1% TCA: 100 mL 증류수에 100 mg trichloroacetic acid 용해",
+      "10 mM Potassium phosphate buffer (pH 7.0): 100 mL 증류수에 136 mg KH₂PO₄ + 174 mg K₂HPO₄ 용해",
+      "1 M KI: 100 mL 증류수에 16.6 g potassium iodide 용해"
     ],
     formulas: [
       <span>H<sub>2</sub>O<sub>2</sub> standard curve 사용하여 함량 계산</span>,
       "농도 = (흡광도 - b) / a"
     ],
     unit: "μmol/g DW",
-    icon: <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: "Alexieva, V., Sergiev, I., Mapelli, S., & Karanov, E. (2001). The effect of drought and ultraviolet radiation on growth and stress markers in pea and wheat. Plant, Cell & Environment, 24(12), 1337-1344.",
+        doi: "10.1046/j.1365-3040.2001.00778.x"
+      },
+      {
+        citation: "Velikova, V., Yordanov, I., & Edreva, A. J. P. S. (2000). Oxidative stress and some antioxidant systems in acid rain-treated bean plants: protective role of exogenous polyamines. Plant science, 151(1), 59-66.",
+        doi: "10.1016/S0168-9452(99)00197-1"
+      },
+      {
+        citation: "Junglee, S., Urban, L., Sallanon, H., & Lopez-Lauri, F. (2014). Optimized assay for hydrogen peroxide determination in plant tissue using potassium iodide. American Journal of Analytical Chemistry, 5(11), 730-736.",
+        doi: "10.4236/ajac.2014.511081"
+      }
+    ]
   }
 };
 
@@ -269,24 +384,25 @@ export default function Analysis() {
                 </CardHeader>
                 <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-                    <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
-                      <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
-                        <TestTube className="h-4 w-4" />
-                        <span>실험 프로토콜</span>
-                      </h3>
-                      <ol className="space-y-3">
-                        {analysisProtocols[selectedAnalysis].protocol.map((step, index) => (
-                          <li key={index} className="flex items-start space-x-3">
-                            <span className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold">
-                              {index + 1}
-                            </span>
-                            <span className="text-gray-700  text-xs sm:text-sm leading-relaxed">{step}</span>
-                          </li>
-                        ))}
-                      </ol>
-                    </div>
-
+                    {/* 왼쪽: 실험 프로토콜 + 계산 공식 */}
                     <div className="space-y-4 sm:space-y-6">
+                      <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                        <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
+                          <TestTube className="h-4 w-4" />
+                          <span>실험 프로토콜</span>
+                        </h3>
+                        <ol className="space-y-3">
+                          {analysisProtocols[selectedAnalysis].protocol.map((step, index) => (
+                            <li key={index} className="flex items-start space-x-3">
+                              <span className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold">
+                                {index + 1}
+                              </span>
+                              <span className="text-gray-700  text-xs sm:text-sm leading-relaxed">{step}</span>
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
+
                       <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
                         <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                           <Calculator className="h-4 w-4" />
@@ -302,6 +418,29 @@ export default function Analysis() {
                           ))}
                         </div>
                       </div>
+                    </div>
+
+                    {/* 오른쪽: 시약 제조법 + 측정 파장 */}
+                    <div className="space-y-4 sm:space-y-6">
+                      {/* 시약 제조법 섹션 */}
+                      {analysisProtocols[selectedAnalysis].reagents && (
+                        <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                          <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
+                            <Beaker className="h-4 w-4" />
+                            <span>시약 제조법</span>
+                          </h3>
+                          <div className="space-y-3">
+                            {analysisProtocols[selectedAnalysis].reagents.map((reagent, index) => (
+                              <div key={index} className="p-3 sm:p-4 bg-blue-50 rounded-lg sm:rounded-xl border border-blue-200">
+                                <div className="text-gray-800 text-xs sm:text-sm leading-relaxed">
+                                  <strong>{reagent.split(':')[0]}:</strong> {reagent.split(':').slice(1).join(':')}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
                       <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
                         <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                           <Microscope className="h-4 w-4" />
@@ -317,6 +456,40 @@ export default function Analysis() {
                       </div>
                     </div>
                   </div>
+                  
+                  {/* 참고문헌 섹션 - 맨 아래 전체 너비 */}
+                  {analysisProtocols[selectedAnalysis].references && analysisProtocols[selectedAnalysis].references.length > 0 && (
+                    <div className="mt-6 sm:mt-8 bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                      <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                        <span>참고문헌</span>
+                      </h3>
+                      <div className="space-y-4">
+                        {analysisProtocols[selectedAnalysis].references?.map((ref, index) => (
+                          <div key={index} className="p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl border border-gray-200">
+                            <p className="text-gray-800 text-xs sm:text-sm leading-relaxed mb-2">
+                              {ref.citation}
+                            </p>
+                            {ref.doi && (
+                              <a 
+                                href={`https://doi.org/${ref.doi}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center space-x-1 text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors"
+                              >
+                                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                                <span>DOI: {ref.doi}</span>
+                              </a>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>

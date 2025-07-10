@@ -14,11 +14,14 @@ const analysisProtocols = {
     subtitle: "Total Chlorophyll & Total Carotenoid",
     wavelengths: ["652.4", "665.2", "470"],
     protocol: [
-      <span>Add 20 mg sample and 2 mL of 90% MeOH to a 2 mL tube</span>,
-      <span>Extract by sonication for 20 minutes at 20℃ (medium intensity)</span>,
-      <span>Centrifuge at 15,000 RPM, 4℃ for 10 min</span>,
-      <span>Extract 1.5 mL of the supernatant and store refrigerated</span>,
-      <span>Dispense 200 μL of the extract into a 96-well plate and measure absorbance</span>
+      "Add 2 mL of 90% MeOH and 20 mg sample to 2 mL tube",
+      "Extract by sonication at medium intensity for 20 min at 20℃",
+      "Centrifuge at 15,000 RPM, 4℃, 10 min",
+      "Extract 1.5 mL supernatant and store refrigerated",
+      "Dispense 200 μL extract in 96-well plate and measure absorbance"
+    ],
+    reagents: [
+      "90% MeOH: 90 mL methanol + 10 mL distilled water"
     ],
     formulas: [
       <span>Chl a (μg/mL) = 16.82 × A<sub>665.2</sub> - 9.28 × A<sub>652.4</sub></span>,
@@ -26,172 +29,284 @@ const analysisProtocols = {
       <span>Carotenoid (μg/mL) = (1000 × A<sub>470</sub> - 1.91 × Chl a - 95.15 × Chl b) / 225</span>
     ],
     unit: "μg/mL",
-    icon: <TestTube className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <TestTube className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: "Lichtenthaler, H.K.; Buschmann, C. Chlorophylls and carotenoids: Measurement and characterization by UV-VIS spectroscopy. Curr. Protoc. Food Anal. Chem. 2001, 1, F4.3.1–F4.3.8.",
+        doi: "10.1002/0471142913.faf0403s01"
+      }
+    ]
   },
   total_phenol: {
     title: "Total Phenolic Content",
     subtitle: "Total Phenolic Content",
     wavelengths: ["765"],
     protocol: [
-      <span>Use 100 μL of aliquot remaining from chlorophyll analysis</span>,
-      <span>Add 100 μL of Folin-Ciocalteu reagent + 1500 μL of distilled water</span>,
-      <span>Let it stand for 5 minutes, then add 300 μL of 7.5% Na<sub>2</sub>CO<sub>3</sub> solution</span>,
-      <span>React for 40 minutes at room temperature</span>,
-      <span>Measure absorbance at 765 nm</span>
+      "Use 100 μL aliquot remaining from chlorophyll analysis",
+      "Add 100 μL Folin-Ciocalteu reagent + 1500 μL distilled water",
+      <span>Wait 5 min, then add 300 μL of 7.5% Na<sub>2</sub>CO<sub>3</sub> solution</span>,
+      "React at room temperature for 40 min",
+      "Measure absorbance at 765 nm"
+    ],
+    reagents: [
+      "7.5% Na₂CO₃: Dissolve 7.5 g Sodium Carbonate in 100 mL distilled water",
+      "Folin-Ciocalteu reagent: Commercial purchase (Sigma-Aldrich etc.)"
     ],
     formulas: [
-      <span>Calculate content using a Gallic acid standard curve</span>,
-      <span>Concentration = (Absorbance - b) / a</span>
+      "Calculate content using Gallic acid standard curve",
+      "Concentration = (Absorbance - b) / a"
     ],
     unit: "mg GAE/g FW",
-    icon: <Beaker className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <Beaker className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: "Severo, J.; Tiecher, A.; Chaves, F.C.; Silva, J.A.; Rombaldi, C.V. Gene transcript accumulation associated with physiological and chemical changes during developmental stages of strawberry cv. Camarosa. Food Chem. 2011, 126, 995–1000.",
+        doi: "10.1016/j.foodchem.2010.11.107"
+      }
+    ]
   },
   total_flavonoid: {
     title: "Total Flavonoid",
     subtitle: "Total Flavonoid",
     wavelengths: ["415"],
     protocol: [
-      <span>Use 100 μL of aliquot remaining from chlorophyll analysis</span>,
-      <span>Add 300 μL of 95% EtOH + 20 μL of 10% AlCl<sub>3</sub></span>,
-      <span>Add 20 μL of 1 M potassium acetate + 600 μL of distilled water</span>,
-      <span>React for 40 minutes at room temperature</span>,
-      <span>Measure absorbance at 415 nm</span>
+      "Use 100 μL aliquot remaining from chlorophyll analysis",
+      <span>Add 300 μL 95% EtOH + 20 μL 10% AlCl<sub>3</sub></span>,
+      "Add 20 μL 1 M potassium acetate + 600 μL distilled water",
+      "React at room temperature for 40 min",
+      "Measure absorbance at 415 nm"
+    ],
+    reagents: [
+      "95% EtOH: 95 mL ethanol + 5 mL distilled water",
+      "10% AlCl₃: Dissolve 10 g Aluminum Chloride in 100 mL distilled water",
+      "1 M Potassium acetate: Dissolve 9.82 g CH₃COOK in 100 mL distilled water"
     ],
     formulas: [
-      <span>Calculate content using a Quercetin standard curve</span>,
-      <span>Concentration = (Absorbance - b) / a</span>
+      "Calculate content using Quercetin standard curve",
+      "Concentration = (Absorbance - b) / a"
     ],
     unit: "mg QE/g FW",
-    icon: <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: "Chang, C.-C.; Yang, M.-H.; Wen, H.-M.; Chern, J.-C. Estimation of total flavonoid content in propolis by two complementary colometric methods. J. Food Drug Anal. 2002, 10, 3.",
+        doi: "10.38212/2224-6614.2748"
+      }
+    ]
   },
   glucosinolate: {
-    title: "Total Glucosinolate",
+    title: "Glucosinolate",
     subtitle: "Total Glucosinolate",
     wavelengths: ["425"],
     protocol: [
-      <span>Use 50 μL of aliquot remaining from chlorophyll analysis</span>,
-      <span>Add 1.5 mL of 2 mM sodium tetrachloropalladate</span>,
-      <span>Add 150 μL of distilled water and mix</span>,
-      <span>React for 1 hour at room temperature</span>,
-      <span>Measure absorbance at 425 nm</span>
+      "Use 50 μL aliquot remaining from chlorophyll analysis",
+      "Add 1.5 mL of 2 mM sodium tetrachloropalladate",
+      "Add 150 μL distilled water and mix",
+      "React at room temperature for 1 hour",
+      "Measure absorbance at 425 nm"
+    ],
+    reagents: [
+      "2 mM Sodium tetrachloropalladate: Dissolve 36.5 mg Na₂PdCl₄ in 100 mL distilled water"
     ],
     formulas: [
       <span>Total glucosinolate (μmol/g) = 1.40 + 118.86 × A<sub>425</sub></span>
     ],
     unit: "μmol/g FW",
-    icon: <Microscope className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <Microscope className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: `Mawlong, I., M. Sujith Kumar, B. Gurung, K. Singh, and D. Singh. 2017. "A Simple Spectrophotometric Method for Estimating Total Glucosinolates in Mustard de-Oiled Cake." International Journal of Food Properties 20 (12): 3274–81`,
+        doi: "10.1080/10942912.2017.1286353"
+      }
+    ]
   },
   dpph_scavenging: {
     title: "DPPH Radical Scavenging",
     subtitle: "DPPH Radical Scavenging",
     wavelengths: ["517"],
     protocol: [
-      <span>DPPH solution: 200 mg DPPH + 50 mL 90% MeOH (wrap in foil and refrigerate)</span>,
-      <span>In a 96-well plate, add 170 μL 90% MeOH + 10 μL DPPH solution + 20 μL Sample</span>,
-      <span>Seal with Parafilm and react for 1 hour in the dark</span>,
-      <span>Measure absorbance at 517 nm</span>
+      "Prepare DPPH solution and store refrigerated",
+      "Add to 96-well plate: 170 μL 90% MeOH + 10 μL DPPH solution + 20 μL Sample",
+      "Seal with Parafilm and react in dark for 1 hour",
+      "Measure absorbance at 517 nm"
+    ],
+    reagents: [
+      "90% MeOH: 90 mL methanol + 10 mL distilled water",
+      "DPPH solution: Dissolve 200 mg DPPH in 50 mL 90% MeOH, wrap with foil and store refrigerated"
     ],
     formulas: [
-      <span>DPPH Inhibition (%) = ((Control - Sample) / Control) × 100%</span>
+      "DPPH Inhibition (%) = ((Control - Sample) / Control) × 100%"
     ],
     unit: "% inhibition",
-    icon: <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: "Blois, M.S. Antioxidant determinations by the use of a stable free radical. Nature 1958, 181, 1199–1200.",
+        doi: "10.1038/1811199a0"
+      }
+    ]
   },
   anthocyanin: {
-    title: "Total Anthocyanin",
+    title: "Anthocyanin",
     subtitle: "Total Anthocyanin",
     wavelengths: ["530", "600"],
     protocol: [
-      <span>Add 20 mg sample and 2 mL of 1% HCl (90% MeOH + 10% HCl) to a 2 mL tube</span>,
-      <span>Extract by sonication for 1 hour at 40℃ (medium intensity)</span>,
-      <span>Centrifuge at 15,000 RPM, 4℃ for 10 min</span>,
-      <span>Extract 1.5 mL of the supernatant and store refrigerated</span>,
-      <span>Measure absorbance at 530 nm and 600 nm</span>
+      <span>Add 2 mL 1% HCl-MeOH solution and 20 mg sample to 2 mL tube</span>,
+      "Extract by sonication at medium intensity for 1 hour at 40℃",
+      "Centrifuge at 15,000 RPM, 4℃, 10 min",
+      "Extract 1.5 mL supernatant and store refrigerated",
+      "Measure absorbance at 530 nm and 600 nm"
+    ],
+    reagents: [
+      "1% HCl-MeOH: 90 mL methanol + 10 mL 1 M HCl",
+      "1 M HCl: Add 8.3 mL concentrated HCl (37%) to 100 mL distilled water"
     ],
     formulas: [
       <span>Anthocyanin (mg/g) = (A<sub>530</sub> - A<sub>600</sub>) × V × n × Mw / (ε × m)</span>,
-      <span>V = extraction vol(mL), n = dilution factor, Mw = 449.2, ε = 26900, m = sample weight(g)</span>
+      "V = extraction volume(mL), n = dilution factor, Mw = 449.2, ε = 26900, m = sample weight(g)"
     ],
     unit: "mg/g FW",
-    icon: <TestTube className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <TestTube className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: `Yang, Y.-C., D.-W. Sun, H. Pu, N.-N. Wang, and Z. Zhu. 2015. "Rapid Detection of Anthocyanin Content in Lychee Pericarp During Storage Using Hyperspectral Imaging Coupled with Model Fusion." Postharvest Biology and Technology 103: 55–65.`,
+        doi: "10.1016/j.postharvbio.2015.02.008"
+      }
+    ]
   },
   cat: {
-    title: "Catalase (CAT) Activity",
+    title: "Catalase Activity",
     subtitle: "Catalase (CAT) Activity",
     wavelengths: ["240"],
     protocol: [
-      <span>Extract enzyme with 20 mg sample + 2 mL of 50 mM PBS (pH 7.0)</span>,
-      <span>Repeat 3 cycles of: 5 min in liquid nitrogen + 10 min sonication</span>,
-      <span>Centrifuge at 15,000 RPM, 4℃ for 10 min</span>,
-      <span>Collect 1.5 mL supernatant and store in a deep freezer</span>,
-      <span>Add 3.4 μL of 3% H<sub>2</sub>O<sub>2</sub> + 193.6 μL of 50 mM phosphate buffer + 3 μL enzyme</span>,
-      <span>Measure absorbance at 240 nm every 10 seconds for 10 min</span>
+      "Extract enzyme with 20 mg sample + 2 mL pH 7.0 50 mM PBS",
+      "Liquid nitrogen 5 min + sonication 10 min (3 times repeat)",
+      "Centrifuge at 15,000 RPM, 4℃, 10 min",
+      "Extract supernatant (1.5 mL) and store in deep freezer",
+      <span>Prepare reaction mixture and add 3 μL enzyme</span>,
+      "Measure absorbance at 240 nm every 10 seconds for 10 min"
+    ],
+    reagents: [
+      "50 mM PBS (pH 7.0): Dissolve 0.68 g KH₂PO₄ + 0.87 g K₂HPO₄ in 100 mL distilled water",
+      "3% H₂O₂: 1 mL 30% H₂O₂ + 9 mL distilled water",
+      "Reaction mixture: 3.4 μL 3% H₂O₂ + 193.6 μL 50 mM PBS"
     ],
     formulas: [
       <span>CAT activity (μmol/min/mL) = (ΔA<sub>240</sub>/min) × total volume × 1000 / (39.4 × enzyme volume)</span>,
-      <span>CAT activity (μmol/min/mg DW) = unit/mL / enzyme (mg/mL)</span>
+      "CAT activity (μmol/min/mg DW) = unit/mL / enzyme (mg/mL)"
     ],
     unit: "μmol/min/mg DW",
-    icon: <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: "Aebi H. Catalase in vitro. Meth Enzymol. 1984;105:121–6.",
+        doi: "10.1016/S0076-6879(84)05016-3"
+      }
+    ]
   },
   pod: {
-    title: "Peroxidase (POD) Activity",
+    title: "Peroxidase Activity",
     subtitle: "Peroxidase (POD) Activity",
     wavelengths: ["470"],
     protocol: [
-      <span>Extract enzyme with 20 mg sample + 2 mL of 50 mM PBS (pH 7.0)</span>,
-      <span>Repeat 3 cycles of: 5 min in liquid nitrogen + 10 min sonication</span>,
-      <span>Centrifuge at 15,000 RPM, 4℃ for 10 min</span>,
-      <span>Collect 1.5 mL supernatant and store in a deep freezer</span>,
-      <span>Add 66.6 μL 40 mM phosphate buffer + 80 μL 20 mM guaiacol + 33.3 μL 3% H<sub>2</sub>O<sub>2</sub> + 20 μL sample</span>,
-      <span>Measure absorbance at 470 nm every 10 seconds</span>
+      "Extract enzyme with 20 mg sample + 2 mL pH 7.0 50 mM PBS",
+      "Liquid nitrogen 5 min + sonication 10 min (3 times repeat)",
+      "Centrifuge at 15,000 RPM, 4℃, 10 min",
+      "Extract supernatant (1.5 mL) and store in deep freezer",
+      <span>Prepare reaction mixture and add 20 μL sample</span>,
+      "Measure absorbance at 470 nm every 10 seconds"
+    ],
+    reagents: [
+      "50 mM PBS (pH 7.0): Dissolve 0.68 g KH₂PO₄ + 0.87 g K₂HPO₄ in 100 mL distilled water",
+      "40 mM Phosphate buffer: Dissolve 0.54 g KH₂PO₄ + 0.70 g K₂HPO₄ in 100 mL distilled water",
+      "20 mM Guaiacol: Dissolve 248 mg guaiacol in 100 mL distilled water",
+      "3% H₂O₂: 1 mL 30% H₂O₂ + 9 mL distilled water",
+      "Reaction mixture: 66.6 μL 40 mM phosphate buffer + 80 μL 20 mM guaiacol + 33.3 μL 3% H₂O₂"
     ],
     formulas: [
       <span>POD activity (μmol/min/mL) = (ΔA<sub>470</sub>/min) × total volume × 1000 / (26.6 × enzyme volume)</span>,
-      <span>POD activity (μmol/min/mg DW) = unit/mL / enzyme (mg/mL)</span>
+      "POD activity (μmol/min/mg DW) = unit/mL / enzyme (mg/mL)"
     ],
     unit: "μmol/min/mg DW",
-    icon: <Beaker className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <Beaker className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: "Rao, M.V.; Paliyath, G.; Ormrod, D.P. Ultraviolet-B-and ozone-induced biochemical changes in antioxidant enzymes of Arabidopsis thaliana. Plant Physiol. 1996, 110, 125–136.",
+        doi: "10.1104/pp.110.1.125"
+      }
+    ]
   },
   sod: {
-    title: "Superoxide Dismutase (SOD) Activity",
+    title: "Superoxide Dismutase Activity",
     subtitle: "Superoxide Dismutase (SOD) Activity",
     wavelengths: ["560"],
     protocol: [
-      <span>Extract enzyme with 20 mg sample + 2 mL of 50 mM PBS (pH 7.0)</span>,
-      <span>Repeat 3 cycles of: 5 min in liquid nitrogen + 10 min sonication</span>,
-      <span>Centrifuge at 15,000 RPM, 4℃ for 10 min</span>,
-      <span>Collect 1.5 mL supernatant and store in a deep freezer</span>,
-      <span>In order, add 93.5 μL 50 mM phosphate buffer, 52 μL 0.1 M methionine, 24.5 μL 2.5 mM NBT, 2 μL 10 mM EDTA, 8 μL 0.5 mM riboflavin</span>,
+      "Extract enzyme with 20 mg sample + 2 mL pH 7.0 50 mM PBS",
+      "Liquid nitrogen 5 min + sonication 10 min (3 times repeat)",
+      "Centrifuge at 15,000 RPM, 4℃, 10 min",
+      "Extract supernatant (1.5 mL) and store in deep freezer",
+      "Add reaction mixture in order and add riboflavin last",
       <span>Expose to LED light at PPFD 50 μmol m<sup>-2</sup>s<sup>-1</sup> for 15 min, then block light</span>,
-      <span>Measure absorbance at 560 nm</span>
+      "Measure absorbance at 560 nm"
+    ],
+    reagents: [
+      "50 mM PBS (pH 7.0): Dissolve 0.68 g KH₂PO₄ + 0.87 g K₂HPO₄ in 100 mL distilled water",
+      "0.1 M Methionine: Dissolve 1.49 g methionine in 100 mL distilled water",
+      "2.5 mM NBT: Dissolve 205 mg nitro blue tetrazolium in 100 mL distilled water",
+      "10 mM EDTA: Dissolve 372 mg EDTA in 100 mL distilled water",
+      "0.5 mM Riboflavin: Dissolve 18.8 mg riboflavin in 100 mL distilled water"
     ],
     formulas: [
-      <span>SOD inhibition (%) = ((Control - Sample) / Control) × 100%</span>,
-      <span>SOD activity (unit/mL) = (inhibition × total volume) / (50 × enzyme volume)</span>,
-      <span>SOD activity (unit/mg DW) = unit/mL / enzyme (mg/mL)</span>
+      "SOD inhibition (%) = ((Control - Sample) / Control) × 100%",
+      "SOD activity (unit/mL) = (inhibition × total volume) / (50 × enzyme volume)",
+      "SOD activity (unit/mg DW) = unit/mL / enzyme (mg/mL)"
     ],
     unit: "unit/mg DW",
-    icon: <Microscope className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <Microscope className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: "Gupta, A.S.; Webb, R.P.; Holaday, A.S.; Allen, R.D. Overexpression of superoxide dismutase protects plants from oxidative stress (induction of ascorbate peroxidase in superoxide dismutase-overexpressing plants). Plant Physiol. 1993, 103, 1067–1073.",
+        doi: "10.1104/pp.103.4.1067"
+      }
+    ]
   },
   h2o2: {
-    title: "Hydrogen Peroxide (H₂O₂) Content",
+    title: "Hydrogen Peroxide Content",
     subtitle: "Hydrogen Peroxide (H₂O₂) Content",
     wavelengths: ["390"],
     protocol: [
-      <span>Mix 20 mg sample + 2 mL of 0.1% TCA and vortex</span>,
-      <span>Repeat 3 cycles of: 5 min in liquid nitrogen + 10 min sonication</span>,
-      <span>Centrifuge at 15,000 RPM, 4℃ for 10 min</span>,
-      <span>Extract 1.5 mL of supernatant</span>,
-      <span>React using 10 mM potassium phosphate buffer + 1 M KI</span>,
-      <span>React in the dark for 10 min, then measure at 390 nm</span>
+      "Mix 20 mg sample + 2 mL 0.1% TCA and vortex",
+      "Liquid nitrogen 5 min + sonication 10 min (3 times repeat)",
+      "Centrifuge at 15,000 RPM, 4℃, 10 min",
+      "Extract 1.5 mL supernatant",
+      "Prepare reaction mixture and react for 10 min",
+      "React in dark for 10 min, then measure at 390 nm"
+    ],
+    reagents: [
+      "0.1% TCA: Dissolve 100 mg trichloroacetic acid in 100 mL distilled water",
+      "10 mM Potassium phosphate buffer (pH 7.0): Dissolve 136 mg KH₂PO₄ + 174 mg K₂HPO₄ in 100 mL distilled water",
+      "1 M KI: Dissolve 16.6 g potassium iodide in 100 mL distilled water"
     ],
     formulas: [
       <span>Calculate content using H<sub>2</sub>O<sub>2</sub> standard curve</span>,
-      <span>Concentration = (Absorbance - b) / a</span>
+      "Concentration = (Absorbance - b) / a"
     ],
     unit: "μmol/g DW",
-    icon: <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />
+    icon: <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />,
+    references: [
+      {
+        citation: "Alexieva, V., Sergiev, I., Mapelli, S., & Karanov, E. (2001). The effect of drought and ultraviolet radiation on growth and stress markers in pea and wheat. Plant, Cell & Environment, 24(12), 1337-1344.",
+        doi: "10.1046/j.1365-3040.2001.00778.x"
+      },
+      {
+        citation: "Velikova, V., Yordanov, I., & Edreva, A. J. P. S. (2000). Oxidative stress and some antioxidant systems in acid rain-treated bean plants: protective role of exogenous polyamines. Plant science, 151(1), 59-66.",
+        doi: "10.1016/S0168-9452(99)00197-1"
+      },
+      {
+        citation: "Junglee, S., Urban, L., Sallanon, H., & Lopez-Lauri, F. (2014). Optimized assay for hydrogen peroxide determination in plant tissue using potassium iodide. American Journal of Analytical Chemistry, 5(11), 730-736.",
+        doi: "10.4236/ajac.2014.511081"
+      }
+    ]
   }
 };
 
@@ -269,28 +384,29 @@ export default function AnalysisEn() {
                 </CardHeader>
                 <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-                    <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
-                      <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
-                        <TestTube className="h-4 w-4" />
-                        <span>Protocol</span>
-                      </h3>
-                      <ol className="space-y-3">
-                        {analysisProtocols[selectedAnalysis].protocol.map((step, index) => (
-                          <li key={index} className="flex items-start space-x-3">
-                            <span className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold">
-                              {index + 1}
-                            </span>
-                            <span className="text-gray-700  text-xs sm:text-sm leading-relaxed">{step}</span>
-                          </li>
-                        ))}
-                      </ol>
-                    </div>
-
+                    {/* Left: Experimental Protocol + Calculation Formula */}
                     <div className="space-y-4 sm:space-y-6">
                       <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
                         <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
+                          <TestTube className="h-4 w-4" />
+                          <span>Experimental Protocol</span>
+                        </h3>
+                        <ol className="space-y-3">
+                          {analysisProtocols[selectedAnalysis].protocol.map((step, index) => (
+                            <li key={index} className="flex items-start space-x-3">
+                              <span className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold">
+                                {index + 1}
+                              </span>
+                              <span className="text-gray-700  text-xs sm:text-sm leading-relaxed">{step}</span>
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
+
+                      <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                        <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                           <Calculator className="h-4 w-4" />
-                          <span>Formulas</span>
+                          <span>Calculation Formula</span>
                         </h3>
                         <div className="space-y-3 sm:space-y-4">
                           {analysisProtocols[selectedAnalysis].formulas.map((formula, index) => (
@@ -302,10 +418,33 @@ export default function AnalysisEn() {
                           ))}
                         </div>
                       </div>
+                    </div>
+
+                    {/* Right: Reagent Preparation + Measurement Wavelengths */}
+                    <div className="space-y-4 sm:space-y-6">
+                      {/* Reagent Preparation Section */}
+                      {analysisProtocols[selectedAnalysis].reagents && (
+                        <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                          <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
+                            <Beaker className="h-4 w-4" />
+                            <span>Reagent Preparation</span>
+                          </h3>
+                          <div className="space-y-3">
+                            {analysisProtocols[selectedAnalysis].reagents.map((reagent, index) => (
+                              <div key={index} className="p-3 sm:p-4 bg-blue-50 rounded-lg sm:rounded-xl border border-blue-200">
+                                <div className="text-gray-800 text-xs sm:text-sm leading-relaxed">
+                                  <strong>{reagent.split(':')[0]}:</strong> {reagent.split(':').slice(1).join(':')}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
                       <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
                         <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                           <Microscope className="h-4 w-4" />
-                          <span>Wavelengths</span>
+                          <span>Measurement Wavelengths</span>
                         </h3>
                         <div className="flex flex-wrap gap-2">
                           {analysisProtocols[selectedAnalysis].wavelengths.map((wavelength) => (
@@ -315,6 +454,38 @@ export default function AnalysisEn() {
                           ))}
                         </div>
                       </div>
+                    </div>
+                  </div>
+                  
+                  {/* References Section - Bottom Full Width */}
+                  <div className="mt-6 sm:mt-8 bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                    <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                      </svg>
+                      <span>References</span>
+                    </h3>
+                    <div className="space-y-4">
+                      {analysisProtocols[selectedAnalysis].references?.map((ref, index) => (
+                        <div key={index} className="p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl border border-gray-200">
+                          <p className="text-gray-800 text-xs sm:text-sm leading-relaxed mb-2">
+                            {ref.citation}
+                          </p>
+                          {ref.doi && (
+                            <a 
+                              href={`https://doi.org/${ref.doi}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center space-x-1 text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors"
+                            >
+                              <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                              </svg>
+                              <span>DOI: {ref.doi}</span>
+                            </a>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </CardContent>
