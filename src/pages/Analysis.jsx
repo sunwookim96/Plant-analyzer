@@ -50,7 +50,8 @@ const analysisProtocols = {
     ],
     reagents: [
       "7.5% Na₂CO₃: 100 mL 증류수에 7.5 g Sodium Carbonate 용해",
-      "Folin-Ciocalteu reagent: 상업적으로 구입 (Sigma-Aldrich 등)"
+      "Folin-Ciocalteu reagent: 상업적으로 구입 (Sigma-Aldrich 등)",
+      "Gallic acid 표준물질 (Standard Curve): 1 mg/mL stock 제조 후, 0, 20, 40, 60, 80, 100 µg/mL 농도로 희석하여 시료와 동일하게 반응."
     ],
     formulas: [
       "Gallic acid standard curve 사용하여 함량 계산",
@@ -79,7 +80,8 @@ const analysisProtocols = {
     reagents: [
       "95% EtOH: 95 mL 에탄올 + 5 mL 증류수",
       "10% AlCl₃: 100 mL 증류수에 10 g Aluminum Chloride 용해",
-      "1 M Potassium acetate: 100 mL 증류수에 9.82 g CH₃COOK 용해"
+      "1 M Potassium acetate: 100 mL 증류수에 9.82 g CH₃COOK 용해",
+      "Quercetin 표준물질 (Standard Curve): 1 mg/mL stock 제조 후, 0, 20, 40, 60, 80, 100 µg/mL 농도로 희석하여 시료와 동일하게 반응."
     ],
     formulas: [
       "Quercetin standard curve 사용하여 함량 계산",
@@ -285,7 +287,9 @@ const analysisProtocols = {
     reagents: [
       "0.1% TCA: 100 mL 증류수에 100 mg trichloroacetic acid 용해",
       "10 mM Potassium phosphate buffer (pH 7.0): 100 mL 증류수에 136 mg KH₂PO₄ + 174 mg K₂HPO₄ 용해",
-      "1 M KI: 100 mL 증류수에 16.6 g potassium iodide 용해"
+      "1 M KI: 100 mL 증류수에 16.6 g potassium iodide 용해",
+      "1 mM H₂O₂ Stock: 35% H₂O₂ 원액 9.8 µL를 증류수 100 mL에 희석.",
+      "H₂O₂ 표준물질 (Standard Curve): 1 mM stock을 이용하여 0, 50, 100, 200, 400 µM 농도로 희석하여 시료와 동일하게 반응."
     ],
     formulas: [
       <span>H<sub>2</sub>O<sub>2</sub> standard curve 사용하여 함량 계산</span>,
@@ -480,7 +484,7 @@ export default function Analysis() {
                                 className="inline-flex items-center space-x-1 text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors"
                               >
                                 <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 0 002 2h10a2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                 </svg>
                                 <span>DOI: {ref.doi}</span>
                               </a>

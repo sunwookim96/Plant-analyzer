@@ -50,7 +50,8 @@ const analysisProtocols = {
     ],
     reagents: [
       "7.5% Na₂CO₃: Dissolve 7.5 g Sodium Carbonate in 100 mL distilled water",
-      "Folin-Ciocalteu reagent: Commercial purchase (Sigma-Aldrich etc.)"
+      "Folin-Ciocalteu reagent: Commercial purchase (Sigma-Aldrich etc.)",
+      "Gallic acid Standard Curve: Prepare 1 mg/mL stock, then dilute to 0, 20, 40, 60, 80, 100 µg/mL and react as per sample protocol."
     ],
     formulas: [
       "Calculate content using Gallic acid standard curve",
@@ -79,7 +80,8 @@ const analysisProtocols = {
     reagents: [
       "95% EtOH: 95 mL ethanol + 5 mL distilled water",
       "10% AlCl₃: Dissolve 10 g Aluminum Chloride in 100 mL distilled water",
-      "1 M Potassium acetate: Dissolve 9.82 g CH₃COOK in 100 mL distilled water"
+      "1 M Potassium acetate: Dissolve 9.82 g CH₃COOK in 100 mL distilled water",
+      "Quercetin Standard Curve: Prepare 1 mg/mL stock, then dilute to 0, 20, 40, 60, 80, 100 µg/mL and react as per sample protocol."
     ],
     formulas: [
       "Calculate content using Quercetin standard curve",
@@ -285,7 +287,9 @@ const analysisProtocols = {
     reagents: [
       "0.1% TCA: Dissolve 100 mg trichloroacetic acid in 100 mL distilled water",
       "10 mM Potassium phosphate buffer (pH 7.0): Dissolve 136 mg KH₂PO₄ + 174 mg K₂HPO₄ in 100 mL distilled water",
-      "1 M KI: Dissolve 16.6 g potassium iodide in 100 mL distilled water"
+      "1 M KI: Dissolve 16.6 g potassium iodide in 100 mL distilled water",
+      "1 mM H₂O₂ Stock: Dilute 9.8 µL of 35% H₂O₂ stock solution in 100 mL of distilled water.",
+      "H₂O₂ Standard Curve: Using 1 mM stock, dilute to 0, 50, 100, 200, 400 µM and react as per sample protocol."
     ],
     formulas: [
       <span>Calculate content using H<sub>2</sub>O<sub>2</sub> standard curve</span>,
