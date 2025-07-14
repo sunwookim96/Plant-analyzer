@@ -26,14 +26,19 @@ const HighlightedValue = ({ value, placeholder }) => (
   </span>
 );
 
-export default function CalculationParams({ analysisType, onParamsChange }) {
-  const [params, setParams] = useState({});
-  const [isApplied, setIsApplied] = useState(false);
+export default function CalculationParams({ analysisType, onParamsChange, initialParams = {} }) {
+  const [params, setParams] = useState(initialParams);
+  const [isApplied, setIsApplied] = useState(Object.keys(initialParams).length > 0);
 
   useEffect(() => {
-    setParams({});
-    setIsApplied(false);
-  }, [analysisType]);
+    if (Object.keys(initialParams).length > 0) {
+      setParams(initialParams);
+      setIsApplied(true);
+    } else {
+      setParams({});
+      setIsApplied(false);
+    }
+  }, [initialParams, analysisType]);
 
   const handleParamChange = (key, value) => {
     setParams(prev => ({ ...prev, [key]: value }));

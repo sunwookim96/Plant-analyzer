@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calculator, BarChart3, Database, ArrowLeft, Download } from "lucide-react";
@@ -22,6 +23,42 @@ export default function ResultsEn() {
   const [selectedSampleIds, setSelectedSampleIds] = useState(new Set());
   const [activeTab, setActiveTab] = useState("data_input_analysis");
   const [calculationParams, setCalculationParams] = useState({});
+
+  // URL 파라미터에서 탭 상태 확인 및 설정
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get("tab");
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [location.search]);
+
+  // 탭 변경 시 URL 업데이트
+  const handleTabChange = (newTab) => {
+    setActiveTab(newTab);
+    const params = new URLSearchParams(location.search);
+    params.set("tab", newTab);
+    navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+  };
+
+  // 계산 변수 localStorage에 저장/불러오기
+  const saveCalculationParams = (params) => {
+    try {
+      localStorage.setItem(`calc_params_${analysisType}`, JSON.stringify(params));
+    } catch (error) {
+      console.error("Error saving calculation parameters:", error);
+    }
+  };
+
+  const loadCalculationParams = () => {
+    try {
+      const saved = localStorage.getItem(`calc_params_${analysisType}`);
+      return saved ? JSON.parse(saved) : {};
+    } catch (error) {
+      console.error("Error loading calculation parameters:", error);
+      return {};
+    }
+  };
 
   // Get samples from localStorage
   const getSamplesFromStorage = (type) => {
@@ -51,8 +88,17 @@ export default function ResultsEn() {
     if (type) {
       setAnalysisType(type);
       setSamples(getSamplesFromStorage(type));
+      // 저장된 계산 변수 불러오기
+      const savedParams = loadCalculationParams();
+      setCalculationParams(savedParams);
     }
-  }, [location.search]);
+  }, [location.search, analysisType]); // Added analysisType to dependencies for `loadCalculationParams`
+
+  // 계산 변수 변경 시 저장
+  const handleCalculationParamsChange = (params) => {
+    setCalculationParams(params);
+    saveCalculationParams(params);
+  };
 
   const handleBackToAnalysis = () => {
     navigate(createPageUrl("Analysis_en"));
@@ -68,7 +114,7 @@ export default function ResultsEn() {
     if (isEditing) {
       updatedSamples = currentSamples.map(s => s.id === sampleData.id ? {...s, ...sampleData, updated_date: new Date().toISOString()} : s);
     } else {
-      updatedSamples = [...currentSamples, { ...sampleData, id: Date.now().toString(), created_date: new Date().toISOString() }];
+      updatedSamples = [...currentSamples, { ...sampleData, id: Date.now().toString(), created_date: new Date().toISOString(), analysis_type: analysisType }]; // Ensure analysis_type is set for new samples
     }
     saveSamplesToStorage(updatedSamples);
     loadSamples();
@@ -189,6 +235,15 @@ export default function ResultsEn() {
       ...calculateSingleResult(sample)
     }));
 
+  // 샘플을 처리구별로 그룹화하고 정렬
+  const groupedAndSortedSamples = useMemo(() => {
+    const grouped = _.groupBy(allCalculatedSamples, 'treatment_name');
+    const sortedGroups = Object.keys(grouped).sort();
+    return sortedGroups.flatMap(groupName => 
+      grouped[groupName].sort((a, b) => a.sample_name.localeCompare(b.sample_name))
+    );
+  }, [allCalculatedSamples]);
+
   const selectedSamples = allCalculatedSamples.filter(s => selectedSampleIds.has(s.id));
 
   const getAnalysisTitle = () => {
@@ -202,7 +257,8 @@ export default function ResultsEn() {
       cat: "Catalase Activity Analysis",
       pod: "Peroxidase Activity Analysis",
       sod: "Superoxide Dismutase Activity Analysis",
-      h2o2: "Hydrogen Peroxide Content Analysis"
+      h2o2: "Hydrogen Peroxide Content Analysis",
+      carotenoid: "Carotenoid Analysis" // Added missing carotenoid title
     };
     return titles[analysisType] || "Analysis";
   };
@@ -252,7 +308,7 @@ export default function ResultsEn() {
           </Button>
         </motion.div>
         
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4 sm:space-y-6">
           <TabsList className="grid w-full grid-cols-2 bg-white/70 backdrop-blur-lg rounded-xl sm:rounded-2xl shadow-xl p-2 border-0 h-12 sm:h-14">
             <TabsTrigger 
               value="data_input_analysis" 
@@ -271,70 +327,84 @@ export default function ResultsEn() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="data_input_analysis" className="space-y-6 sm:space-y-8">
+          <AnimatePresence mode="wait">
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
+              key={activeTab} // Key changes with activeTab to trigger re-animation
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="mt-4" // Tailwind margin top to compensate for the AnimatePresence div
             >
-              <CalculationParams analysisType={analysisType} onParamsChange={setCalculationParams} />
-            </motion.div>
+              <TabsContent value="data_input_analysis" className="space-y-6 sm:space-y-8 mt-0">
+                <motion.div // Removed initial/animate from here, as parent AnimatePresence handles it
+                  initial={{ opacity: 0, y: -20 }} // Kept for individual element animation within the tab
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <CalculationParams 
+                    analysisType={analysisType} 
+                    onParamsChange={handleCalculationParamsChange}
+                    initialParams={calculationParams}
+                  />
+                </motion.div>
 
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6 items-start"
-            >
-              <div className="lg:col-span-2 space-y-4 sm:space-y-6">
-                <Tabs defaultValue="manual" className="w-full">
-                  <TabsList className="bg-white/70 backdrop-blur-lg rounded-xl sm:rounded-2xl shadow-xl p-2 border-0 h-10 sm:h-12 w-full">
-                    <TabsTrigger value="manual" className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-gray-600 data-[state=active]:text-blue-600 rounded-lg sm:rounded-xl font-semibold h-6 sm:h-8 transition-all duration-200 text-xs sm:text-sm flex-1">
-                      Manual Input
-                    </TabsTrigger>
-                    <TabsTrigger value="excel" className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-gray-600 data-[state=active]:text-blue-600 rounded-lg sm:rounded-xl font-semibold h-6 sm:h-8 transition-all duration-200 text-xs sm:text-sm flex-1">
-                      File Upload
-                    </TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="manual" className="mt-4 sm:mt-6">
-                    <ManualInput 
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6 items-start"
+                >
+                  <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+                    <Tabs defaultValue="manual" className="w-full">
+                      <TabsList className="bg-white/70 backdrop-blur-lg rounded-xl sm:rounded-2xl shadow-xl p-2 border-0 h-10 sm:h-12 w-full">
+                        <TabsTrigger value="manual" className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-gray-600 data-[state=active]:text-blue-600 rounded-lg sm:rounded-xl font-semibold h-6 sm:h-8 transition-all duration-200 text-xs sm:text-sm flex-1">
+                          Manual Input
+                        </TabsTrigger>
+                        <TabsTrigger value="excel" className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-gray-600 data-[state=active]:text-blue-600 rounded-lg sm:rounded-xl font-semibold h-6 sm:h-8 transition-all duration-200 text-xs sm:text-sm flex-1">
+                          File Upload
+                        </TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="manual" className="mt-4 sm:mt-6">
+                        <ManualInput 
+                          analysisType={analysisType}
+                          onSaveSample={handleAddOrUpdateSample}
+                        />
+                      </TabsContent>
+                      <TabsContent value="excel" className="mt-4 sm:mt-6">
+                          <ExcelUpload 
+                            analysisType={analysisType}
+                            onSamplesUploaded={handleSamplesUploaded}
+                          />
+                      </TabsContent>
+                    </Tabs>
+                    <CalculationEngine samples={selectedSamples} />
+                  </div>
+                  <div className="lg:col-span-3">
+                    <SampleResults
+                      samples={groupedAndSortedSamples}
+                      selectedIds={selectedSampleIds}
+                      onSelectionChange={setSelectedSampleIds}
+                      onEdit={handleAddOrUpdateSample}
+                      onRemove={handleRemoveSample}
+                      onRemoveMultiple={handleRemoveMultipleSamples}
                       analysisType={analysisType}
-                      onSaveSample={handleAddOrUpdateSample}
                     />
-                  </TabsContent>
-                  <TabsContent value="excel" className="mt-4 sm:mt-6">
-                      <ExcelUpload 
-                        analysisType={analysisType}
-                        onSamplesUploaded={handleSamplesUploaded}
-                      />
-                  </TabsContent>
-                </Tabs>
-                <CalculationEngine samples={selectedSamples} />
-              </div>
-              <div className="lg:col-span-3">
-                <SampleResults
-                  samples={allCalculatedSamples}
-                  selectedIds={selectedSampleIds}
-                  onSelectionChange={setSelectedSampleIds}
-                  onEdit={handleAddOrUpdateSample}
-                  onRemove={handleRemoveSample}
-                  onRemoveMultiple={handleRemoveMultipleSamples}
-                  analysisType={analysisType}
-                />
-              </div>
-            </motion.div>
-          </TabsContent>
+                  </div>
+                </motion.div>
+              </TabsContent>
 
-          <TabsContent value="visualization">
-            <motion.div
-              key="visualization"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <ChartVisualization samples={allCalculatedSamples} />
+              <TabsContent value="visualization" className="mt-0">
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <ChartVisualization samples={allCalculatedSamples} />
+                </motion.div>
+              </TabsContent>
             </motion.div>
-          </TabsContent>
+          </AnimatePresence>
         </Tabs>
       </div>
     </div>

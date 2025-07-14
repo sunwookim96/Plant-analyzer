@@ -1,5 +1,4 @@
 
-
 import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Leaf } from "lucide-react";
@@ -10,6 +9,12 @@ export default function Layout({ children, currentPageName }) {
   const location = useLocation();
 
   const isEnglish = location.pathname.includes('_en');
+
+  // 현재 분석 타입과 페이지 상태 확인
+  const isResultsPage = currentPageName.includes("Results");
+  const isAnalysisPage = currentPageName.includes("Analysis") && !currentPageName.includes("Results");
+  const currentAnalysisType = new URLSearchParams(location.search).get("analysis_type");
+  const currentTab = new URLSearchParams(location.search).get("tab");
 
   useEffect(() => {
     if (isEnglish) {
@@ -27,6 +32,36 @@ export default function Layout({ children, currentPageName }) {
       return location.pathname.includes('_en') ? "Analysis Protocols" : "분석 프로토콜";
     }
     return "Plant Biochemical Analysis";
+  };
+
+  // 언어 전환을 위한 URL 생성 함수
+  const createLanguageSwitchUrl = (targetLanguage) => {
+    const searchParams = new URLSearchParams(location.search);
+    
+    if (isResultsPage) {
+      // Results 페이지의 경우
+      const basePageName = targetLanguage === 'en' ? 'Results_en' : 'Results';
+      let url = createPageUrl(basePageName);
+      if (currentAnalysisType) {
+        searchParams.set('analysis_type', currentAnalysisType);
+      }
+      if (currentTab) {
+        searchParams.set('tab', currentTab);
+      }
+      return url + (searchParams.toString() ? `?${searchParams.toString()}` : '');
+    } else if (isAnalysisPage) {
+      // Analysis 페이지의 경우
+      const basePageName = targetLanguage === 'en' ? 'Analysis_en' : 'Analysis';
+      let url = createPageUrl(basePageName);
+      // Analysis 페이지에서 선택된 분석이 있다면 URL fragment로 전달
+      if (currentAnalysisType) {
+        searchParams.set('selected', currentAnalysisType);
+      }
+      return url + (searchParams.toString() ? `?${searchParams.toString()}` : '');
+    } else {
+      // 기타 페이지의 경우 기본 페이지로 이동
+      return createPageUrl(targetLanguage === 'en' ? 'Analysis_en' : 'Analysis');
+    }
   };
   
   return (
@@ -102,6 +137,30 @@ export default function Layout({ children, currentPageName }) {
             padding: 12px;
           }
         }
+
+        /* Language switch animation */
+        .language-switch {
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .language-option {
+          position: relative;
+          z-index: 2;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .language-active {
+          color: #1f2937;
+        }
+        
+        .language-inactive {
+          color: #6b7280;
+        }
+        
+        .language-inactive:hover {
+          background-color: rgba(156, 163, 175, 0.1);
+        }
       `}</style>
 
       <div className="relative z-10">
@@ -120,23 +179,36 @@ export default function Layout({ children, currentPageName }) {
                 </Link>
               </div>
               
-              <div className="flex items-center bg-gray-200/80 rounded-full p-1">
+              <div className="flex items-center bg-gray-200/80 rounded-full p-1 language-switch relative">
+                {/* 애니메이션 배경 */}
+                <motion.div
+                  className="absolute inset-1 bg-white rounded-full shadow-md"
+                  initial={false}
+                  animate={{
+                    x: isEnglish ? '100%' : '0%',
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 30,
+                  }}
+                  style={{
+                    width: 'calc(50% - 2px)',
+                  }}
+                />
+                
                 <Link 
-                  to={createPageUrl("Analysis")}
-                  className={`px-4 py-1.5 text-xs font-bold rounded-full transition-all duration-300 ${
-                    !isEnglish 
-                      ? 'bg-white shadow-md text-gray-900' 
-                      : 'bg-transparent text-gray-500 hover:bg-gray-300/50'
+                  to={createLanguageSwitchUrl('ko')}
+                  className={`px-4 py-1.5 text-xs font-bold rounded-full transition-all duration-300 language-option ${
+                    !isEnglish ? 'language-active' : 'language-inactive'
                   }`}
                 >
                   KO
                 </Link>
                 <Link 
-                  to={createPageUrl("Analysis_en")}
-                  className={`px-4 py-1.5 text-xs font-bold rounded-full transition-all duration-300 ${
-                    isEnglish 
-                      ? 'bg-white shadow-md text-gray-900' 
-                      : 'bg-transparent text-gray-500 hover:bg-gray-300/50'
+                  to={createLanguageSwitchUrl('en')}
+                  className={`px-4 py-1.5 text-xs font-bold rounded-full transition-all duration-300 language-option ${
+                    isEnglish ? 'language-active' : 'language-inactive'
                   }`}
                 >
                   EN
@@ -150,7 +222,7 @@ export default function Layout({ children, currentPageName }) {
         <main className="relative">
           <AnimatePresence mode="wait">
             <motion.div
-              key={location.pathname}
+              key={location.pathname + location.search}
               initial={{ opacity: 0, x: -15 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 15 }}
@@ -164,4 +236,3 @@ export default function Layout({ children, currentPageName }) {
     </div>
   );
 }
-

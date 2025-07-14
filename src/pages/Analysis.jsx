@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // Added useLocation
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TestTube, Beaker, FlaskConical, Microscope, Calculator, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -281,7 +281,7 @@ const analysisProtocols = {
       "액체질소 5분 + sonication 10분 (3회 반복)",
       "15,000 RPM, 4℃, 10 min centrifuge",
       "상등액 1.5 mL 추출",
-      "반응 혼합물 제조 후 10분 반응",
+      "반응 혼합물 제조 후 1시간 반응", // Changed from 10분 to 1시간
       "암실에서 10분 반응 후 390 nm에서 측정"
     ],
     reagents: [
@@ -317,6 +317,18 @@ const analysisProtocols = {
 export default function Analysis() {
   const [selectedAnalysis, setSelectedAnalysis] = useState("");
   const navigate = useNavigate();
+  const location = useLocation(); // Added useLocation hook
+
+  // URL에서 선택된 분석 타입 확인
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const selected = params.get("selected");
+    if (selected) {
+      setSelectedAnalysis(selected);
+    } else {
+      setSelectedAnalysis("");
+    }
+  }, [location.search]); // Dependency on location.search
 
   const handleAnalyzeClick = () => {
     if (selectedAnalysis) {
@@ -484,7 +496,7 @@ export default function Analysis() {
                                 className="inline-flex items-center space-x-1 text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors"
                               >
                                 <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 0 002 2h10a2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 0 00-2 2v10a2 0 002 2h10a2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                 </svg>
                                 <span>DOI: {ref.doi}</span>
                               </a>

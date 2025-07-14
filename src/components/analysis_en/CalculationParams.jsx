@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -25,14 +26,16 @@ const HighlightedValue = ({ value, placeholder }) => (
   </span>
 );
 
-export default function CalculationParams({ analysisType, onParamsChange }) {
-  const [params, setParams] = useState({});
-  const [isApplied, setIsApplied] = useState(false);
+export default function CalculationParams({ analysisType, onParamsChange, initialParams = {} }) {
+  const [params, setParams] = useState(initialParams);
+  const [isApplied, setIsApplied] = useState(Object.keys(initialParams).length > 0);
 
+  // initialParams가 변경되거나 analysisType이 변경될 때 params 업데이트
   useEffect(() => {
-    setParams({});
-    setIsApplied(false);
-  }, [analysisType]);
+    setParams(initialParams);
+    // 초기 params가 있으면 적용된 상태로 표시
+    setIsApplied(Object.keys(initialParams).length > 0);
+  }, [initialParams, analysisType]);
 
   const handleParamChange = (key, value) => {
     setParams(prev => ({ ...prev, [key]: value }));

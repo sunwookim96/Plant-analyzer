@@ -1,6 +1,6 @@
 
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TestTube, Beaker, FlaskConical, Microscope, Calculator, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -281,7 +281,7 @@ const analysisProtocols = {
       "Liquid nitrogen 5 min + sonication 10 min (3 times repeat)",
       "Centrifuge at 15,000 RPM, 4℃, 10 min",
       "Extract 1.5 mL supernatant",
-      "Prepare reaction mixture and react for 10 min",
+      "Prepare reaction mixture and react for 1 hour", // Changed from 10 min to 1 hour
       "React in dark for 10 min, then measure at 390 nm"
     ],
     reagents: [
@@ -317,6 +317,18 @@ const analysisProtocols = {
 export default function AnalysisEn() {
   const [selectedAnalysis, setSelectedAnalysis] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // URL에서 선택된 분석 타입 확인
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const selected = params.get("selected");
+    if (selected) {
+      setSelectedAnalysis(selected);
+    } else {
+      setSelectedAnalysis("");
+    }
+  }, [location.search]);
 
   const handleAnalyzeClick = () => {
     if (selectedAnalysis) {
@@ -483,7 +495,7 @@ export default function AnalysisEn() {
                               className="inline-flex items-center space-x-1 text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors"
                             >
                               <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 0 00-2 2v10a2 0 002 2h10a2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                               </svg>
                               <span>DOI: {ref.doi}</span>
                             </a>

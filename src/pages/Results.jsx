@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calculator, BarChart3, Database, ArrowLeft, Download } from "lucide-react";
@@ -23,6 +23,42 @@ export default function Results() {
   const [selectedSampleIds, setSelectedSampleIds] = useState(new Set());
   const [activeTab, setActiveTab] = useState("data_input_analysis");
   const [calculationParams, setCalculationParams] = useState({});
+
+  // URL 파라미터에서 탭 상태 확인 및 설정
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get("tab");
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [location.search]);
+
+  // 탭 변경 시 URL 업데이트
+  const handleTabChange = (newTab) => {
+    setActiveTab(newTab);
+    const params = new URLSearchParams(location.search);
+    params.set("tab", newTab);
+    navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+  };
+
+  // 계산 변수 localStorage에 저장/불러오기
+  const saveCalculationParams = (params) => {
+    try {
+      localStorage.setItem(`calc_params_${analysisType}`, JSON.stringify(params));
+    } catch (error) {
+      console.error("Error saving calculation parameters:", error);
+    }
+  };
+
+  const loadCalculationParams = () => {
+    try {
+      const saved = localStorage.getItem(`calc_params_${analysisType}`);
+      return saved ? JSON.parse(saved) : {};
+    } catch (error) {
+      console.error("Error loading calculation parameters:", error);
+      return {};
+    }
+  };
 
   // Get samples from localStorage
   const getSamplesFromStorage = (type) => {
@@ -52,8 +88,11 @@ export default function Results() {
     if (type) {
       setAnalysisType(type);
       setSamples(getSamplesFromStorage(type));
+      // 저장된 계산 변수 불러오기
+      const savedParams = loadCalculationParams();
+      setCalculationParams(savedParams);
     }
-  }, [location.search]);
+  }, [location.search, analysisType]); // Added analysisType to dependencies for reload on type change
 
   const handleBackToAnalysis = () => {
     navigate(createPageUrl("Analysis"));
@@ -63,13 +102,19 @@ export default function Results() {
     setSamples(getSamplesFromStorage(analysisType));
   };
 
+  // 계산 변수 변경 시 저장
+  const handleCalculationParamsChange = (params) => {
+    setCalculationParams(params);
+    saveCalculationParams(params);
+  };
+
   const handleAddOrUpdateSample = (sampleData, isEditing) => {
     const currentSamples = getSamplesFromStorage(analysisType);
     let updatedSamples;
     if (isEditing) {
       updatedSamples = currentSamples.map(s => s.id === sampleData.id ? {...s, ...sampleData, updated_date: new Date().toISOString()} : s);
     } else {
-      updatedSamples = [...currentSamples, { ...sampleData, id: Date.now().toString(), created_date: new Date().toISOString() }];
+      updatedSamples = [...currentSamples, { ...sampleData, id: Date.now().toString(), created_date: new Date().toISOString(), analysis_type: analysisType }];
     }
     saveSamplesToStorage(updatedSamples);
     loadSamples();
@@ -192,6 +237,15 @@ export default function Results() {
 
   const selectedSamples = allCalculatedSamples.filter(s => selectedSampleIds.has(s.id));
 
+  // 샘플을 처리구별로 그룹화하고 정렬
+  const groupedAndSortedSamples = useMemo(() => {
+    const grouped = _.groupBy(allCalculatedSamples, 'treatment_name');
+    const sortedGroups = Object.keys(grouped).sort();
+    return sortedGroups.flatMap(groupName => 
+      _.sortBy(grouped[groupName], ['replicate', 'sample_name']) // Sort by replicate then sample_name
+    );
+  }, [allCalculatedSamples]);
+
   const getAnalysisTitle = () => {
     const titles = {
       chlorophyll_a_b: "엽록소 및 카로티노이드 분석",
@@ -209,7 +263,7 @@ export default function Results() {
   };
 
   const getTemplateHeaders = (type) => {
-    const commonHeaders = ["Sample Name", "Description", "Replicate"];
+    const commonHeaders = ["Sample Name", "Description", "Treatment Name", "Replicate"];
     const typeSpecificAbsorbanceHeaders = {
         chlorophyll_a_b: ["665.2", "652.4", "470"], // Added 470 for carotenoid in combined template
         carotenoid: ["470", "665.2", "652.4"],
@@ -235,8 +289,8 @@ export default function Results() {
       }
 
       const headers = getTemplateHeaders(analysisType);
-      if (headers.length <= 3) { // Only common headers, no specific absorbance headers
-          alert("이 분석 항목에 대한 특정 템플릿이 없습니다. '샘플 이름', '설명', '반복' 열만 제공됩니다.");
+      if (headers.length <= 4) { // Only common headers (Sample Name, Description, Treatment Name, Replicate)
+          alert("이 분석 항목에 대한 특정 흡광도 템플릿이 없습니다. '샘플 이름', '설명', '처리구', '반복' 열만 제공됩니다.");
       }
 
       let csvContent = headers.map(header => `"${header}"`).join(",") + "\n";
@@ -245,6 +299,7 @@ export default function Results() {
           const exampleRow = headers.map(header => {
               if (header === "Sample Name") return `"Sample ${i}"`;
               if (header === "Description") return `"Description for Sample ${i}"`;
+              if (header === "Treatment Name") return `"Control"`; 
               if (header === "Replicate") return `""`; // Leave empty for user to fill
               // For absorbance values, provide placeholder 0.000
               return `"0.000"`;
@@ -313,7 +368,7 @@ export default function Results() {
           </Button>
         </motion.div>
         
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4 sm:space-y-6">
           <TabsList className="grid w-full grid-cols-2 bg-white/70 backdrop-blur-lg rounded-xl sm:rounded-2xl shadow-xl p-2 border-0 h-12 sm:h-14">
             <TabsTrigger 
               value="data_input_analysis" 
@@ -338,7 +393,11 @@ export default function Results() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
             >
-              <CalculationParams analysisType={analysisType} onParamsChange={setCalculationParams} />
+              <CalculationParams 
+                analysisType={analysisType} 
+                onParamsChange={handleCalculationParamsChange}
+                initialParams={calculationParams}
+              />
             </motion.div>
 
             <motion.div 
@@ -367,6 +426,7 @@ export default function Results() {
                       <ExcelUpload 
                         analysisType={analysisType}
                         onSamplesUploaded={handleSamplesUploaded}
+                        onDownloadTemplate={handleDownloadTemplate}
                       />
                   </TabsContent>
                 </Tabs>
@@ -374,7 +434,7 @@ export default function Results() {
               </div>
               <div className="lg:col-span-3">
                 <SampleResults
-                  samples={allCalculatedSamples}
+                  samples={groupedAndSortedSamples}
                   selectedIds={selectedSampleIds}
                   onSelectionChange={setSelectedSampleIds}
                   onEdit={handleAddOrUpdateSample}
