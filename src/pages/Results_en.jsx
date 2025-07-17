@@ -265,7 +265,15 @@ export default function ResultsEn() {
 
   if (!analysisType) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <div className="relative min-h-screen bg-gray-100 overflow-hidden">
+        {/* Video Background */}
+        <div className="absolute inset-0 z-[-1] overflow-hidden">
+          <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
+            <source src="/videos/background-video.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <div className="absolute inset-0 bg-black opacity-30"></div> {/* Overlay */}
+        </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
           <div className="text-center py-20">
             <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">Please select an analysis type</h1>
@@ -284,8 +292,17 @@ export default function ResultsEn() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 space-y-6 sm:space-y-8">
+    <div className="relative min-h-screen bg-gray-100 overflow-hidden">
+      {/* Video Background */}
+      <div className="absolute inset-0 z-[-1] overflow-hidden">
+        <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
+          <source src="/videos/background-video.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <div className="absolute inset-0 bg-black opacity-30"></div> {/* Overlay */}
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 space-y-6 sm:space-y-8 relative z-0">
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -309,7 +326,7 @@ export default function ResultsEn() {
         </motion.div>
         
         <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4 sm:space-y-6">
-          <TabsList className="grid w-full grid-cols-2 bg-white/70 backdrop-blur-lg rounded-xl sm:rounded-2xl shadow-xl p-2 border-0 h-12 sm:h-14">
+          <TabsList className="grid w-full grid-cols-2 bg-gray-200/60 ios-blur rounded-xl sm:rounded-2xl shadow-inner p-2 border-0 h-12 sm:h-14">
             <TabsTrigger 
               value="data_input_analysis" 
               className="flex items-center space-x-1 sm:space-x-2 data-[state=active]:bg-white data-[state=active]:shadow-lg data-[state=active]:text-blue-600 text-gray-600 rounded-lg sm:rounded-xl h-8 sm:h-10 font-semibold transition-all duration-200 text-xs sm:text-sm"
@@ -357,7 +374,7 @@ export default function ResultsEn() {
                 >
                   <div className="lg:col-span-2 space-y-4 sm:space-y-6">
                     <Tabs defaultValue="manual" className="w-full">
-                      <TabsList className="bg-white/70 backdrop-blur-lg rounded-xl sm:rounded-2xl shadow-xl p-2 border-0 h-10 sm:h-12 w-full">
+                      <TabsList className="bg-gray-200/60 ios-blur rounded-xl sm:rounded-2xl shadow-inner p-2 border-0 h-10 sm:h-12 w-full">
                         <TabsTrigger value="manual" className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-gray-600 data-[state=active]:text-blue-600 rounded-lg sm:rounded-xl font-semibold h-6 sm:h-8 transition-all duration-200 text-xs sm:text-sm flex-1">
                           Manual Input
                         </TabsTrigger>

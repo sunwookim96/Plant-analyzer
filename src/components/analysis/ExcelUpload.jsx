@@ -7,7 +7,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const getWavelengthsForAnalysis = (analysisType) => {
   const wavelengths = {
-    chlorophyll_a_b: ["665.2", "652.4", "470"], // Added 470nm for chlorophyll_a_b
+    chlorophyll_a_b: ["665.2", "652.4", "470"], 
     carotenoid: ["470", "665.2", "652.4"],
     total_phenol: ["765"],
     total_flavonoid: ["415"],

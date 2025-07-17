@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +14,7 @@ const getWavelengthsForAnalysis = (analysisType) => {
     total_flavonoid: ["510"],
     glucosinolate: ["425"],
     dpph_scavenging: ["517"],
-    anthocyanin: ["530", "657"],
+    anthocyanin: ["530", "600"], // Updated from "657" to "600"
     cat: ["240"],
     pod: ["470"],
     sod: ["560"],
@@ -85,7 +86,7 @@ export default function ManualInput({ analysisType, onSaveSample }) {
                     <Input value={treatmentName} onChange={e => setTreatmentName(e.target.value)} placeholder="e.g., Control" className="ios-input border-0 text-gray-900 placeholder:text-gray-400" />
                 </div>
                 <div className="space-y-2">
-                    <Label className="text-gray-700 font-medium text-sm">Sample Name</Label>
+                    <Label className="text-gray-700 font-medium text-sm">Replicate</Label>
                     <Input value={sampleName} onChange={e => setSampleName(e.target.value)} placeholder="e.g., Rep1" className="ios-input border-0 text-gray-900 placeholder:text-gray-400" />
                 </div>
             </div>

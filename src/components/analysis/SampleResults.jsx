@@ -17,7 +17,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const getWavelengthsForAnalysis = (analysisType) => {
   const wavelengths = {
-    chlorophyll_a_b: ["665.2", "652.4", "470"], // Added "470" here
+    chlorophyll_a_b: ["665.2", "652.4", "470"],
     carotenoid: ["470", "665.2", "652.4"],
     total_phenol: ["765"],
     total_flavonoid: ["415"],
@@ -355,7 +355,7 @@ export default function SampleResults({ samples, selectedIds, onSelectionChange,
         <CardContent className="pt-0">
           <div className="space-y-2 max-h-80 overflow-y-auto">
             {samples.map((sample) => (
-              <div key={sample.id} className="p-3 rounded-xl bg-white/60 ios-shadow border border-gray-100/50 flex items-center gap-2">
+              <div key={sample.id} className="p-3 rounded-xl bg-white/70 ios-blur border border-gray-200/50 flex items-center gap-2">
                 <Checkbox 
                   checked={selectedIds.has(sample.id)}
                   onCheckedChange={(checked) => handleSelectOne(sample.id, checked)}

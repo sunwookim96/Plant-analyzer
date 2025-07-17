@@ -12,16 +12,16 @@ import _ from "lodash";
 
 const StatCard = ({ title, value, unit, icon, color = "blue" }) => {
   const colorClasses = {
-    blue: "bg-blue-50 border-blue-200 text-blue-800",
-    green: "bg-green-50 border-green-200 text-green-800",
-    orange: "bg-orange-50 border-orange-200 text-orange-800",
-    purple: "bg-purple-50 border-purple-200 text-purple-800"
+    blue: "bg-blue-50/80 border-blue-200 text-blue-800",
+    green: "bg-green-50/80 border-green-200 text-green-800",
+    orange: "bg-orange-50/80 border-orange-200 text-orange-800",
+    purple: "bg-purple-50/80 border-purple-200 text-purple-800"
   };
   
   const noSpace = unit && (unit.startsWith('%') || unit.startsWith('°C'));
 
   return (
-    <div className={`p-4 rounded-2xl border-2 ${colorClasses[color]} transition-all duration-200 hover:shadow-md`}>
+    <div className={`p-4 rounded-2xl border-2 ios-blur ${colorClasses[color]} transition-all duration-200 hover:shadow-md`}>
       <div className="flex items-center space-x-2 mb-2">
         {icon}
         <p className="font-semibold text-sm">{title}</p>
@@ -34,7 +34,7 @@ const StatCard = ({ title, value, unit, icon, color = "blue" }) => {
   );
 };
 
-export default function CalculationEngine({ samples }) {
+export default function CalculationEngineEn({ samples }) {
   if (samples.length === 0) {
     return (
       <Card className="ios-card ios-blur rounded-3xl ios-shadow-lg border-0 h-full">
