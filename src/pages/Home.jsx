@@ -83,7 +83,7 @@ export default function Home() {
           className="text-center mb-16"
         >
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight mb-4">
-            PlantAnalyzer
+            Instrumental Analysis
           </h1>
           <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
             복잡한 식물 생화학 분석, 이제는 간편하게.
