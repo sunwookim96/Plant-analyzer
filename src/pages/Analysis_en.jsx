@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TestTube, Beaker, FlaskConical, Microscope, Calculator, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { createPageUrl } from "@/utils";
+import { createPageUrl } from "@/utils"; // Corrected import statement
 import { motion, AnimatePresence } from "framer-motion";
 
 const analysisProtocols = {
@@ -13,11 +14,11 @@ const analysisProtocols = {
     subtitle: "Total Chlorophyll & Total Carotenoid",
     wavelengths: ["652.4", "665.2", "470"],
     protocol: [
-      "Add 20 mg of sample and 2 mL of 90% MeOH to a 2 mL tube",
-      "Extract by sonicating for 20 minutes at 20℃ with medium intensity",
-      "Centrifuge at 15,000 RPM, 4℃ for 10 min",
-      "Extract 1.5 mL of the supernatant and store refrigerated",
-      "Pipette 200 μL of the extract into a 96-well plate and measure absorbance"
+      "Add 2 mL of 90% MeOH and 20 mg sample to 2 mL tube",
+      "Extract by sonication at medium intensity for 20 min at 20℃",
+      "Centrifuge at 15,000 RPM, 4℃, 10 min",
+      "Extract 1.5 mL supernatant and store refrigerated",
+      "Dispense 200 μL extract in 96-well plate and measure absorbance"
     ],
     reagents: [
       "90% MeOH: 90 mL methanol + 10 mL distilled water"
@@ -41,29 +42,29 @@ const analysisProtocols = {
     subtitle: "Total Phenolic Content",
     wavelengths: ["765"],
     protocol: [
-      "Add 20 mg of sample and 2 mL of 90% MeOH to a 2 mL tube",
-      "Extract by sonicating for 20 min at 20℃ with medium intensity",
-      "Centrifuge at 15,000 RPM, 4℃ for 10 min",
-      "Extract 1.5 mL of the supernatant and store refrigerated",
-      "Add 100 μL of supernatant, 100 μL of Folin-Ciocalteu reagent, and 1500 μL of distilled water",
-      "Let stand for 5 minutes",
-      <span>Add 300 μL of 7.5% Na<sub>2</sub>CO<sub>3</sub> solution</span>,
-      "React for 40 minutes at room temperature",
-      "Measure absorbance at 765 nm"
+        "Add 2 mL of 90% MeOH and 20 mg sample to a 2 mL tube.",
+        "Extract by sonication at medium intensity for 20 min at 20℃.",
+        "Centrifuge at 15,000 RPM, 4℃ for 10 min.",
+        "Extract 1.5 mL of the supernatant and store refrigerated.",
+        "Mix 100 μL of supernatant + 100 μL of Folin-Ciocalteu reagent + 1500 μL of distilled water.",
+        "Let stand for 5 minutes.",
+        "Add 300 μL of 7.5% Na2CO3 solution.",
+        "React at room temperature for 40 minutes.",
+        "Measure absorbance at 765 nm."
     ],
     reagents: [
-      "7.5% Na₂CO₃: Dissolve 7.5 g of Sodium Carbonate in 100 mL of distilled water",
-      "Folin-Ciocalteu reagent: Commercially available (e.g., Sigma-Aldrich)",
-      "Gallic acid standard curve: Prepare 1 mg/mL stock, then dilute to 0, 20, 40, 60, 80, 100 μg/mL. React under the same conditions as the sample (40 min, room temp)."
+      "7.5% Na₂CO₃: Dissolve 7.5 g Sodium Carbonate in 100 mL distilled water",
+      "Folin-Ciocalteu reagent: Commercial purchase (Sigma-Aldrich etc.)",
+      "Gallic acid Standard Curve: Prepare 1 mg/mL stock, then dilute to 0, 20, 40, 60, 80, 100 μg/mL and react under same conditions (40 min, room temperature)"
     ],
     storage_conditions: [
-      "Buffers like TCA, PBS: Store refrigerated after preparation. Prevent contamination; filter-sterilization recommended for long-term storage."
+      "TCA, PBS buffers: Store refrigerated (after preparation) - prevent contamination, filter-sterilize for long-term storage."
     ],
     formulas: [
       "Calculate content using Gallic acid standard curve",
       "Concentration = (Absorbance - b) / a"
     ],
-    unit: "mg GAE/g DW",
+    unit: "mg GAE/g DW", // Changed from FW to DW
     icon: <Beaker className="h-4 w-4 sm:h-5 sm:w-5" />,
     references: [
       {
@@ -77,25 +78,25 @@ const analysisProtocols = {
     subtitle: "Total Flavonoid",
     wavelengths: ["415"],
     protocol: [
-      "Add 20 mg of sample and 2 mL of 90% MeOH to a 2 mL tube",
-      "Extract by sonicating for 20 min at 20℃ with medium intensity",
-      "Centrifuge at 15,000 RPM, 4℃ for 10 min",
-      "Extract 1.5 mL of the supernatant and store refrigerated",
-      <span>In a 2ml tube, add 100 μL of supernatant + 300 μL of 95% EtOH + 20 μL of 10% AlCl<sub>3</sub> + 20 μL of 1 M potassium acetate + 600 μL of distilled water</span>,
-      "React for 40 minutes at room temperature",
-      "Measure absorbance at 415 nm"
+        "Add 2 mL of 90% MeOH and 20 mg sample to a 2 mL tube.",
+        "Extract by sonication at medium intensity for 20 min at 20℃.",
+        "Centrifuge at 15,000 RPM, 4℃ for 10 min.",
+        "Extract 1.5 mL of the supernatant and store refrigerated.",
+        "In a 2 mL tube, mix 100 μL of supernatant + 300 μL of 95% EtOH + 20 μL of 10% AlCl3 + 20 μL of 1 M potassium acetate + 600 μL of distilled water.",
+        "React at room temperature for 40 minutes.",
+        "Measure absorbance at 415 nm."
     ],
     reagents: [
       "95% EtOH: 95 mL ethanol + 5 mL distilled water",
-      "10% AlCl₃: Dissolve 10 g Aluminum Chloride in 100 mL of distilled water",
-      "1 M Potassium acetate: Dissolve 9.82 g CH₃COOK in 100 mL of distilled water",
-      "Quercetin standard curve: Prepare 1 mg/mL stock, then dilute to 0, 20, 40, 60, 80, 100 μg/mL. React under the same conditions as sample (40 min, room temp)."
+      "10% AlCl₃: Dissolve 10 g Aluminum Chloride in 100 mL distilled water",
+      "1 M Potassium acetate: Dissolve 9.82 g CH₃COOK in 100 mL distilled water",
+      "Quercetin Standard Curve: Prepare 1 mg/mL stock, then dilute to 0, 20, 40, 60, 80, 100 μg/mL and react under same conditions (40 min, room temperature)" // Updated description
     ],
     formulas: [
       "Calculate content using Quercetin standard curve",
       "Concentration = (Absorbance - b) / a"
     ],
-    unit: "mg QE/g DW",
+    unit: "mg QE/g DW", // Changed from FW to DW
     icon: <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" />,
     references: [
       {
@@ -109,25 +110,25 @@ const analysisProtocols = {
     subtitle: "Total Glucosinolate",
     wavelengths: ["425"],
     protocol: [
-      "Add 20 mg of sample and 2 mL of 90% MeOH to a 2 mL tube",
-      "Extract by sonicating for 20 min at 20℃ with medium intensity",
-      "Centrifuge at 15,000 RPM, 4℃ for 10 min",
-      "Extract 1.5 mL of the supernatant and store refrigerated",
-      "In a 2ml tube, add 50 μL of supernatant + 1.5 mL of 2 mM sodium tetrachloropalladate + 150 μL of distilled water",
-      "React for 1 hour at room temperature",
-      "Measure absorbance at 425 nm"
+        "Add 2 mL of 90% MeOH and 20 mg sample to a 2 mL tube.",
+        "Extract by sonication at medium intensity for 20 min at 20℃.",
+        "Centrifuge at 15,000 RPM, 4℃ for 10 min.",
+        "Extract 1.5 mL of the supernatant and store refrigerated.",
+        "In a 2 mL tube, mix 50 μL of supernatant + 1.5 mL of 2 mM sodium tetrachloropalladate + 150 μL of distilled water.",
+        "React at room temperature for 1 hour.",
+        "Measure absorbance at 425 nm."
     ],
     reagents: [
-      "2 mM Sodium tetrachloropalladate: Dissolve 36.5 mg Na₂PdCl₄ in 100 mL of distilled water"
+      "2 mM Sodium tetrachloropalladate: Dissolve 36.5 mg Na₂PdCl₄ in 100 mL distilled water"
     ],
     formulas: [
       <span>Total glucosinolate (μmol/g) = 1.40 + 118.86 × A<sub>425</sub></span>
     ],
-    unit: "μmol/g DW",
+    unit: "μmol/g DW", // Changed from FW to DW
     icon: <Microscope className="h-4 w-4 sm:h-5 sm:w-5" />,
     references: [
       {
-        citation: "Mawlong, I., M. Sujith Kumar, B. Gurung, K. Singh, and D. Singh. 2017. \"A Simple Spectrophotometric Method for Estimating Total Glucosinolates in Mustard de-Oiled Cake.\" International Journal of Food Properties 20 (12): 3274–81",
+        citation: `Mawlong, I., M. Sujith Kumar, B. Gurung, K. Singh, and D. Singh. 2017. "A Simple Spectrophotometric Method for Estimating Total Glucosinolates in Mustard de-Oiled Cake." International Journal of Food Properties 20 (12): 3274–81`,
         doi: "10.1080/10942912.2017.1286353"
       }
     ]
@@ -137,21 +138,21 @@ const analysisProtocols = {
     subtitle: "DPPH Radical Scavenging",
     wavelengths: ["517"],
     protocol: [
-      "Add 20 mg of sample and 2 mL of 90% MeOH to a 2 mL tube",
-      "Extract by sonicating for 20 min at 20℃ with medium intensity",
-      "Centrifuge at 15,000 RPM, 4℃ for 10 min",
-      "Extract 1.5 mL of the supernatant and store refrigerated",
-      "In a 96-well plate, add 170 μL of 90% MeOH + 10 μL of DPPH solution + 20 μL of supernatant in order",
-      "For the Control (Blank), use 20 μL of 90% MeOH instead of the supernatant.",
-      "Seal with parafilm and react for 1 hour in the dark",
-      "Measure absorbance at 517 nm"
+        "Add 2 mL of 90% MeOH and 20 mg sample to a 2 mL tube.",
+        "Extract by sonication at medium intensity for 20 min at 20℃.",
+        "Centrifuge at 15,000 RPM, 4℃ for 10 min.",
+        "Extract 1.5 mL of the supernatant and store refrigerated.",
+        "In a 96-well plate, add 170 μL of 90% MeOH + 10 μL of DPPH solution + 20 μL of supernatant in order.",
+        "For the Control (Blank), use 20 μL of 90% MeOH instead of the supernatant.",
+        "Seal with Parafilm and react in the dark for 1 hour.",
+        "Measure absorbance at 517 nm."
     ],
     reagents: [
       "90% MeOH: 90 mL methanol + 10 mL distilled water",
-      "DPPH solution: Dissolve 200 mg DPPH in 50 mL of 90% MeOH (final concentration 4 mg/mL), wrap in foil, and store refrigerated (4℃)"
+      "DPPH solution: Dissolve 200 mg DPPH in 50 mL 90% MeOH, wrap with foil and store refrigerated"
     ],
     storage_conditions: [
-      "DPPH: Store refrigerated (4℃), wrapped in foil, keep in dark conditions until use"
+      "DPPH: Store refrigerated (4℃), wrapped in foil, keep in dark until use."
     ],
     formulas: [
       "DPPH Inhibition (%) = ((Control - Sample) / Control) × 100%"
@@ -170,53 +171,53 @@ const analysisProtocols = {
     subtitle: "Total Anthocyanin",
     wavelengths: ["530", "600"],
     protocol: [
-      <span>In a 2 mL tube, add 2 mL of 1% HCl-MeOH solution + 20 mg of sample</span>,
-      "Extract by sonicating for 1 hour at 40℃ with medium intensity",
-      "Centrifuge at 15,000 RPM, 4℃ for 10 min",
-      "Extract 1.5 mL of the supernatant and store refrigerated",
+      <span>Add 2 mL 1% HCl-MeOH solution and 20 mg sample to 2 mL tube</span>,
+      "Extract by sonication at medium intensity for 1 hour at 40℃",
+      "Centrifuge at 15,000 RPM, 4℃, 10 min",
+      "Extract 1.5 mL supernatant and store refrigerated",
       "Measure absorbance at 530 nm and 600 nm"
     ],
     reagents: [
-      "1% HCl-MeOH: Slowly add 1 mL of concentrated HCl (37%, ~12 M) to 99 mL of methanol and mix",
-      "1 M HCl: Slowly add ~8.3 mL of concentrated HCl (37%, 12 M) to 100 mL of distilled water and mix"
+      "1% HCl-MeOH: 90 mL methanol + 10 mL 1 M HCl",
+      "1 M HCl: Add 8.3 mL concentrated HCl (37%) to 100 mL distilled water"
     ],
     formulas: [
       <span>Anthocyanin (mg/g) = (A<sub>530</sub> - A<sub>600</sub>) × V × n × Mw / (ε × m)</span>,
       "V = extraction volume(mL), n = dilution factor, Mw = 449.2, ε = 26900, m = sample weight(g)"
     ],
-    unit: "mg/g DW",
+    unit: "mg/g DW", // Changed from FW to DW
     icon: <TestTube className="h-4 w-4 sm:h-5 sm:w-5" />,
     references: [
       {
-        citation: "Yang, Y.-C., D.-W. Sun, H. Pu, N.-N. Wang, and Z. Zhu. 2015. \"Rapid Detection of Anthocyanin Content in Lychee Pericarp During Storage Using Hyperspectral Imaging Coupled with Model Fusion.\" Postharvest Biology and Technology 103: 55–65.",
+        citation: `Yang, Y.-C., D.-W. Sun, H. Pu, N.-N. Wang, and Z. Zhu. 2015. "Rapid Detection of Anthocyanin Content in Lychee Pericarp During Storage Using Hyperspectral Imaging Coupled with Model Fusion." Postharvest Biology and Technology 103: 55–65.`,
         doi: "10.1016/j.postharvbio.2015.02.008"
       }
     ]
   },
   cat: {
-    title: "Catalase (CAT) Activity",
+    title: "Catalase Activity",
     subtitle: "Catalase (CAT) Activity",
     wavelengths: ["240"],
     protocol: [
-      "Extract enzyme with 20 mg sample + 2 mL of 50 mM PBS (pH 7.0)",
-      "Repeat 3 times: 5 min in liquid nitrogen + 10 min sonication",
-      "Centrifuge at 15,000 RPM, 4℃ for 10 min",
-      "Collect supernatant (1.5 mL) and store in a deep freezer",
-      <span>Prepare reaction mixture, then add 3 μL of enzyme</span>,
-      "Measure absorbance at 240 nm every 10 seconds for 10 minutes"
+      "Extract enzyme with 20 mg sample + 2 mL pH 7.0 50 mM PBS",
+      "Liquid nitrogen 5 min + sonication 10 min (3 times repeat)",
+      "Centrifuge at 15,000 RPM, 4℃, 10 min",
+      "Extract supernatant (1.5 mL) and store in deep freezer",
+      <span>Prepare reaction mixture and add 3 μL enzyme</span>,
+      "Measure absorbance at 240 nm every 10 seconds for 10 min"
     ],
     reagents: [
-      "50 mM PBS (pH 7.0): Dissolve 0.68 g KH₂PO₄ + 0.87 g K₂HPO₄ in 100 mL DW, store refrigerated",
-      "3% H₂O₂: 1 mL of 30% H₂O₂ + 9 mL DW, store refrigerated (4℃) in a brown bottle",
-      "Reaction mixture: 3.4 μL of 3% H₂O₂ + 193.6 μL of 50 mM PBS"
-    ],
-    storage_conditions: [
-        "H₂O₂: Store refrigerated (4℃), sealed, in a brown bottle. Use immediately after dilution, minimize air exposure.",
-        "PBS buffer: Store refrigerated after preparation. Prevent contamination; filter-sterilization recommended for long-term storage."
+      "50 mM PBS (pH 7.0): Dissolve 0.68 g KH₂PO₄ + 0.87 g K₂HPO₄ in 100 mL distilled water",
+      "3% H₂O₂: 1 mL 30% H₂O₂ + 9 mL distilled water",
+      "Reaction mixture: 3.4 μL 3% H₂O₂ + 193.6 μL 50 mM PBS"
     ],
     formulas: [
       <span>CAT activity (μmol/min/mL) = (ΔA<sub>240</sub>/min) × total volume × 1000 / (39.4 × enzyme volume)</span>,
       "CAT activity (μmol/min/mg DW) = unit/mL / enzyme (mg/mL)"
+    ],
+    storage_conditions: [
+        "H₂O₂: Store refrigerated (4℃), sealed, in a brown bottle - use immediately after dilution, minimize air exposure.",
+        "PBS buffer: Store refrigerated (after preparation) - prevent contamination, filter-sterilize for long-term storage."
     ],
     unit: "μmol/min/mg DW",
     icon: <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" />,
@@ -228,32 +229,32 @@ const analysisProtocols = {
     ]
   },
   pod: {
-    title: "Peroxidase (POD) Activity",
+    title: "Peroxidase Activity",
     subtitle: "Peroxidase (POD) Activity",
     wavelengths: ["470"],
     protocol: [
-      "Extract enzyme with 20 mg sample + 2 mL of 50 mM PBS (pH 7.0)",
-      "Repeat 3 times: 5 min in liquid nitrogen + 10 min sonication",
-      "Centrifuge at 15,000 RPM, 4℃ for 10 min",
-      "Collect supernatant (1.5 mL) and store in a deep freezer",
-      <span>Prepare reaction mixture, then add 20 μL of sample</span>,
+      "Extract enzyme with 20 mg sample + 2 mL pH 7.0 50 mM PBS",
+      "Liquid nitrogen 5 min + sonication 10 min (3 times repeat)",
+      "Centrifuge at 15,000 RPM, 4℃, 10 min",
+      "Extract supernatant (1.5 mL) and store in deep freezer",
+      <span>Prepare reaction mixture and add 20 μL sample</span>,
       "Measure absorbance at 470 nm every 10 seconds"
     ],
     reagents: [
-      "50 mM PBS (pH 7.0): Dissolve 0.68 g KH₂PO₄ + 0.87 g K₂HPO₄ in 100 mL DW, store refrigerated",
-      "40 mM Phosphate buffer: Dissolve 0.54 g KH₂PO₄ + 0.70 g K₂HPO₄ in 100 mL DW, store refrigerated",
-      "20 mM Guaiacol: Dissolve 248 mg guaiacol in 100 mL DW. Can be stored at room temp (refrigerate for long-term), keep sealed.",
-      "3% H₂O₂: 1 mL of 30% H₂O₂ + 9 mL DW, store refrigerated (4℃) in a brown bottle",
-      "Reaction mixture: 66.6 μL of 40 mM phosphate buffer + 80 μL of 20 mM guaiacol + 33.3 μL of 3% H₂O₂"
-    ],
-    storage_conditions: [
-        "H₂O₂: Store refrigerated (4℃), sealed, in a brown bottle. Use immediately after dilution, minimize air exposure.",
-        "Guaiacol: Can be stored at room temp (refrigerate for long-term). Highly volatile, keep sealed.",
-        "PBS buffer: Store refrigerated after preparation. Prevent contamination; filter-sterilization recommended for long-term storage."
+      "50 mM PBS (pH 7.0): Dissolve 0.68 g KH₂PO₄ + 0.87 g K₂HPO₄ in 100 mL distilled water",
+      "40 mM Phosphate buffer: Dissolve 0.54 g KH₂PO₄ + 0.70 g K₂HPO₄ in 100 mL distilled water",
+      "20 mM Guaiacol: Dissolve 248 mg guaiacol in 100 mL distilled water",
+      "3% H₂O₂: 1 mL 30% H₂O₂ + 9 mL distilled water",
+      "Reaction mixture: 66.6 μL 40 mM phosphate buffer + 80 μL 20 mM guaiacol + 33.3 μL 3% H₂O₂"
     ],
     formulas: [
       <span>POD activity (μmol/min/mL) = (ΔA<sub>470</sub>/min) × total volume × 1000 / (26.6 × enzyme volume)</span>,
       "POD activity (μmol/min/mg DW) = unit/mL / enzyme (mg/mL)"
+    ],
+    storage_conditions: [
+        "H₂O₂: Store refrigerated (4℃), sealed, in a brown bottle - use immediately after dilution.",
+        "Guaiacol: Can be stored at room temp (refrigerate for long-term), highly volatile, so keep sealed.",
+        "PBS buffer: Store refrigerated (after preparation) - prevent contamination."
     ],
     unit: "μmol/min/mg DW",
     icon: <Beaker className="h-4 w-4 sm:h-5 sm:w-5" />,
@@ -265,35 +266,35 @@ const analysisProtocols = {
     ]
   },
   sod: {
-    title: "Superoxide Dismutase (SOD) Activity",
+    title: "Superoxide Dismutase Activity",
     subtitle: "Superoxide Dismutase (SOD) Activity",
     wavelengths: ["560"],
     protocol: [
-      "Extract enzyme with 20 mg sample + 2 mL of 50 mM PBS (pH 7.0)",
-      "Repeat 3 times: 5 min in liquid nitrogen + 10 min sonication",
-      "Centrifuge at 15,000 RPM, 4℃ for 10 min",
-      "Collect supernatant (1.5 mL) and store in a deep freezer",
-      "Add reaction mixture components in order, adding riboflavin last",
-      <span>Expose to LED light at PPFD 50 μmol m<sup>-2</sup>s<sup>-1</sup> for 15 minutes, then block light</span>,
+      "Extract enzyme with 20 mg sample + 2 mL pH 7.0 50 mM PBS",
+      "Liquid nitrogen 5 min + sonication 10 min (3 times repeat)",
+      "Centrifuge at 15,000 RPM, 4℃, 10 min",
+      "Extract supernatant (1.5 mL) and store in deep freezer",
+      "Add reaction mixture in order and add riboflavin last",
+      <span>Expose to LED light at PPFD 50 μmol m<sup>-2</sup>s<sup>-1</sup> for 15 min, then block light</span>,
       "Measure absorbance at 560 nm"
     ],
     reagents: [
-      "50 mM PBS (pH 7.0): Dissolve 0.68 g KH₂PO₄ + 0.87 g K₂HPO₄ in 100 mL DW, store refrigerated",
-      "0.1 M Methionine: Dissolve 1.49 g methionine in 100 mL DW, store refrigerated (seal to prevent oxidation)",
-      "2.5 mM NBT: Dissolve 205 mg nitro blue tetrazolium in 100 mL DW, store refrigerated (4℃), foil wrapping recommended, use immediately after preparation",
-      "10 mM EDTA: Dissolve 372 mg EDTA in 100 mL DW, store refrigerated after preparation",
-      "0.5 mM Riboflavin: Dissolve 18.8 mg riboflavin in 100 mL DW, store refrigerated (4℃), must be foil-wrapped, highly sensitive to light, use immediately"
-    ],
-    storage_conditions: [
-        "Riboflavin: Store refrigerated (4℃), must be foil-wrapped, sensitive to light, use immediately.",
-        "NBT: Store refrigerated (4℃), foil wrapping recommended, use immediately after preparation, keep in dark.",
-        "Methionine: Store refrigerated, seal to prevent oxidation.",
-        "EDTA, PBS buffers: Store refrigerated after preparation. Prevent contamination; filter-sterilization recommended for long-term storage."
+      "50 mM PBS (pH 7.0): Dissolve 0.68 g KH₂PO₄ + 0.87 g K₂HPO₄ in 100 mL distilled water",
+      "0.1 M Methionine: Dissolve 1.49 g methionine in 100 mL distilled water",
+      "2.5 mM NBT: Dissolve 205 mg nitro blue tetrazolium in 100 mL distilled water",
+      "10 mM EDTA: Dissolve 372 mg EDTA in 100 mL distilled water",
+      "0.5 mM Riboflavin: Dissolve 18.8 mg riboflavin in 100 mL distilled water"
     ],
     formulas: [
       "SOD inhibition (%) = ((Control - Sample) / Control) × 100%",
       "SOD activity (unit/mL) = (inhibition × total volume) / (50 × enzyme volume)",
       "SOD activity (unit/mg DW) = unit/mL / enzyme (mg/mL)"
+    ],
+    storage_conditions: [
+        "Riboflavin: Store refrigerated (4℃), must be wrapped in foil, light-sensitive, use immediately.",
+        "NBT: Store refrigerated (4℃), foil wrapping recommended, use immediately after preparation, keep in dark.",
+        "Methionine: Store refrigerated, seal to prevent oxidation.",
+        "EDTA, PBS buffer: Store refrigerated (after preparation) - prevent contamination."
     ],
     unit: "unit/mg DW",
     icon: <Microscope className="h-4 w-4 sm:h-5 sm:w-5" />,
@@ -305,28 +306,28 @@ const analysisProtocols = {
     ]
   },
   h2o2: {
-    title: "Hydrogen Peroxide (H₂O₂) Content",
+    title: "Hydrogen Peroxide Content",
     subtitle: "Hydrogen Peroxide (H₂O₂) Content",
     wavelengths: ["390"],
     protocol: [
-      "Mix 20 mg sample + 2 mL of 0.1% TCA and vortex",
-      "Repeat 3 times: 5 min in liquid nitrogen + 10 min sonication",
-      "Centrifuge at 15,000 RPM, 4℃ for 10 min",
-      "Extract 1.5 mL of supernatant",
-      "Prepare reaction mixture and react for 1 hour in the dark",
+      "Mix 20 mg sample + 2 mL 0.1% TCA and vortex",
+      "Liquid nitrogen 5 min + sonication 10 min (3 times repeat)",
+      "Centrifuge at 15,000 RPM, 4℃, 10 min",
+      "Extract 1.5 mL supernatant",
+      "Prepare reaction mixture and react for 1 hour in dark",
       "Measure at 390 nm"
     ],
     reagents: [
-      "0.1% TCA: Dissolve 100 mg trichloroacetic acid in 100 mL DW, store refrigerated after preparation.",
-      "10 mM Potassium phosphate buffer (pH 7.0): Dissolve 136 mg KH₂PO₄ + 174 mg K₂HPO₄ in 100 mL DW, store refrigerated.",
-      "1 M KI: Dissolve 16.6 g potassium iodide in 100 mL DW, store refrigerated.",
-      "1 mM H₂O₂ Stock: 5.1 μL of 35% H₂O₂ stock + 49.995 mL of 0.1% TCA. (35% H₂O₂ is ~9.89 M). Store refrigerated (4℃) in a brown bottle, use immediately.",
-      "H₂O₂ standard curve (example): Use 1 mM stock to dilute to: 0, 0.05, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0 mM. React under same conditions as sample (1 hour, dark). (Concentrations may vary)."
+      "0.1% TCA: Dissolve 100 mg trichloroacetic acid in 100 mL distilled water, store refrigerated (after preparation)",
+      "10 mM Potassium phosphate buffer (pH 7.0): Dissolve 136 mg KH₂PO₄ + 174 mg K₂HPO₄ in 100 mL distilled water, store refrigerated (after preparation)",
+      "1 M KI: Dissolve 16.6 g potassium iodide in 100 mL distilled water, store refrigerated",
+      "1 mM H₂O₂ Stock: 35% H₂O₂ stock solution 5.1 μL + 0.1% TCA 49.995 mL (35% H₂O₂ is approximately 9.89 M), store refrigerated (4℃), brown bottle, use immediately",
+      <span>H₂O₂ Standard Curve (Example): Using 1 mM stock, dilute to the following concentrations: 0, 0.05, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0 mM. React under the same conditions as samples (1 hour dark reaction). (Concentrations may vary by user)</span>
     ],
     storage_conditions: [
-      "H₂O₂: Store refrigerated (4℃), sealed, in a brown bottle. Use immediately after dilution, minimize air exposure.",
-      "KI: Store refrigerated. Prevent contamination; filter-sterilization recommended for long-term storage.",
-      "TCA, PBS buffers: Store refrigerated after preparation. Prevent contamination; filter-sterilization recommended for long-term storage."
+      "H₂O₂: Refrigerated storage (4℃), sealed, brown bottle - Use immediately after dilution, minimize air exposure",
+      "KI: Refrigerated storage - Prevent contamination, filter-sterilize for long-term storage",
+      "TCA, PBS buffers: Refrigerated storage (after preparation) - Prevent contamination, filter-sterilize for long-term storage"
     ],
     formulas: [
       <span>Calculate content using H<sub>2</sub>O<sub>2</sub> standard curve</span>,
@@ -356,7 +357,8 @@ export default function AnalysisEn() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  React.useEffect(() => {
+  // URL에서 선택된 분석 타입 확인
+  useEffect(() => {
     const params = new URLSearchParams(location.search);
     const selected = params.get("selected");
     if (selected) {
@@ -373,24 +375,14 @@ export default function AnalysisEn() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover z-0 pointer-events-none"
-      >
-        <source src="/videos/science_background.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 space-y-6 sm:space-y-8">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 space-y-6 sm:space-y-8">
         <div className="text-center mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Select Analysis Protocol</h1>
-          <p className="text-sm sm:text-base text-gray-600">Choose the biochemical analysis to perform.</p>
+          <p className="text-sm sm:text-base text-gray-600">Please select the biochemical analysis to perform.</p>
         </div>
 
-        <div className="ios-card ios-blur rounded-3xl ios-shadow-lg border-0 p-4 sm:p-6 mb-6 sm:mb-8">
+        <div className="bg-white/70 backdrop-blur-lg rounded-2xl sm:rounded-3xl shadow-xl border-0 p-4 sm:p-6 mb-6 sm:mb-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
             {Object.entries(analysisProtocols).map(([key, protocol]) => (
               <button
@@ -399,7 +391,7 @@ export default function AnalysisEn() {
                 className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all duration-300 text-left ${
                   selectedAnalysis === key
                     ? 'bg-blue-600 text-white border-blue-600 shadow-xl'
-                    : 'bg-white/70 text-gray-700 border-gray-200 hover:bg-blue-50 hover:border-blue-300'
+                    : 'bg-white/80 text-gray-700 border-gray-200 hover:bg-blue-50 hover:border-blue-300'
                 }`}
               >
                 <div className="flex items-center space-x-2 mb-2">
@@ -423,7 +415,7 @@ export default function AnalysisEn() {
               exit={{ opacity: 0, y: -20, height: 0 }}
               transition={{ duration: 0.4, ease: "easeInOut" }}
             >
-              <Card className="ios-card ios-blur rounded-3xl ios-shadow-lg border-0 overflow-hidden">
+              <Card className="bg-white/80 backdrop-blur-lg rounded-2xl sm:rounded-3xl shadow-xl border-0 overflow-hidden">
                 <CardHeader className="p-4 sm:p-6">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
                     <div className="flex items-start space-x-3">
@@ -446,9 +438,9 @@ export default function AnalysisEn() {
                 </CardHeader>
                 <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-                    {/* Left side: Experimental Protocol + Calculation Formula + Measurement Wavelengths */}
+                    {/* Left: Experimental Protocol + Calculation Formula + Measurement Wavelengths */}
                     <div className="space-y-4 sm:space-y-6">
-                      <div className="bg-white/70 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                      <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
                         <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                           <TestTube className="h-4 w-4" />
                           <span>Experimental Protocol</span>
@@ -465,7 +457,7 @@ export default function AnalysisEn() {
                         </ol>
                       </div>
 
-                      <div className="bg-white/70 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                      <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
                         <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                           <Calculator className="h-4 w-4" />
                           <span>Calculation Formula</span>
@@ -481,7 +473,7 @@ export default function AnalysisEn() {
                         </div>
                       </div>
 
-                      <div className="bg-white/70 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                      <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
                         <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                           <Microscope className="h-4 w-4" />
                           <span>Measurement Wavelengths</span>
@@ -496,10 +488,11 @@ export default function AnalysisEn() {
                       </div>
                     </div>
 
-                    {/* Right side: Reagent Preparation + Storage Conditions */}
+                    {/* Right: Reagent Preparation + Storage Conditions */}
                     <div className="space-y-4 sm:space-y-6">
+                      {/* Reagent Preparation Section */}
                       {analysisProtocols[selectedAnalysis].reagents && (
-                        <div className="bg-white/70 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                        <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
                           <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                             <Beaker className="h-4 w-4" />
                             <span>Reagent Preparation</span>
@@ -508,13 +501,7 @@ export default function AnalysisEn() {
                             {analysisProtocols[selectedAnalysis].reagents.map((reagent, index) => (
                               <div key={index} className="p-3 sm:p-4 bg-blue-50 rounded-lg sm:rounded-xl border border-blue-200">
                                 <div className="text-gray-800 text-xs sm:text-sm leading-relaxed">
-                                  {typeof reagent === 'string' ? (
-                                    <>
-                                      <strong>{reagent.split(':')[0]}:</strong> {reagent.split(':').slice(1).join(':')}
-                                    </>
-                                  ) : (
-                                    reagent
-                                  )}
+                                  <strong>{reagent.split(':')[0]}:</strong> {reagent.split(':').slice(1).join(':')}
                                 </div>
                               </div>
                             ))}
@@ -522,25 +509,20 @@ export default function AnalysisEn() {
                         </div>
                       )}
 
+                      {/* Storage Conditions Section */}
                       {analysisProtocols[selectedAnalysis].storage_conditions && (
-                        <div className="bg-yellow-50/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
-                          <h3 className="text-yellow-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
+                        <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                          <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.98-.833-2.75 0L4.064 16.5c-.77.833.192 2.5 1.732 2.5z" />
                             </svg>
-                            <span>Reagent Storage & Precautions</span>
+                            <span>Storage Conditions</span>
                           </h3>
                           <div className="space-y-3">
                             {analysisProtocols[selectedAnalysis].storage_conditions.map((condition, index) => (
                               <div key={index} className="p-3 sm:p-4 bg-yellow-50 rounded-lg sm:rounded-xl border border-yellow-200">
                                 <div className="text-gray-800 text-xs sm:text-sm leading-relaxed">
-                                  {typeof condition === 'string' ? (
-                                    <>
-                                      <strong>{condition.split(':')[0]}:</strong> {condition.split(':').slice(1).join(':')}
-                                    </>
-                                  ) : (
-                                    condition
-                                  )}
+                                  <strong>{condition.split(':')[0]}:</strong> {condition.split(':').slice(1).join(':')}
                                 </div>
                               </div>
                             ))}
@@ -548,40 +530,38 @@ export default function AnalysisEn() {
                         </div>
                       )}
                     </div>
+                  </div>
                   
-                    {/* References Section - Full width at the bottom */}
-                    {analysisProtocols[selectedAnalysis].references && analysisProtocols[selectedAnalysis].references.length > 0 && (
-                      <div className="lg:col-span-2 mt-6 sm:mt-8 bg-white/70 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
-                        <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
-                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                          </svg>
-                          <span>References</span>
-                        </h3>
-                        <div className="space-y-4">
-                          {analysisProtocols[selectedAnalysis].references?.map((ref, index) => (
-                            <div key={index} className="p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl border border-gray-200">
-                              <p className="text-gray-800 text-xs sm:text-sm leading-relaxed mb-2">
-                                {ref.citation}
-                              </p>
-                              {ref.doi && (
-                                <a 
-                                  href={`https://doi.org/${ref.doi}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center space-x-1 text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors"
-                                >
-                                  <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 00-2 2v10a2 2 002 2h10a2 2 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                  </svg>
-                                  <span>DOI: {ref.doi}</span>
-                                </a>
-                              )}
-                            </div>
-                          ))}
+                  {/* References Section - Bottom Full Width */}
+                  <div className="mt-6 sm:mt-8 bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                    <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                      </svg>
+                      <span>References</span>
+                    </h3>
+                    <div className="space-y-4">
+                      {analysisProtocols[selectedAnalysis].references?.map((ref, index) => (
+                        <div key={index} className="p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl border border-gray-200">
+                          <p className="text-gray-800 text-xs sm:text-sm leading-relaxed mb-2">
+                            {ref.citation}
+                          </p>
+                          {ref.doi && (
+                            <a 
+                              href={`https://doi.org/${ref.doi}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center space-x-1 text-blue-600 hover:bg-blue-700 text-xs font-medium transition-colors"
+                            >
+                              <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 00-2 2v10a2 2 002 2h10a2 2 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                              </svg>
+                              <span>DOI: {ref.doi}</span>
+                            </a>
+                          )}
                         </div>
-                      </div>
-                    )}
+                      ))}
+                    </div>
                   </div>
                 </CardContent>
               </Card>

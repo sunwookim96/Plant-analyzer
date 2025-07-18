@@ -162,7 +162,7 @@ const SampleEditForm = ({ sample, onSave, onCancel }) => {
   );
 };
 
-export default function SampleResultsEn({ samples, selectedIds, onSelectionChange, onEdit, onRemove, onRemoveMultiple, analysisType }) {
+export default function SampleResults({ samples, selectedIds, onSelectionChange, onEdit, onRemove, onRemoveMultiple, analysisType }) {
   const [editingSample, setEditingSample] = useState(null);
 
   const exportSelectedResults = () => {
@@ -349,7 +349,7 @@ export default function SampleResultsEn({ samples, selectedIds, onSelectionChang
         <CardContent className="pt-0">
           <div className="space-y-2 max-h-80 overflow-y-auto">
             {samples.map((sample) => (
-              <div key={sample.id} className="p-3 rounded-xl bg-white/70 ios-blur border border-gray-200/50 flex items-center gap-2">
+              <div key={sample.id} className="p-3 rounded-xl bg-white/60 ios-shadow border border-gray-100/50 flex items-center gap-2">
                 <Checkbox 
                   checked={selectedIds.has(sample.id)}
                   onCheckedChange={(checked) => handleSelectOne(sample.id, checked)}
@@ -427,7 +427,7 @@ export default function SampleResultsEn({ samples, selectedIds, onSelectionChang
             ))}
             {samples.length === 0 && (
               <div className="text-center py-8 text-gray-500 text-sm">
-                No samples registered
+                No registered samples found.
               </div>
             )}
           </div>

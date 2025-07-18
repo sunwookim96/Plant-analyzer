@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -30,7 +29,7 @@ const ChartComponent = ({ data, unit }) => {
   );
 
   return (
-    <div className="h-[500px] p-4 rounded-2xl bg-white/70 ios-blur">
+    <div className="h-[500px] p-4 rounded-2xl bg-white/60">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 80 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -122,7 +121,7 @@ export default function ChartVisualization({ samples }) {
     return (
       <Card className="ios-card ios-blur rounded-3xl ios-shadow-lg border-0">
         <CardContent className="space-y-6 pt-6">
-          <div className="p-6 rounded-2xl bg-white/80 ios-shadow border border-gray-100/50 ios-blur">
+          <div className="p-6 rounded-2xl bg-white/80 ios-shadow border border-gray-100/50">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-center">
               <div>
                 <p className="text-gray-500 text-sm font-semibold mb-1">총 샘플 수</p>
@@ -136,7 +135,7 @@ export default function ChartVisualization({ samples }) {
           </div>
 
           <Tabs defaultValue="chl_a" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 bg-gray-200/60 ios-blur rounded-xl shadow-inner p-2 border-0 h-12">
+            <TabsList className="grid w-full grid-cols-4 bg-white/70 backdrop-blur-lg rounded-xl shadow-xl p-2 border-0 h-12">
               <TabsTrigger value="chl_a" className="data-[state=active]:bg-white data-[state=active]:shadow-lg text-gray-600 data-[state=active]:text-blue-600 rounded-lg font-semibold transition-all duration-200 text-sm">
                 엽록소 a
               </TabsTrigger>
@@ -194,7 +193,7 @@ export default function ChartVisualization({ samples }) {
   return (
     <Card className="ios-card ios-blur rounded-3xl ios-shadow-lg border-0">
       <CardContent className="space-y-6 pt-6">
-        <div className="p-6 rounded-2xl bg-white/80 ios-shadow border border-gray-100/50 ios-blur">
+        <div className="p-6 rounded-2xl bg-white/80 ios-shadow border border-gray-100/50">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-center">
             <div>
               <p className="text-gray-500 text-sm font-semibold mb-1">총 샘플 수</p>

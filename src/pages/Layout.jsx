@@ -1,30 +1,22 @@
 
 
 import React, { useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Leaf, Home, Beaker, FlaskConical } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { Leaf, Home, TestTube, FlaskConical } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPageUrl } from "@/utils";
 
-export default function Layout({ children }) {
+export default function Layout({ children, currentPageName }) {
   const location = useLocation();
-  const navigate = useNavigate();
 
   const isEnglish = location.pathname.includes('_en');
 
-  // 루트 경로일 때 홈으로 리다이렉트
-  useEffect(() => {
-    if (location.pathname === '/') {
-      navigate(createPageUrl('Home'), { replace: true });
-    }
-  }, [location.pathname, navigate]);
-
-  // 현재 페이지 상태 확인 (location.pathname 기반으로 변경)
-  const isHomePage = location.pathname.includes("Home");
-  const isResultsPage = location.pathname.includes("Results");
-  const isAnalysisPage = location.pathname.includes("Analysis") && !location.pathname.includes("Results");
-  
-  const currentAnalysisType = new URLSearchParams(location.search).get("analysis_type") || new URLSearchParams(location.search).get("selected");
+  // 현재 페이지 상태 확인 - 루트 경로도 홈으로 인식
+  const isHomePage = currentPageName.toLowerCase().includes("home") || location.pathname === "/";
+  const isResultsPage = currentPageName.includes("Results");
+  const isAnalysisPage = currentPageName.includes("Analysis");
+  const currentAnalysisType = new URLSearchParams(location.search).get("analysis_type");
+  const currentSelected = new URLSearchParams(location.search).get("selected");
   const currentTab = new URLSearchParams(location.search).get("tab");
 
   useEffect(() => {
@@ -37,7 +29,7 @@ export default function Layout({ children }) {
 
   const getPageTitle = () => {
     if (isHomePage) {
-      return isEnglish ? "Homepage" : "메인 홈";
+      return isEnglish ? "Welcome" : "환영합니다";
     }
     if (isResultsPage) {
       return isEnglish ? "Data Analysis & Results" : "데이터 분석 및 결과";
@@ -48,32 +40,32 @@ export default function Layout({ children }) {
     return "Plant Biochemical Analysis";
   };
 
-  // 언어 전환을 위한 URL 생성 함수
+  // 언어 전환을 위한 URL 생성 함수 - 루트 경로 처리 개선
   const createLanguageSwitchUrl = (targetLanguage) => {
     const searchParams = new URLSearchParams(location.search);
     
+    // 홈 페이지인 경우 (루트 경로 포함)
+    if (isHomePage) {
+      return createPageUrl(targetLanguage === 'en' ? 'Home_en' : 'Home');
+    }
+
     if (isResultsPage) {
       const basePageName = targetLanguage === 'en' ? 'Results_en' : 'Results';
-      let url = createPageUrl(basePageName);
-      if (currentAnalysisType) {
-        searchParams.set('analysis_type', currentAnalysisType);
-      }
-      if (currentTab) {
-        searchParams.set('tab', currentTab);
-      }
-      return url + (searchParams.toString() ? `?${searchParams.toString()}` : '');
-    } else if (isAnalysisPage) {
-      const basePageName = targetLanguage === 'en' ? 'Analysis_en' : 'Analysis';
-      let url = createPageUrl(basePageName);
-      if (currentAnalysisType) {
-        searchParams.set('selected', currentAnalysisType);
-      }
-      return url + (searchParams.toString() ? `?${searchParams.toString()}` : '');
-    } else {
-      // Home 페이지 및 기타
-      const basePageName = targetLanguage === 'en' ? 'Home_en' : 'Home';
-      return createPageUrl(basePageName);
+      if (currentAnalysisType) searchParams.set('analysis_type', currentAnalysisType);
+      if (currentTab) searchParams.set('tab', currentTab);
+      const queryString = searchParams.toString();
+      return createPageUrl(basePageName) + (queryString ? `?${queryString}` : '');
     }
+
+    if (isAnalysisPage) {
+      const basePageName = targetLanguage === 'en' ? 'Analysis_en' : 'Analysis';
+      if (currentSelected) searchParams.set('selected', currentSelected);
+      const queryString = searchParams.toString();
+      return createPageUrl(basePageName) + (queryString ? `?${queryString}` : '');
+    }
+    
+    // Fallback to home
+    return createPageUrl(targetLanguage === 'en' ? 'Home_en' : 'Home');
   };
   
   return (
@@ -173,6 +165,31 @@ export default function Layout({ children }) {
         .language-inactive:hover {
           background-color: rgba(156, 163, 175, 0.1);
         }
+
+        /* Navigation button styles */
+        .nav-button {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 36px;
+          height: 36px;
+          border-radius: 10px;
+          background: rgba(255, 255, 255, 0.1);
+          color: #6b7280;
+          transition: all 0.2s ease;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-button:hover {
+          background: rgba(255, 255, 255, 0.2);
+          color: #374151;
+        }
+        
+        .nav-button.active {
+          background: rgba(59, 130, 246, 0.1);
+          color: #3b82f6;
+          border-color: rgba(59, 130, 246, 0.2);
+        }
       `}</style>
 
       <div className="relative z-10">
@@ -192,33 +209,32 @@ export default function Layout({ children }) {
               </div>
               
               <div className="flex items-center space-x-3">
-                {/* 홈 아이콘 */}
-                <Link 
-                  to={createPageUrl(isEnglish ? "Home_en" : "Home")}
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                  title={isEnglish ? "Home" : "홈"}
-                >
-                  <Home className="h-4 w-4 text-gray-600" />
-                </Link>
-                
-                {/* 분광광도계 아이콘 */}
-                <Link 
-                  to={createPageUrl(isEnglish ? "Analysis_en" : "Analysis")}
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                  title={isEnglish ? "Spectrophotometer" : "분광광도계"}
-                >
-                  <Beaker className="h-4 w-4 text-gray-600" />
-                </Link>
-                
-                {/* HPLC 아이콘 (향후 추가될 기능) */}
-                <div 
-                  className="p-2 rounded-full opacity-50 cursor-not-allowed"
-                  title={isEnglish ? "HPLC (Coming Soon)" : "HPLC (준비중)"}
-                >
-                  <FlaskConical className="h-4 w-4 text-gray-400" />
+                {/* Navigation Buttons */}
+                <div className="hidden sm:flex items-center space-x-2">
+                  <Link 
+                    to={createPageUrl(isEnglish ? "Home_en" : "Home")}
+                    className={`nav-button ${isHomePage ? 'active' : ''}`}
+                    title={isEnglish ? "Home" : "홈"}
+                  >
+                    <Home className="h-4 w-4" />
+                  </Link>
+                  <Link 
+                    to={createPageUrl(isEnglish ? "Analysis_en" : "Analysis")}
+                    className={`nav-button ${isAnalysisPage ? 'active' : ''}`}
+                    title={isEnglish ? "Spectrophotometry" : "흡광도"}
+                  >
+                    <TestTube className="h-4 w-4" />
+                  </Link>
+                  <button 
+                    className="nav-button opacity-50 cursor-not-allowed"
+                    title={isEnglish ? "HPLC (Coming Soon)" : "HPLC (향후 추가 예정)"}
+                    disabled
+                  >
+                    <FlaskConical className="h-4 w-4" />
+                  </button>
                 </div>
 
-                {/* 언어 전환 버튼 */}
+                {/* Language Switch */}
                 <div className="flex items-center bg-gray-200/80 rounded-full p-1 language-switch relative">
                   <motion.div
                     className="absolute inset-1 bg-white rounded-full shadow-md"
@@ -263,10 +279,10 @@ export default function Layout({ children }) {
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname + location.search}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2, ease: "easeInOut" }}
+              initial={{ opacity: 0, x: -15 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 15 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
             >
               {children}
             </motion.div>

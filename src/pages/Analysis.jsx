@@ -322,7 +322,7 @@ const analysisProtocols = {
       "10 mM Potassium phosphate buffer (pH 7.0): 100 mL 증류수에 136 mg KH₂PO₄ + 174 mg K₂HPO₄ 용해, 냉장보관 (제조 후)",
       "1 M KI: 100 mL 증류수에 16.6 g potassium iodide 용해, 냉장보관",
       "1 mM H₂O₂ Stock: 35% H₂O₂ 원액 5.1 μL + 0.1% TCA 49.995 mL (35% H₂O₂는 약 9.89 M), 냉장보관 (4℃), 갈색병 보관, 즉시 사용",
-      "H₂O₂ 표준곡선 (예): 1 mM stock을 이용하여 다음 농도로 희석: 0, 0.05, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0 mM. 시료와 동일 조건(1시간 암반응)에서 반응. (농도는 사용자에 따라 달라질 수 있음)"
+      <span>H₂O₂ 표준곡선 (예): 1 mM stock을 이용하여 다음 농도로 희석: 0, 0.05, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0 mM. 시료와 동일 조건(1시간 암반응)에서 반응. (농도는 사용자에 따라 달라질 수 있음)</span>
     ],
     storage_conditions: [
       "H₂O₂: 냉장 보관 (4℃), 밀봉, 갈색병 보관 - 희석 후 즉시 사용, 공기 노출 최소화",
@@ -375,24 +375,14 @@ export default function Analysis() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover z-0 pointer-events-none"
-      >
-        <source src="/videos/science_background.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 space-y-6 sm:space-y-8">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 space-y-6 sm:space-y-8">
         <div className="text-center mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">분석 프로토콜 선택</h1>
           <p className="text-sm sm:text-base text-gray-600">수행할 생화학 분석을 선택하세요.</p>
         </div>
 
-        <div className="ios-card ios-blur rounded-3xl ios-shadow-lg border-0 p-4 sm:p-6 mb-6 sm:mb-8">
+        <div className="bg-white/70 backdrop-blur-lg rounded-2xl sm:rounded-3xl shadow-xl border-0 p-4 sm:p-6 mb-6 sm:mb-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
             {Object.entries(analysisProtocols).map(([key, protocol]) => (
               <button
@@ -401,7 +391,7 @@ export default function Analysis() {
                 className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all duration-300 text-left ${
                   selectedAnalysis === key
                     ? 'bg-blue-600 text-white border-blue-600 shadow-xl'
-                    : 'bg-white/70 text-gray-700 border-gray-200 hover:bg-blue-50 hover:border-blue-300'
+                    : 'bg-white/80 text-gray-700 border-gray-200 hover:bg-blue-50 hover:border-blue-300'
                 }`}
               >
                 <div className="flex items-center space-x-2 mb-2">
@@ -425,7 +415,7 @@ export default function Analysis() {
               exit={{ opacity: 0, y: -20, height: 0 }}
               transition={{ duration: 0.4, ease: "easeInOut" }}
             >
-              <Card className="ios-card ios-blur rounded-3xl ios-shadow-lg border-0 overflow-hidden">
+              <Card className="bg-white/80 backdrop-blur-lg rounded-2xl sm:rounded-3xl shadow-xl border-0 overflow-hidden">
                 <CardHeader className="p-4 sm:p-6">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
                     <div className="flex items-start space-x-3">
@@ -450,7 +440,7 @@ export default function Analysis() {
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
                     {/* 왼쪽: 실험 프로토콜 + 계산 공식 + 측정 파장 */}
                     <div className="space-y-4 sm:space-y-6">
-                      <div className="bg-white/70 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                      <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
                         <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                           <TestTube className="h-4 w-4" />
                           <span>실험 프로토콜</span>
@@ -467,7 +457,7 @@ export default function Analysis() {
                         </ol>
                       </div>
 
-                      <div className="bg-white/70 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                      <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
                         <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                           <Calculator className="h-4 w-4" />
                           <span>계산 공식</span>
@@ -483,7 +473,7 @@ export default function Analysis() {
                         </div>
                       </div>
 
-                      <div className="bg-white/70 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                      <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
                         <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                           <Microscope className="h-4 w-4" />
                           <span>측정 파장</span>
@@ -502,7 +492,7 @@ export default function Analysis() {
                     <div className="space-y-4 sm:space-y-6">
                       {/* 시약 제조법 섹션 */}
                       {analysisProtocols[selectedAnalysis].reagents && (
-                        <div className="bg-white/70 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                        <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
                           <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                             <Beaker className="h-4 w-4" />
                             <span>시약 제조법</span>
@@ -511,14 +501,7 @@ export default function Analysis() {
                             {analysisProtocols[selectedAnalysis].reagents.map((reagent, index) => (
                               <div key={index} className="p-3 sm:p-4 bg-blue-50 rounded-lg sm:rounded-xl border border-blue-200">
                                 <div className="text-gray-800 text-xs sm:text-sm leading-relaxed">
-                                  {/* Split only if it's a string, otherwise render directly */}
-                                  {typeof reagent === 'string' ? (
-                                    <>
-                                      <strong>{reagent.split(':')[0]}:</strong> {reagent.split(':').slice(1).join(':')}
-                                    </>
-                                  ) : (
-                                    reagent
-                                  )}
+                                  <strong>{reagent.split(':')[0]}:</strong> {reagent.split(':').slice(1).join(':')}
                                 </div>
                               </div>
                             ))}
@@ -528,8 +511,8 @@ export default function Analysis() {
 
                       {/* 시약별 보관조건 주의 섹션 */}
                       {analysisProtocols[selectedAnalysis].storage_conditions && (
-                        <div className="bg-yellow-50/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
-                          <h3 className="text-yellow-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
+                        <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                          <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.98-.833-2.75 0L4.064 16.5c-.77.833.192 2.5 1.732 2.5z" />
                             </svg>
@@ -539,14 +522,7 @@ export default function Analysis() {
                             {analysisProtocols[selectedAnalysis].storage_conditions.map((condition, index) => (
                               <div key={index} className="p-3 sm:p-4 bg-yellow-50 rounded-lg sm:rounded-xl border border-yellow-200">
                                 <div className="text-gray-800 text-xs sm:text-sm leading-relaxed">
-                                  {/* Split only if it's a string, otherwise render directly */}
-                                  {typeof condition === 'string' ? (
-                                    <>
-                                      <strong>{condition.split(':')[0]}:</strong> {condition.split(':').slice(1).join(':')}
-                                    </>
-                                  ) : (
-                                    condition
-                                  )}
+                                  <strong>{condition.split(':')[0]}:</strong> {condition.split(':').slice(1).join(':')}
                                 </div>
                               </div>
                             ))}
@@ -557,7 +533,7 @@ export default function Analysis() {
                   
                     {/* 참고문헌 섹션 - 맨 아래 전체 너비 */}
                     {analysisProtocols[selectedAnalysis].references && analysisProtocols[selectedAnalysis].references.length > 0 && (
-                      <div className="lg:col-span-2 mt-6 sm:mt-8 bg-white/70 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
+                      <div className="lg:col-span-2 mt-6 sm:mt-8 bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
                         <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
