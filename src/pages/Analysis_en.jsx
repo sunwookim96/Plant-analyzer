@@ -501,7 +501,13 @@ export default function AnalysisEn() {
                             {analysisProtocols[selectedAnalysis].reagents.map((reagent, index) => (
                               <div key={index} className="p-3 sm:p-4 bg-blue-50 rounded-lg sm:rounded-xl border border-blue-200">
                                 <div className="text-gray-800 text-xs sm:text-sm leading-relaxed">
-                                  <strong>{reagent.split(':')[0]}:</strong> {reagent.split(':').slice(1).join(':')}
+                                  {typeof reagent === 'string' ? (
+                                    <>
+                                      <strong>{reagent.split(':')[0]}:</strong> {reagent.split(':').slice(1).join(':')}
+                                    </>
+                                  ) : (
+                                    reagent
+                                  )}
                                 </div>
                               </div>
                             ))}
@@ -551,7 +557,7 @@ export default function AnalysisEn() {
                               href={`https://doi.org/${ref.doi}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center space-x-1 text-blue-600 hover:bg-blue-700 text-xs font-medium transition-colors"
+                              className="inline-flex items-center space-x-1 text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors"
                             >
                               <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 00-2 2v10a2 2 002 2h10a2 2 002-2v-4M14 4h6m0 0v6m0-6L10 14" />

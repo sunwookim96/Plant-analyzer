@@ -501,7 +501,13 @@ export default function Analysis() {
                             {analysisProtocols[selectedAnalysis].reagents.map((reagent, index) => (
                               <div key={index} className="p-3 sm:p-4 bg-blue-50 rounded-lg sm:rounded-xl border border-blue-200">
                                 <div className="text-gray-800 text-xs sm:text-sm leading-relaxed">
-                                  <strong>{reagent.split(':')[0]}:</strong> {reagent.split(':').slice(1).join(':')}
+                                  {typeof reagent === 'string' ? (
+                                    <>
+                                      <strong>{reagent.split(':')[0]}:</strong> {reagent.split(':').slice(1).join(':')}
+                                    </>
+                                  ) : (
+                                    reagent
+                                  )}
                                 </div>
                               </div>
                             ))}
