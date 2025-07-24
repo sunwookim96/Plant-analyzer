@@ -60,7 +60,7 @@ export default function CalculationInput({ analysisType, onCalculationParamsChan
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="mb-4">
-            <Label className="text-gray-700 font-medium text-sm">시료 무게 (g)</Label>
+            <Label className="text-gray-700 font-medium text-sm">시료 무게 (mg)</Label>
             <Input
               type="number"
               step="any"
