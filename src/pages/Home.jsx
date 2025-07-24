@@ -68,10 +68,6 @@ export default function Home() {
     setSelectedAnalysis(analysisType);
   };
 
-  const handleProtocolNavigation = () => {
-    // 프로토콜 페이지로 이동하는 로직은 실제 버튼 클릭 시에만 실행
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-blue-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
@@ -142,16 +138,20 @@ export default function Home() {
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.4 }}
-                className="flex justify-center"
+                className="grid grid-cols-1 md:grid-cols-2 gap-6"
               >
-                <div className="w-full max-w-md">
-                  <SubOptionCard
-                    icon={<FlaskConical />}
-                    title="HPLC용 분석 프로토콜 매뉴얼"
-                    description="고성능 액체 크로마토그래피 분석을 위한 상세한 프로토콜을 제공합니다."
-                    comingSoon={true}
-                  />
-                </div>
+                <SubOptionCard
+                  icon={<Settings />}
+                  title="HPLC 프로그램 이용 방법"
+                  description="HPLC 장비의 사용법과 측정 절차를 안내합니다."
+                  comingSoon={true}
+                />
+                <SubOptionCard
+                  icon={<BookOpen />}
+                  title="HPLC 분석 프로토콜"
+                  description="페놀, 글루코시놀레이트, 아카세틴 등 다양한 HPLC 분석을 제공합니다."
+                  onClick={() => window.location.href = createPageUrl("HPLC")}
+                />
               </motion.div>
             )}
           </AnimatePresence>
