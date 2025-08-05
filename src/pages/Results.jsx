@@ -158,14 +158,17 @@ export default function Results() {
     
     switch (sample.analysis_type) {
         case "chlorophyll_a_b": {
-            const abs_df = parseFloat(p.abs_dilution_factor) || 1;
-            const a665 = (values["665.2"] || 0) * abs_df;
-            const a652 = (values["652.4"] || 0) * abs_df;
-            const a470 = (values["470"] || 0) * abs_df;
+            const a665 = values["665.2"] || 0;
+            const a652 = values["652.4"] || 0;
+            const a470 = values["470"] || 0;
+            const dilutionFactor = parseFloat(p?.dilutionFactor) || 1;
             
-            const chl_a = 16.82 * a665 - 9.28 * a652;
-            const chl_b = 36.92 * a652 - 16.54 * a665;
-            const carotenoid = (1000 * a470 - 1.91 * chl_a - 95.15 * chl_b) / 225;
+            const chl_a_base = 16.82 * a665 - 9.28 * a652;
+            const chl_b_base = 36.92 * a652 - 16.54 * a665;
+            
+            const chl_a = chl_a_base * dilutionFactor;
+            const chl_b = chl_b_base * dilutionFactor;
+            const carotenoid = (1000 * a470 - 1.91 * chl_a_base - 95.15 * chl_b_base) / 225 * dilutionFactor;
             
             return { 
                 result: chl_a, // 기본 표시값은 엽록소 a
@@ -175,42 +178,39 @@ export default function Results() {
                 carotenoid: carotenoid
             };
         }
+        case "carotenoid": {
+            const a470 = values["470"] || 0;
+            const a665 = values["665.2"] || 0;
+            const a652 = values["652.4"] || 0;
+            const chl_a = 16.82 * a665 - 9.28 * a652;
+            const chl_b = 36.92 * a652 - 16.54 * a665;
+            return { result: (1000 * a470 - 1.91 * chl_a - 95.15 * chl_b) / 225, unit: "μg/mL" };
+        }
         case "total_phenol":
-        case "total_flavonoid":
-        case "h2o2": {
+        case "total_flavonoid": {
             if (!p.std_a || !p.std_b) return { result: 0, unit: "N/A" };
-            const abs_df = parseFloat(p.abs_dilution_factor) || 1;
-            const y = (values[Object.keys(values)[0]] || 0) * abs_df;
-            const final_df = parseFloat(p.dilution_factor) || 1;
-            const result = ((y - parseFloat(p.std_b)) / parseFloat(p.std_a)) * final_df;
-            const unitMap = { 
-                total_phenol: "mg GAE/g DW", 
-                total_flavonoid: "mg QE/g DW",
-                h2o2: "μmol/g DW"
-            };
+            const y = values[Object.keys(values)[0]] || 0; // Assumes a single absorbance value
+            const result = (y - parseFloat(p.std_b)) / parseFloat(p.std_a);
+            const unitMap = { total_phenol: "mg GAE/g DW", total_flavonoid: "mg QE/g DW" };
             return { result, unit: unitMap[sample.analysis_type] };
         }
-        case "glucosinolate": {
-            const abs_df = parseFloat(p.abs_dilution_factor) || 1;
-            const a425 = (values["425"] || 0) * abs_df;
-            const final_df = parseFloat(p.dilution_factor) || 1;
-            const result = (1.40 + 118.86 * a425) * final_df;
+        case "h2o2": {
+            if (!p.std_a || !p.std_b) return { result: 0, unit: "N/A" };
+            const y = values[Object.keys(values)[0]] || 0;
+            const result = (y - parseFloat(p.std_b)) / parseFloat(p.std_a);
             return { result, unit: "μmol/g DW" };
         }
+        case "glucosinolate":
+            return { result: 1.40 + 118.86 * (values["425"] || 0), unit: "μmol/g DW" };
         case "dpph_scavenging": {
             if (!p.dpph_control) return { result: 0, unit: "% inhibition" };
-            const abs_df = parseFloat(p.abs_dilution_factor) || 1;
-            const sample_abs = (values["517"] || 0) * abs_df;
             const control = parseFloat(p.dpph_control);
-            const final_df = parseFloat(p.dilution_factor) || 1;
-            const result = ((control - sample_abs) / control) * 100 * final_df;
-            return { result, unit: "% inhibition" };
+            return { result: ((control - (values["517"] || 0)) / control) * 100, unit: "% inhibition" };
         }
         case "anthocyanin": {
-            const { V = 2, n = 1, Mw = 449.2, epsilon = 26900, m = 0.02, abs_dilution_factor = 1 } = p.anthocyanin || {};
-            const abs_df = parseFloat(abs_dilution_factor) || 1;
-            const a530 = (values["530"] || 0) * abs_df;
-            const a600 = (values["600"] || 0) * abs_df;
+            const { V = 2, n = 1, Mw = 449.2, epsilon = 26900, m = 0.02 } = p.anthocyanin || {};
+            const a530 = values["530"] || 0;
+            const a600 = values["600"] || 0;
             const result = (a530 - a600) * parseFloat(V) * parseFloat(n) * parseFloat(Mw) / (parseFloat(epsilon) * parseFloat(m));
             return { result, unit: "mg/g DW" };
         }

@@ -28,17 +28,12 @@ const HighlightedValue = ({ value, placeholder }) => (
 
 export default function CalculationParams({ analysisType, onParamsChange, initialParams = {} }) {
   const [params, setParams] = useState(initialParams);
-  const [isApplied, setIsApplied] = useState(Object.keys(initialParams).length > 0);
+  const [isApplied, setIsApplied] = useState(false);
 
   useEffect(() => {
-    if (Object.keys(initialParams).length > 0) {
-      setParams(initialParams);
-      setIsApplied(true);
-    } else {
-      setParams({});
-      setIsApplied(false);
-    }
-  }, [initialParams, analysisType]);
+    setParams(initialParams);
+    setIsApplied(Object.keys(initialParams).length > 0 && Object.values(initialParams).some(v => v));
+  }, [initialParams]);
 
   const handleParamChange = (key, value) => {
     setParams(prev => ({ ...prev, [key]: value }));
@@ -65,38 +60,33 @@ export default function CalculationParams({ analysisType, onParamsChange, initia
     switch (analysisType) {
       case "chlorophyll_a_b":
         return (
-          <motion.div
-            layout
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="flex flex-col sm:flex-row items-stretch gap-4"
-          >
-            <motion.div layout className="flex-1 w-full space-y-4">
-              <ParamInput label="희석배수" value={params.abs_dilution_factor || ""} onChange={e => handleParamChange('abs_dilution_factor', e.target.value)} placeholder="1" />
-              <Button onClick={handleApply} className="ios-button rounded-xl h-12 w-full flex items-center justify-center">
-                {isApplied && <CheckCircle className="h-4 w-4 mr-2" />}
-                {isApplied ? "적용됨" : "적용"}
-              </Button>
-            </motion.div>
-            
+          <motion.div layout className="flex items-end gap-4">
+            <div className="flex-grow space-y-2">
+              <Label className="text-gray-600 text-sm">희석배수</Label>
+              <Input
+                type="number"
+                value={params.dilutionFactor || ""}
+                onChange={(e) => handleParamChange('dilutionFactor', e.target.value)}
+                placeholder="예: 1, 10"
+                className="ios-input border-0 text-gray-900 placeholder:text-gray-400"
+              />
+            </div>
+            <Button onClick={handleApply} className="ios-button rounded-xl h-12 flex-shrink-0 flex items-center justify-center">
+              {isApplied && params.dilutionFactor ? <CheckCircle className="h-4 w-4 mr-2" /> : null}
+              {isApplied && params.dilutionFactor ? "적용됨" : "적용"}
+            </Button>
             <AnimatePresence>
-              {isApplied && (
+              {isApplied && params.dilutionFactor && (
                 <motion.div
-                  layout
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, width: 0, x: -20 }}
+                  animate={{ opacity: 1, width: 'auto', x: 0 }}
+                  exit={{ opacity: 0, width: 0, x: -20 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="flex-1 w-full"
+                  className="bg-blue-50 border border-blue-200 rounded-xl h-12 flex items-center px-4"
                 >
-                  <div className="h-full p-4 bg-blue-50 rounded-xl border border-blue-200">
-                    <h4 className="text-blue-800 font-semibold mb-3">적용된 계산 변수</h4>
-                    <div className="grid grid-cols-1 gap-4 text-sm">
-                      <div className="bg-blue-100 rounded p-2 text-center">
-                        <div className="text-blue-700 font-medium mb-1">희석배수</div>
-                        <div className="font-bold text-blue-900">{params.abs_dilution_factor || '1'}</div>
-                      </div>
-                    </div>
-                  </div>
+                  <p className="text-blue-800 font-semibold whitespace-nowrap">
+                    적용된 배수: {params.dilutionFactor}
+                  </p>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -110,27 +100,14 @@ export default function CalculationParams({ analysisType, onParamsChange, initia
             <div className="flex flex-col sm:flex-row items-end gap-4">
               <div className="flex-1 w-full"><ParamInput label="기울기 (a)" value={params.std_a || ""} onChange={e => handleParamChange('std_a', e.target.value)} placeholder="Standard curve's slope" /></div>
               <div className="flex-1 w-full"><ParamInput label="Y절편 (b)" value={params.std_b || ""} onChange={e => handleParamChange('std_b', e.target.value)} placeholder="Standard curve's y-intercept" /></div>
-              <div className="flex-1 w-full"><ParamInput label="흡광도 희석배수" value={params.abs_dilution_factor || ""} onChange={e => handleParamChange('abs_dilution_factor', e.target.value)} placeholder="1" /></div>
-              <div className="flex-1 w-full"><ParamInput label="최종 희석배수" value={params.dilution_factor || ""} onChange={e => handleParamChange('dilution_factor', e.target.value)} placeholder="1" /></div>
               <Button onClick={handleApply} className="ios-button rounded-xl h-12 w-full sm:w-auto flex items-center justify-center">
                 {isApplied && <CheckCircle className="h-4 w-4 mr-2" />}
                 {isApplied ? "적용됨" : "적용"}
               </Button>
             </div>
             <p className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-center">
-                농도 = (((흡광도 × <HighlightedValue value={params.abs_dilution_factor} placeholder="흡광도 희석배수"/>) - <HighlightedValue value={params.std_b} placeholder="b" />) / <HighlightedValue value={params.std_a} placeholder="a" />) × <HighlightedValue value={params.dilution_factor} placeholder="최종 희석배수" />
+                y = <HighlightedValue value={params.std_a} placeholder="a" />x + (<HighlightedValue value={params.std_b} placeholder="b" />)
             </p>
-            {isApplied && Object.keys(initialParams).length > 0 && (
-              <div className="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-200">
-                <h4 className="text-blue-800 font-semibold mb-3">적용된 계산 변수</h4>
-                <div className="grid grid-cols-4 gap-4 text-sm">
-                  <div className="bg-blue-100 rounded p-2 text-center"><div className="text-blue-700 font-medium mb-1">기울기 (a)</div><div className="font-bold text-blue-900">{params.std_a || 'N/A'}</div></div>
-                  <div className="bg-blue-100 rounded p-2 text-center"><div className="text-blue-700 font-medium mb-1">Y절편 (b)</div><div className="font-bold text-blue-900">{params.std_b || 'N/A'}</div></div>
-                  <div className="bg-blue-100 rounded p-2 text-center"><div className="text-blue-700 font-medium mb-1">흡광도 희석배수</div><div className="font-bold text-blue-900">{params.abs_dilution_factor || '1'}</div></div>
-                  <div className="bg-blue-100 rounded p-2 text-center"><div className="text-blue-700 font-medium mb-1">최종 희석배수</div><div className="font-bold text-blue-900">{params.dilution_factor || '1'}</div></div>
-                </div>
-              </div>
-            )}
           </div>
         );
       case "dpph_scavenging":
@@ -138,51 +115,14 @@ export default function CalculationParams({ analysisType, onParamsChange, initia
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row items-end gap-4">
               <div className="flex-1 w-full"><ParamInput label="Control 흡광도" value={params.dpph_control || ""} onChange={e => handleParamChange('dpph_control', e.target.value)} placeholder="Absorbance of control" /></div>
-              <div className="flex-1 w-full"><ParamInput label="흡광도 희석배수" value={params.abs_dilution_factor || ""} onChange={e => handleParamChange('abs_dilution_factor', e.target.value)} placeholder="1" /></div>
-              <div className="flex-1 w-full"><ParamInput label="최종 희석배수" value={params.dilution_factor || ""} onChange={e => handleParamChange('dilution_factor', e.target.value)} placeholder="1" /></div>
               <Button onClick={handleApply} className="ios-button rounded-xl h-12 w-full sm:w-auto flex items-center justify-center">
                  {isApplied && <CheckCircle className="h-4 w-4 mr-2" />}
                  {isApplied ? "적용됨" : "적용"}
               </Button>
             </div>
             <p className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-center">
-                Inhibition (%) = ((<HighlightedValue value={params.dpph_control} placeholder="Control" /> - (Sample × <HighlightedValue value={params.abs_dilution_factor} placeholder="흡광도 희석배수"/>)) / <HighlightedValue value={params.dpph_control} placeholder="Control" />) × 100 × <HighlightedValue value={params.dilution_factor} placeholder="최종 희석배수" />
+                Inhibition (%) = ((<HighlightedValue value={params.dpph_control} placeholder="Control" /> - Sample) / <HighlightedValue value={params.dpph_control} placeholder="Control" />) * 100
             </p>
-            {isApplied && Object.keys(initialParams).length > 0 && (
-              <div className="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-200">
-                <h4 className="text-blue-800 font-semibold mb-3">적용된 계산 변수</h4>
-                <div className="grid grid-cols-3 gap-4 text-sm">
-                  <div className="bg-blue-100 rounded p-2 text-center"><div className="text-blue-700 font-medium mb-1">Control 흡광도</div><div className="font-bold text-blue-900">{params.dpph_control || 'N/A'}</div></div>
-                  <div className="bg-blue-100 rounded p-2 text-center"><div className="text-blue-700 font-medium mb-1">흡광도 희석배수</div><div className="font-bold text-blue-900">{params.abs_dilution_factor || '1'}</div></div>
-                  <div className="bg-blue-100 rounded p-2 text-center"><div className="text-blue-700 font-medium mb-1">최종 희석배수</div><div className="font-bold text-blue-900">{params.dilution_factor || '1'}</div></div>
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      case "glucosinolate":
-        return (
-          <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row items-end gap-4">
-              <div className="flex-1 w-full"><ParamInput label="흡광도 희석배수" value={params.abs_dilution_factor || ""} onChange={e => handleParamChange('abs_dilution_factor', e.target.value)} placeholder="1" /></div>
-              <div className="flex-1 w-full"><ParamInput label="최종 희석배수" value={params.dilution_factor || ""} onChange={e => handleParamChange('dilution_factor', e.target.value)} placeholder="1" /></div>
-              <Button onClick={handleApply} className="ios-button rounded-xl h-12 w-full sm:w-auto flex items-center justify-center">
-                {isApplied && <CheckCircle className="h-4 w-4 mr-2" />}
-                {isApplied ? "적용됨" : "적용"}
-              </Button>
-            </div>
-            <p className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-center">
-              Total glucosinolate (μmol/g) = (1.40 + 118.86 × (A<sub>425</sub> × <HighlightedValue value={params.abs_dilution_factor} placeholder="흡광도 희석배수"/>)) × <HighlightedValue value={params.dilution_factor} placeholder="최종 희석배수" />
-            </p>
-            {isApplied && Object.keys(initialParams).length > 0 && (
-              <div className="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-200">
-                <h4 className="text-blue-800 font-semibold mb-3">적용된 계산 변수</h4>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="bg-blue-100 rounded p-2 text-center"><div className="text-blue-700 font-medium mb-1">흡광도 희석배수</div><div className="font-bold text-blue-900">{params.abs_dilution_factor || '1'}</div></div>
-                  <div className="bg-blue-100 rounded p-2 text-center"><div className="text-blue-700 font-medium mb-1">최종 희석배수</div><div className="font-bold text-blue-900">{params.dilution_factor || '1'}</div></div>
-                </div>
-              </div>
-            )}
           </div>
         );
       case "anthocyanin":
@@ -204,9 +144,6 @@ export default function CalculationParams({ analysisType, onParamsChange, initia
               <div className="flex-1 min-w-[120px]">
                 <ParamInput label="시료 무게 (m, g)" value={params.anthocyanin?.m || ""} onChange={e => handleNestedParamChange('anthocyanin', 'm', e.target.value)} placeholder="Default: 0.02" />
               </div>
-              <div className="flex-1 min-w-[120px]">
-                <ParamInput label="흡광도 희석배수" value={params.anthocyanin?.abs_dilution_factor || ""} onChange={e => handleNestedParamChange('anthocyanin', 'abs_dilution_factor', e.target.value)} placeholder="Default: 1" />
-              </div>
               <div className="flex-shrink-0">
                 <Button onClick={handleApply} className="ios-button rounded-xl h-12 mt-6 flex items-center justify-center px-6">
                   {isApplied && <CheckCircle className="h-4 w-4 mr-2" />}
@@ -215,21 +152,8 @@ export default function CalculationParams({ analysisType, onParamsChange, initia
               </div>
             </div>
             <p className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-center text-sm">
-              Anthocyanin = ((A530 - A600) × <HighlightedValue value={params.anthocyanin?.abs_dilution_factor} placeholder="흡광도 희석배수"/>) × <HighlightedValue value={params.anthocyanin?.V} placeholder="V" /> × <HighlightedValue value={params.anthocyanin?.n} placeholder="n" /> × <HighlightedValue value={params.anthocyanin?.Mw} placeholder="Mw" /> / (<HighlightedValue value={params.anthocyanin?.epsilon} placeholder="ε" /> × <HighlightedValue value={params.anthocyanin?.m} placeholder="m" />)
+              Anthocyanin = (A530 - A600) × <HighlightedValue value={params.anthocyanin?.V} placeholder="V" /> × <HighlightedValue value={params.anthocyanin?.n} placeholder="n" /> × <HighlightedValue value={params.anthocyanin?.Mw} placeholder="Mw" /> / (<HighlightedValue value={params.anthocyanin?.epsilon} placeholder="ε" /> × <HighlightedValue value={params.anthocyanin?.m} placeholder="m" />)
             </p>
-            {isApplied && Object.keys(initialParams).length > 0 && (
-              <div className="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-200">
-                <h4 className="text-blue-800 font-semibold mb-3">적용된 계산 변수</h4>
-                <div className="grid grid-cols-3 gap-4 text-sm">
-                  <div className="bg-blue-100 rounded p-2 text-center"><div className="text-blue-700 font-medium mb-1">추출 부피 (V)</div><div className="font-bold text-blue-900">{params.anthocyanin?.V || '2'}</div></div>
-                  <div className="bg-blue-100 rounded p-2 text-center"><div className="text-blue-700 font-medium mb-1">희석 배수 (n)</div><div className="font-bold text-blue-900">{params.anthocyanin?.n || '1'}</div></div>
-                  <div className="bg-blue-100 rounded p-2 text-center"><div className="text-blue-700 font-medium mb-1">분자량 (Mw)</div><div className="font-bold text-blue-900">{params.anthocyanin?.Mw || '449.2'}</div></div>
-                  <div className="bg-blue-100 rounded p-2 text-center"><div className="text-blue-700 font-medium mb-1">Molar absorptivity (ε)</div><div className="font-bold text-blue-900">{params.anthocyanin?.epsilon || '26900'}</div></div>
-                  <div className="bg-blue-100 rounded p-2 text-center"><div className="text-blue-700 font-medium mb-1">시료 무게 (m)</div><div className="font-bold text-blue-900">{params.anthocyanin?.m || '0.02'}</div></div>
-                  <div className="bg-blue-100 rounded p-2 text-center"><div className="text-blue-700 font-medium mb-1">흡광도 희석배수</div><div className="font-bold text-blue-900">{params.anthocyanin?.abs_dilution_factor || '1'}</div></div>
-                </div>
-              </div>
-            )}
            </div>
         );
        case "pod":

@@ -415,8 +415,8 @@ export default function Analysis() {
               exit={{ opacity: 0, y: -20, height: 0 }}
               transition={{ duration: 0.4, ease: "easeInOut" }}
             >
-              {/* 흡광도 신뢰성 가이드 - SOD, POD, CAT 제외 */}
-              {!['sod', 'pod', 'cat'].includes(selectedAnalysis) && (
+              {/* 흡광도 신뢰성 가이드 - 엽록소 및 카로티노이드만 표시 */}
+              {selectedAnalysis === 'chlorophyll_a_b' && (
                 <Card className="bg-white/80 backdrop-blur-lg rounded-2xl sm:rounded-3xl shadow-xl border-0 overflow-hidden mb-6">
                   <CardHeader className="p-4 sm:p-6 pb-3">
                     <CardTitle className="text-gray-900 text-lg sm:text-xl font-bold flex items-center space-x-2">
@@ -475,7 +475,7 @@ export default function Analysis() {
                             <td className="py-3 px-4 text-gray-700">stray light로 인해 비선형 가능성 있음</td>
                           </tr>
                           <tr className="border-b border-gray-100 bg-red-50/30">
-                            <td className="py-3 px-4 font-mono font-semibold text-gray-900"> 2.0</td>
+                            <td className="py-3 px-4 font-mono font-semibold text-gray-900">&gt; 2.0</td>
                             <td className="py-3 px-4">
                               <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
                                 비추천
