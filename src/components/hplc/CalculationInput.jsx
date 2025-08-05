@@ -60,7 +60,7 @@ export default function CalculationInput({ analysisType, onCalculationParamsChan
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="mb-4">
-            <Label className="text-gray-700 font-medium text-sm">시료 무게 (mg)</Label>
+            <Label className="text-gray-700 font-medium text-sm">시료 무게 (g)</Label>
             <Input
               type="number"
               step="any"
@@ -110,7 +110,7 @@ export default function CalculationInput({ analysisType, onCalculationParamsChan
             <div className="space-y-4 max-h-64 overflow-y-auto border border-blue-200 rounded-xl p-3 bg-blue-50/30">
               <h4 className="text-blue-800 font-semibold text-sm mb-2">적용된 변수</h4>
               <div className="mb-3 p-2 bg-blue-100 rounded-lg">
-                <p className="text-blue-800 text-xs font-semibold">시료무게: {params.sampleWeight || '미입력'}mg</p>
+                <p className="text-blue-800 text-xs font-semibold">시료무게: {params.sampleWeight || '미입력'}g</p>
               </div>
               {defaultPhenolCompounds.map(compound => {
                 const aValue = initialValues[`${compound}_a`];
@@ -141,7 +141,7 @@ export default function CalculationInput({ analysisType, onCalculationParamsChan
             <h4 className="text-gray-800 font-semibold mb-2">계산 공식</h4>
             <div className="text-gray-700 text-sm space-y-1 font-mono">
               <p>• µg/mL = (Area + b) / a</p>
-              <p>• mg/g = µg/mL × 2 / <HighlightedValue value={params.sampleWeight} placeholder="시료무게 (mg)"/></p>
+              <p>• mg/g = µg/mL × 2 / <HighlightedValue value={params.sampleWeight} placeholder="시료무게 (g)"/></p>
             </div>
           </div>
         </CardContent>
