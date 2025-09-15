@@ -322,7 +322,7 @@ const analysisProtocols = {
       "10 mM Potassium phosphate buffer (pH 7.0): 100 mL 증류수에 136 mg KH₂PO₄ + 174 mg K₂HPO₄ 용해, 냉장보관",
       "1 M KI: 100 mL 증류수에 16.6 g potassium iodide 용해, 냉장보관",
       "1 mM H₂O₂ Stock: 35% H₂O₂ 원액 5.1 μL + 0.1% TCA 49.995 mL (35% H₂O₂는 약 9.89 M), 냉장보관 (4℃), 갈색병 보관, 즉시 사용",
-      "H₂O₂ 표준곡선 (예): 1 mM stock을 이용하여 다음 농도로 희석: 0, 0.05, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0 mM. 시료와 동일 조건(1시간 암반응)에서 반응. (농도는 사용자에 따라 달라질 수 있음)"
+      "H₂O₂ 표준곡선: 1 mM stock을 이용하여 다음 농도로 희석: 0, 0.05, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0 mM. 시료와 동일 조건(1시간 암반응)에서 반응. (농도는 사용자에 따라 달라질 수 있음)"
     ],
     storage_conditions: [
       "H₂O₂: 냉장 보관 (4℃), 밀봉, 갈색병 보관 - 희석 후 즉시 사용, 공기 노출 최소화",
@@ -587,6 +587,8 @@ export default function Analysis() {
                                 className={`p-3 sm:p-4 rounded-lg sm:rounded-xl border ${
                                   typeof reagent === 'string' && reagent.startsWith('반응 혼합물')
                                     ? 'bg-red-50 border-red-200'
+                                    : typeof reagent === 'string' && reagent.includes('표준곡선')
+                                    ? 'bg-green-50 border-green-200'
                                     : 'bg-blue-50 border-blue-200'
                                 }`}
                               >
