@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -212,8 +211,8 @@ const analysisProtocols = {
       "반응 혼합물: 3% H₂O₂ 3.4 μL + 50 mM PBS 193.6 μL"
     ],
     storage_conditions: [
-        "H₂O₂: 냉장 보관 (4℃), 밀봉, 갈색병 보관 - 희석 후 즉시 사용, 공기 노출 최소화",
-        "PBS 완충액: 냉장 보관 (제조 후) - 오염 주의, 장기 보관 시 filter-sterilize 권장"
+      "H₂O₂: 냉장 보관 (4℃), 밀봉, 갈색병 보관 - 희석 후 즉시 사용, 공기 노출 최소화",
+      "PBS 완충액: 냉장 보관 (제조 후) - 오염 주의, 장기 보관 시 filter-sterilize 권장"
     ],
     formulas: [
       <span>CAT activity (μmol/min/mL) = (ΔA<sub>240</sub>/min) × total volume × 1000 / (39.4 × enzyme volume)</span>,
@@ -238,7 +237,7 @@ const analysisProtocols = {
       "15,000 RPM, 4℃, 10 min centrifuge",
       "Centrifuge 후 상층액 (1.5 mL) 뽑고 박스에 넣어 deep freezer에 보관",
       <span>반응 혼합물 제조 후 sample 20 μL 넣기</span>,
-      "470 nm에서 10초마다 흡광도 측정"
+      "Blank는 반응 혼합물에 추출한 효소가 들어가지 않은 것으로 sample 과 함께 470 nm에서 10초마다 흡광도 측정"
     ],
     reagents: [
       "50 mM PBS (pH 7.0): 100 mL 증류수에 0.68 g KH₂PO₄ + 0.87 g K₂HPO₄ 용해, 냉장보관",
@@ -248,9 +247,9 @@ const analysisProtocols = {
       "반응 혼합물: 40 mM phosphate buffer 66.6 μL + 20 mM guaiacol 80 μL + 3% H₂O₂ 33.3 μL"
     ],
     storage_conditions: [
-        "H₂O₂: 냉장 보관 (4℃), 밀봉, 갈색병 보관 - 희석 후 즉시 사용, 공기 노출 최소화",
-        "Guaiacol: 실온 보관 가능 (장기 보관 시 냉장), 휘발성 강하므로 밀폐",
-        "PBS 완충액: 냉장 보관 (제조 후) - 오염 주의, 장기 보관 시 filter-sterilize 권장"
+      "H₂O₂: 냉장 보관 (4℃), 밀봉, 갈색병 보관 - 희석 후 즉시 사용, 공기 노출 최소화",
+      "Guaiacol: 실온 보관 가능 (장기 보관 시 냉장), 휘발성 강하므로 밀폐",
+      "PBS 완충액: 냉장 보관 (제조 후) - 오염 주의, 장기 보관 시 filter-sterilize 권장"
     ],
     formulas: [
       <span>POD activity (μmol/min/mL) = (ΔA<sub>470</sub>/min) × total volume × 1000 / (26.6 × enzyme volume)</span>,
@@ -274,7 +273,7 @@ const analysisProtocols = {
       "액체질소 5분 + sonication 10분 (3회 반복)",
       "15,000 RPM, 4℃, 10 min centrifuge",
       "Centrifuge 후 상층액 (1.5 mL) 뽑고 박스에 넣어 deep freezer에 보관",
-      "반응 혼합물을 순서대로 넣고 마지막에 riboflavin 첨가",
+      "Control은 반응 혼합물 들어가지 않는 것으로 하고 시료 + 반응 혼합물 넣기",
       <span>PPFD 50 μmol m<sup>-2</sup>s<sup>-1</sup>의 LED 광에 15분간 노출시킨 후 빛을 차단</span>,
       "560 nm에서 흡광도 측정"
     ],
@@ -283,13 +282,14 @@ const analysisProtocols = {
       "0.1 M Methionine: 100 mL 증류수에 1.49 g methionine 용해, 냉장보관 (산화 방지를 위해 밀봉)",
       "2.5 mM NBT: 100 mL 증류수에 205 mg nitro blue tetrazolium 용해, 냉장보관 (4℃), 호일 포장 권장, 즉시 조제 후 사용",
       "10 mM EDTA: 100 mL 증류수에 372 mg EDTA 용해, 냉장보관 (조제 후)",
-      "0.5 mM Riboflavin: 100 mL 증류수에 18.8 mg riboflavin 용해, 냉장보관 (4℃), 반드시 호일 포장, 광분해 민감하므로 즉시 사용 권장"
+      "0.5 mM Riboflavin: 100 mL 증류수에 18.8 mg riboflavin 용해, 냉장보관 (4℃), 반드시 호일 포장, 광분해 민감하므로 즉시 사용 권장",
+      "반응 혼합물: 50mM pH 7.0 Sodium phosphate (93.5 μL) + 0.1M methionine (52 μL), 2.5 mM NBT (24.5 μL) + 10mM EDTA (2μL), 0.5mM riboflavin (8μL)"
     ],
     storage_conditions: [
-        "Riboflavin: 냉장 보관 (4℃), 반드시 호일 포장, 광분해 민감, 즉시 사용 권장",
-        "NBT: 냉장 보관 (4℃), 호일 포장 권장, 즉시 조제 후 사용, 암조건 유지",
-        "Methionine: 냉장 보관, 산화 방지 위해 밀봉",
-        "EDTA, PBS 완충액: 냉장 보관 (제조 후) - 오염 주의, 장기 보관 시 filter-sterilize 권장"
+      "Riboflavin: 냉장 보관 (4℃), 반드시 호일 포장, 광분해 민감, 즉시 사용 권장",
+      "NBT: 냉장 보관 (4℃), 호일 포장 권장, 즉시 조제 후 사용, 암조건 유지",
+      "Methionine: 냉장 보관, 산화 방지 위해 밀봉",
+      "EDTA, PBS 완충액: 냉장 보관 (제조 후) - 오염 주의, 장기 보관 시 filter-sterilize 권장"
     ],
     formulas: [
       "SOD inhibition (%) = ((Control - Sample) / Control) × 100%",
@@ -318,11 +318,11 @@ const analysisProtocols = {
       "390 nm에서 측정"
     ],
     reagents: [
-      "0.1% TCA: 100 mL 증류수에 100 mg trichloroacetic acid 용해, 냉장보관 (제조 후)",
-      "10 mM Potassium phosphate buffer (pH 7.0): 100 mL 증류수에 136 mg KH₂PO₄ + 174 mg K₂HPO₄ 용해, 냉장보관 (제조 후)",
+      "0.1% TCA: 100 mL 증류수에 100 mg trichloroacetic acid 용해, 냉장보관",
+      "10 mM Potassium phosphate buffer (pH 7.0): 100 mL 증류수에 136 mg KH₂PO₄ + 174 mg K₂HPO₄ 용해, 냉장보관",
       "1 M KI: 100 mL 증류수에 16.6 g potassium iodide 용해, 냉장보관",
       "1 mM H₂O₂ Stock: 35% H₂O₂ 원액 5.1 μL + 0.1% TCA 49.995 mL (35% H₂O₂는 약 9.89 M), 냉장보관 (4℃), 갈색병 보관, 즉시 사용",
-      <span>H₂O₂ 표준곡선 (예): 1 mM stock을 이용하여 다음 농도로 희석: 0, 0.05, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0 mM. 시료와 동일 조건(1시간 암반응)에서 반응. (농도는 사용자에 따라 달라질 수 있음)</span>
+      "H₂O₂ 표준곡선 (예): 1 mM stock을 이용하여 다음 농도로 희석: 0, 0.05, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0 mM. 시료와 동일 조건(1시간 암반응)에서 반응. (농도는 사용자에 따라 달라질 수 있음)"
     ],
     storage_conditions: [
       "H₂O₂: 냉장 보관 (4℃), 밀봉, 갈색병 보관 - 희석 후 즉시 사용, 공기 노출 최소화",
@@ -381,7 +381,6 @@ export default function Analysis() {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">분석 프로토콜 선택</h1>
           <p className="text-sm sm:text-base text-gray-600">수행할 생화학 분석을 선택하세요.</p>
         </div>
-
         <div className="bg-white/70 backdrop-blur-lg rounded-2xl sm:rounded-3xl shadow-xl border-0 p-4 sm:p-6 mb-6 sm:mb-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
             {Object.entries(analysisProtocols).map(([key, protocol]) => (
@@ -405,7 +404,6 @@ export default function Analysis() {
             ))}
           </div>
         </div>
-
         <AnimatePresence>
           {selectedAnalysis && (
             <motion.div
@@ -503,7 +501,6 @@ export default function Analysis() {
                   </CardContent>
                 </Card>
               )}
-
               <Card className="bg-white/80 backdrop-blur-lg rounded-2xl sm:rounded-3xl shadow-xl border-0 overflow-hidden">
                 <CardHeader className="p-4 sm:p-6">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
@@ -540,12 +537,11 @@ export default function Analysis() {
                               <span className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold">
                                 {index + 1}
                               </span>
-                              <span className="text-gray-700  text-xs sm:text-sm leading-relaxed">{step}</span>
+                              <span className="text-gray-700 text-xs sm:text-sm leading-relaxed">{step}</span>
                             </li>
                           ))}
                         </ol>
                       </div>
-
                       <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
                         <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                           <Calculator className="h-4 w-4" />
@@ -561,7 +557,6 @@ export default function Analysis() {
                           ))}
                         </div>
                       </div>
-
                       <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
                         <h3 className="text-gray-900 font-semibold mb-4 flex items-center space-x-2 text-sm sm:text-base">
                           <Microscope className="h-4 w-4" />
@@ -576,7 +571,6 @@ export default function Analysis() {
                         </div>
                       </div>
                     </div>
-
                     {/* 오른쪽: 시약 제조법 + 시약별 보관조건 주의 */}
                     <div className="space-y-4 sm:space-y-6">
                       {/* 시약 제조법 섹션 */}
@@ -588,7 +582,14 @@ export default function Analysis() {
                           </h3>
                           <div className="space-y-3">
                             {analysisProtocols[selectedAnalysis].reagents.map((reagent, index) => (
-                              <div key={index} className="p-3 sm:p-4 bg-blue-50 rounded-lg sm:rounded-xl border border-blue-200">
+                              <div
+                                key={index}
+                                className={`p-3 sm:p-4 rounded-lg sm:rounded-xl border ${
+                                  typeof reagent === 'string' && reagent.startsWith('반응 혼합물')
+                                    ? 'bg-red-50 border-red-200'
+                                    : 'bg-blue-50 border-blue-200'
+                                }`}
+                              >
                                 <div className="text-gray-800 text-xs sm:text-sm leading-relaxed">
                                   {typeof reagent === 'string' ? (
                                     <>
@@ -603,7 +604,6 @@ export default function Analysis() {
                           </div>
                         </div>
                       )}
-
                       {/* 시약별 보관조건 주의 섹션 */}
                       {analysisProtocols[selectedAnalysis].storage_conditions && (
                         <div className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
@@ -625,7 +625,6 @@ export default function Analysis() {
                         </div>
                       )}
                     </div>
-                  
                     {/* 참고문헌 섹션 - 맨 아래 전체 너비 */}
                     {analysisProtocols[selectedAnalysis].references && analysisProtocols[selectedAnalysis].references.length > 0 && (
                       <div className="lg:col-span-2 mt-6 sm:mt-8 bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-0">
@@ -642,14 +641,14 @@ export default function Analysis() {
                                 {ref.citation}
                               </p>
                               {ref.doi && (
-                                <a 
+                                <a
                                   href={`https://doi.org/${ref.doi}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="inline-flex items-center space-x-1 text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors"
                                 >
                                   <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 00-2 2v10a2 2 002 2h10a2 2 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                   </svg>
                                   <span>DOI: {ref.doi}</span>
                                 </a>
