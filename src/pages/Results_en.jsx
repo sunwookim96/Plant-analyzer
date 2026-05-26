@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import _ from "lodash";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPageUrl } from "@/utils";
+import { calculateCatActivity, calculatePodActivity, calculateSodActivity } from "@/utils/antioxidantCalculations";
 
 import ManualInput from "../components/analysis_en/ManualInput";
 import ExcelUpload from "../components/analysis_en/ExcelUpload";
@@ -92,7 +93,7 @@ export default function ResultsEn() {
       const savedParams = loadCalculationParams();
       setCalculationParams(savedParams);
     }
-  }, [location.search, analysisType]); // Added analysisType to dependencies for `loadCalculationParams`
+  }, [location.search]);
 
   // 계산 변수 변경 시 저장
   const handleCalculationParamsChange = (params) => {
@@ -154,80 +155,104 @@ export default function ResultsEn() {
 
   const calculateSingleResult = (sample) => {
     const p = calculationParams;
-    const values = sample.absorbance_values;
-    
+    const values = sample.absorbance_values || {};
+    const toNumber = (value, fallback = 0) => {
+      const parsed = parseFloat(value);
+      return Number.isFinite(parsed) ? parsed : fallback;
+    };
+    const getIntercept = (value) => {
+      if (value === undefined || value === null || value === "") return 0;
+      const parsed = parseFloat(value);
+      return Number.isFinite(parsed) ? parsed : NaN;
+    };
+
     switch (sample.analysis_type) {
-        case "chlorophyll_a_b": {
-            const a665 = values["665.2"] || 0;
-            const a652 = values["652.4"] || 0;
-            const a470 = values["470"] || 0;
-            
-            const chl_a = 16.82 * a665 - 9.28 * a652;
-            const chl_b = 36.92 * a652 - 16.54 * a665;
-            const carotenoid = (1000 * a470 - 1.91 * chl_a - 95.15 * chl_b) / 225;
-            
-            return { 
-                result: chl_a, // Default display value is Chlorophyll a
-                unit: "μg/ml",
-                chl_a: chl_a,
-                chl_b: chl_b,
-                carotenoid: carotenoid
-            };
+      case "chlorophyll_a_b": {
+        const a665 = toNumber(values["665.2"]);
+        const a652 = toNumber(values["652.4"]);
+        const a470 = toNumber(values["470"]);
+        const dF = toNumber(p?.dilutionFactor, 1) || 1;
+        const raw_ca = (16.82 * a665 - 9.28 * a652) * dF;
+        const raw_cb = (36.92 * a652 - 16.54 * a665) * dF;
+        const raw_car = ((1000 * a470 - 1.91 * (raw_ca / dF) - 95.15 * (raw_cb / dF)) / 225) * dF;
+        return {
+          result: raw_ca / 10,
+          unit: "mg/g DW",
+          chl_a: raw_ca / 10,
+          chl_b: raw_cb / 10,
+          carotenoid: raw_car / 10
+        };
+      }
+      case "carotenoid": {
+        const a470 = toNumber(values["470"]);
+        const a665 = toNumber(values["665.2"]);
+        const a652 = toNumber(values["652.4"]);
+        const dF = toNumber(p?.dilutionFactor, 1) || 1;
+        const raw_ca = (16.82 * a665 - 9.28 * a652) * dF;
+        const raw_cb = (36.92 * a652 - 16.54 * a665) * dF;
+        const raw_car = ((1000 * a470 - 1.91 * (raw_ca / dF) - 95.15 * (raw_cb / dF)) / 225) * dF;
+        return { result: raw_car / 10, unit: "mg/g DW" };
+      }
+      case "total_phenol":
+      case "total_flavonoid": {
+        const slope = parseFloat(p.std_a);
+        const intercept = getIntercept(p.std_b);
+        if (!Number.isFinite(slope) || slope === 0 || !Number.isFinite(intercept)) {
+          return { result: 0, unit: "N/A" };
         }
-        case "carotenoid": {
-            const a470 = values["470"] || 0;
-            const a665 = values["665.2"] || 0;
-            const a652 = values["652.4"] || 0;
-            const chl_a = 16.82 * a665 - 9.28 * a652;
-            const chl_b = 36.92 * a652 - 16.54 * a665;
-            return { result: (1000 * a470 - 1.91 * chl_a - 95.15 * chl_b) / 225, unit: "μg/ml" };
+        const y = toNumber(values[Object.keys(values)[0]]);
+        const result = Math.max(0, ((y - intercept) / slope) / 10);
+        return {
+          result,
+          unit: sample.analysis_type === "total_phenol" ? "mg GAE/g DW" : "mg QE/g DW"
+        };
+      }
+      case "h2o2": {
+        const { a, b, vol = 2, dw = 0.02 } = p.h2o2 || {};
+        const slope = parseFloat(a);
+        const intercept = getIntercept(b);
+        const extractionVolume = toNumber(vol, 2);
+        const dryWeight = toNumber(dw, 0.02);
+        if (!Number.isFinite(slope) || slope === 0 || !Number.isFinite(intercept) || extractionVolume <= 0 || dryWeight <= 0) {
+          return { result: 0, unit: "Check Params" };
         }
-        case "total_phenol":
-        case "total_flavonoid":
-        case "h2o2": {
-            if (!p.std_a || !p.std_b) return { result: 0, unit: "N/A" };
-            const y = values[Object.keys(values)[0]] || 0; // Assumes a single absorbance value
-            const result = (y - parseFloat(p.std_b)) / parseFloat(p.std_a);
-            const unitMap = { total_phenol: "mg GAE/g FW", total_flavonoid: "mg QE/g FW", h2o2: "μmol/g DW" };
-            return { result, unit: unitMap[sample.analysis_type] };
-        }
-        case "glucosinolate":
-            return { result: 1.40 + 118.86 * (values["425"] || 0), unit: "μmol/g FW" };
-        case "dpph_scavenging": {
-            if (!p.dpph_control) return { result: 0, unit: "% inhibition" };
-            const control = parseFloat(p.dpph_control);
-            return { result: ((control - (values["517"] || 0)) / control) * 100, unit: "% inhibition" };
-        }
-        case "anthocyanin": {
-            const { V=2, n=1, Mw=449.2, epsilon=26900, m=0.02 } = p.anthocyanin || {};
-            const a530 = values["530"] || 0;
-            const a600 = values["600"] || 0;
-            return { result: (a530 - a600) * V * n * Mw / (epsilon * m), unit: "mg/g FW" };
-        }
-        case "cat": {
-            const { delta_A, total_vol, enzyme_vol, enzyme_conc } = p.cat || {};
-            if (!delta_A || !total_vol || !enzyme_vol || !enzyme_conc) return { result: 0, unit: "μmol/min/mg DW" };
-            const activity_per_ml = (delta_A * total_vol * 1000) / (39.4 * enzyme_vol);
-            return { result: activity_per_ml / enzyme_conc, unit: "μmol/min/mg DW" };
-        }
-        case "pod": {
-             const { delta_A, total_vol, enzyme_vol, enzyme_conc } = p.pod || {};
-            if (!delta_A || !total_vol || !enzyme_vol || !enzyme_conc) return { result: 0, unit: "μmol/min/mg DW" };
-            const activity_per_ml = (delta_A * total_vol * 1000) / (26.6 * enzyme_vol);
-            return { result: activity_per_ml / enzyme_conc, unit: "μmol/min/mg DW" };
-        }
-        case "sod": {
-            const { control_abs, enzyme_vol, enzyme_conc, total_vol } = p.sod || {};
-            if (!control_abs || !enzyme_vol || !enzyme_conc || !total_vol) return { result: 0, unit: "unit/mg DW" };
-            const sample_abs = values["560"] || 0;
-            const inhibition = ((control_abs - sample_abs) / control_abs) * 100;
-            const activity_per_ml = (inhibition * total_vol) / (50 * enzyme_vol);
-            return { result: activity_per_ml / enzyme_conc, unit: "unit/mg DW" };
-        }
-        default:
-            return { result: 0, unit: "N/A" };
+        const abs = toNumber(values["390"]);
+        const mM = Math.max(0, (abs - intercept) / slope);
+        const result_dw = (mM * extractionVolume) / dryWeight;
+        const freshWeight = sample.weight ? toNumber(sample.weight, dryWeight) : dryWeight;
+        const result_fw = freshWeight > 0 ? result_dw * (dryWeight / freshWeight) : result_dw;
+        return { result: result_dw, unit: "μmol/g DW", result_dw, result_fw };
+      }
+      case "glucosinolate":
+        return { result: 1.40 + 118.86 * toNumber(values["425"]), unit: "μmol/g DW" };
+      case "dpph_scavenging": {
+        const control = parseFloat(p.dpph_control);
+        if (!Number.isFinite(control) || control <= 0) return { result: 0, unit: "% inhibition" };
+        return { result: ((control - toNumber(values["517"])) / control) * 100, unit: "% inhibition" };
+      }
+      case "anthocyanin": {
+        const { V = 2, n = 1, Mw = 449.2, epsilon = 26900, m = 0.02 } = p.anthocyanin || {};
+        const denominator = toNumber(epsilon, 26900) * toNumber(m, 0.02);
+        if (!denominator) return { result: 0, unit: "Check Params" };
+        return {
+          result: (toNumber(values["530"]) - toNumber(values["600"])) * toNumber(V, 2) * toNumber(n, 1) * toNumber(Mw, 449.2) / denominator,
+          unit: "mg/g DW"
+        };
+      }
+      case "cat": {
+        return calculateCatActivity(values, p);
+      }
+      case "pod": {
+        return calculatePodActivity(values, p);
+      }
+      case "sod": {
+        return calculateSodActivity(values, p);
+      }
+      default:
+        return { result: 0, unit: "N/A" };
     }
   };
+
   
   const allCalculatedSamples = samples
     .map(sample => ({

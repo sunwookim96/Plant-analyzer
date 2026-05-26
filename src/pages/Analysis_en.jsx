@@ -17,18 +17,22 @@ const analysisProtocols = {
       "Add 2 mL of 90% MeOH and 20 mg sample to 2 mL tube",
       "Extract by sonication at medium intensity for 20 min at 20℃",
       "Centrifuge at 15,000 RPM, 4℃, 10 min",
-      "Extract 1.5 mL supernatant and store refrigerated",
-      "Dispense 200 μL extract in 96-well plate and measure absorbance"
+      "Collect 1–1.5 mL supernatant and keep it protected from light at 4℃ until measurement",
+      "Dispense 200 μL extract in a 96-well plate and measure at 652.4, 665.2, and 470 nm"
     ],
     reagents: [
       "90% MeOH: 90 mL methanol + 10 mL distilled water"
     ],
-    formulas: [
-      <span>Chl a (μg/mL) = 16.82 × A<sub>665.2</sub> - 9.28 × A<sub>652.4</sub></span>,
-      <span>Chl b (μg/mL) = 36.92 × A<sub>652.4</sub> - 16.54 × A<sub>665.2</sub></span>,
-      <span>Carotenoid (μg/mL) = (1000 × A<sub>470</sub> - 1.91 × Chl a - 95.15 × Chl b) / 225</span>
+    storage_conditions: [
+      "Sample powder: freeze-dry or low-temperature dry, then store sealed, protected from light and moisture at −20℃.",
+      "90% MeOH extract: keep in amber/foil-wrapped tubes at 4℃ and measure on the same day when possible."
     ],
-    unit: "μg/mL",
+    formulas: [
+      <span>Chl a (mg/g DW) = (16.82 × A<sub>665.2</sub> - 9.28 × A<sub>652.4</sub>) / 10</span>,
+      <span>Chl b (mg/g DW) = (36.92 × A<sub>652.4</sub> - 16.54 × A<sub>665.2</sub>) / 10</span>,
+      <span>Carotenoid (mg/g DW) = (1000 × A<sub>470</sub> - 1.91 × Chl a - 95.15 × Chl b) / 2250</span>
+    ],
+    unit: "mg/g DW",
     icon: <TestTube className="h-4 w-4 sm:h-5 sm:w-5" />,
     references: [
       {
@@ -45,7 +49,7 @@ const analysisProtocols = {
         "Add 2 mL of 90% MeOH and 20 mg sample to a 2 mL tube.",
         "Extract by sonication at medium intensity for 20 min at 20℃.",
         "Centrifuge at 15,000 RPM, 4℃ for 10 min.",
-        "Extract 1.5 mL of the supernatant and store refrigerated.",
+        "Collect 1–1.5 mL supernatant and keep it protected from light at 4℃; react on the same day when possible.",
         "Mix 100 μL of supernatant + 100 μL of Folin-Ciocalteu reagent + 1500 μL of distilled water.",
         "Let stand for 5 minutes.",
         "Add 300 μL of 7.5% Na2CO3 solution.",
@@ -58,11 +62,13 @@ const analysisProtocols = {
       "Gallic acid Standard Curve: Prepare 1 mg/mL stock, then dilute to 0, 20, 40, 60, 80, 100 μg/mL and react under same conditions (40 min, room temperature)"
     ],
     storage_conditions: [
-      "TCA, PBS buffers: Store refrigerated (after preparation) - prevent contamination, filter-sterilize for long-term storage."
+      "Sample powder: freeze-dry or low-temperature dry, then store sealed, protected from light and moisture at −20℃.",
+      "90% MeOH extract: store protected from light at 4℃ and measure within 24–48 h when possible.",
+      "Folin-Ciocalteu reagent and gallic acid standards: aliquot in amber containers and store refrigerated or at −20℃.",
+      "7.5% Na₂CO₃: store refrigerated after preparation."
     ],
     formulas: [
-      "Calculate content using Gallic acid standard curve",
-      "Concentration = (Absorbance - b) / a"
+      "Content (mg/g DW) = ((Absorbance - b) / a) / 10"
     ],
     unit: "mg GAE/g DW", // Changed from FW to DW
     icon: <Beaker className="h-4 w-4 sm:h-5 sm:w-5" />,
@@ -81,7 +87,7 @@ const analysisProtocols = {
         "Add 2 mL of 90% MeOH and 20 mg sample to a 2 mL tube.",
         "Extract by sonication at medium intensity for 20 min at 20℃.",
         "Centrifuge at 15,000 RPM, 4℃ for 10 min.",
-        "Extract 1.5 mL of the supernatant and store refrigerated.",
+        "Collect 1–1.5 mL supernatant and keep it protected from light at 4℃; react on the same day when possible.",
         "In a 2 mL tube, mix 100 μL of supernatant + 300 μL of 95% EtOH + 20 μL of 10% AlCl3 + 20 μL of 1 M potassium acetate + 600 μL of distilled water.",
         "React at room temperature for 40 minutes.",
         "Measure absorbance at 415 nm."
@@ -92,9 +98,14 @@ const analysisProtocols = {
       "1 M Potassium acetate: Dissolve 9.82 g CH₃COOK in 100 mL distilled water",
       "Quercetin Standard Curve: Prepare 1 mg/mL stock, then dilute to 0, 20, 40, 60, 80, 100 μg/mL and react under same conditions (40 min, room temperature)" // Updated description
     ],
+    storage_conditions: [
+      "Sample powder: freeze-dry or low-temperature dry, then store sealed, protected from light and moisture at −20℃.",
+      "90% MeOH extract: store protected from light at 4℃ and measure within 24–48 h when possible.",
+      "Quercetin standards: aliquot in amber containers and store at −20℃.",
+      "AlCl₃ and potassium acetate solutions: store refrigerated after preparation."
+    ],
     formulas: [
-      "Calculate content using Quercetin standard curve",
-      "Concentration = (Absorbance - b) / a"
+      "Content (mg/g DW) = ((Absorbance - b) / a) / 10"
     ],
     unit: "mg QE/g DW", // Changed from FW to DW
     icon: <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" />,
@@ -113,13 +124,18 @@ const analysisProtocols = {
         "Add 2 mL of 90% MeOH and 20 mg sample to a 2 mL tube.",
         "Extract by sonication at medium intensity for 20 min at 20℃.",
         "Centrifuge at 15,000 RPM, 4℃ for 10 min.",
-        "Extract 1.5 mL of the supernatant and store refrigerated.",
+        "Collect 1–1.5 mL supernatant and keep it protected from light at 4℃; react on the same day when possible.",
         "In a 2 mL tube, mix 50 μL of supernatant + 1.5 mL of 2 mM sodium tetrachloropalladate + 150 μL of distilled water.",
         "React at room temperature for 1 hour.",
         "Measure absorbance at 425 nm."
     ],
     reagents: [
       "2 mM Sodium tetrachloropalladate: Dissolve 36.5 mg Na₂PdCl₄ in 100 mL distilled water"
+    ],
+    storage_conditions: [
+      "Dry powder: store moisture-proof at −20℃ and avoid long room-temperature exposure to reduce myrosinase-related degradation.",
+      "MeOH extract: keep protected from light at 4℃ and measure within 24–48 h when possible.",
+      "Sodium tetrachloropalladate solution: store protected from light at 4℃; prepare fresh if precipitation or color change appears."
     ],
     formulas: [
       <span>Total glucosinolate (μmol/g) = 1.40 + 118.86 × A<sub>425</sub></span>
@@ -141,7 +157,7 @@ const analysisProtocols = {
         "Add 2 mL of 90% MeOH and 20 mg sample to a 2 mL tube.",
         "Extract by sonication at medium intensity for 20 min at 20℃.",
         "Centrifuge at 15,000 RPM, 4℃ for 10 min.",
-        "Extract 1.5 mL of the supernatant and store refrigerated.",
+        "Collect 1–1.5 mL supernatant and keep it protected from light at 4℃; react on the same day when possible.",
         "In a 96-well plate, add 170 μL of 90% MeOH + 10 μL of DPPH solution + 20 μL of supernatant in order.",
         "For the Control (Blank), use 20 μL of 90% MeOH instead of the supernatant.",
         "Seal with Parafilm and react in the dark for 1 hour.",
@@ -152,7 +168,8 @@ const analysisProtocols = {
       "DPPH solution: Dissolve 200 mg DPPH in 50 mL 90% MeOH, wrap with foil and store refrigerated"
     ],
     storage_conditions: [
-      "DPPH: Store refrigerated (4℃), wrapped in foil, keep in dark until use."
+      "DPPH: Store refrigerated (4℃), wrapped in foil, keep in dark until use.",
+      "Sample extract: keep protected from light at 4℃ and measure on the same day when possible."
     ],
     formulas: [
       "DPPH Inhibition (%) = ((Control - Sample) / Control) × 100%"
@@ -174,12 +191,17 @@ const analysisProtocols = {
       <span>Add 2 mL 1% HCl-MeOH solution and 20 mg sample to 2 mL tube</span>,
       "Extract by sonication at medium intensity for 1 hour at 40℃",
       "Centrifuge at 15,000 RPM, 4℃, 10 min",
-      "Extract 1.5 mL supernatant and store refrigerated",
+      "Collect 1–1.5 mL supernatant and keep it protected from light at 4℃ until measurement",
       "Measure absorbance at 530 nm and 600 nm"
     ],
     reagents: [
       "1% HCl-MeOH: 90 mL methanol + 10 mL 1 M HCl",
       "1 M HCl: Add 8.3 mL concentrated HCl (37%) to 100 mL distilled water"
+    ],
+    storage_conditions: [
+      "Sample powder: freeze-dry or low-temperature dry and store at −20℃ protected from light and moisture.",
+      "1% HCl-MeOH extract: keep protected from light at 4℃ and measure on the same day when possible.",
+      "Acidified MeOH is volatile/corrosive; keep tightly sealed, refrigerated, and handle in a fume hood."
     ],
     formulas: [
       <span>Anthocyanin (mg/g) = (A<sub>530</sub> - A<sub>600</sub>) × V × n × Mw / (ε × m)</span>,
@@ -202,8 +224,9 @@ const analysisProtocols = {
       "Extract enzyme with 20 mg sample + 2 mL pH 7.0 50 mM PBS",
       "Liquid nitrogen 5 min + sonication 10 min (3 times repeat)",
       "Centrifuge at 15,000 RPM, 4℃, 10 min",
-      "Extract supernatant (1.5 mL) and store in deep freezer",
-      <span>Prepare reaction mixture and add 3 μL enzyme</span>,
+      "Collect 1–1.5 mL supernatant, keep on ice, and analyze immediately when possible. For storage, aliquot at −80℃ and avoid repeated freeze-thaw cycles",
+      <span>Sample: mix 197 μL reaction mixture + 3 μL enzyme extract</span>,
+      "H₂O₂ control: use 3 μL PBS instead of enzyme extract and record its slope under the same condition",
       "Measure absorbance at 240 nm every 10 seconds for 10 min"
     ],
     reagents: [
@@ -212,10 +235,11 @@ const analysisProtocols = {
       "Reaction mixture: 3.4 μL 3% H₂O₂ + 193.6 μL 50 mM PBS"
     ],
     formulas: [
-      <span>CAT activity (μmol/min/mL) = (ΔA<sub>240</sub>/min) × total volume × 1000 / (39.4 × enzyme volume)</span>,
-      "CAT activity (μmol/min/mg DW) = unit/mL / enzyme (mg/mL)"
+      <span>ΔA<sub>corr</sub>/min = slope<sub>H₂O₂ control</sub> − slope<sub>sample</sub></span>,
+      <span>CAT activity (μmol/min/mg DW) = ΔA<sub>corr</sub>/min × 152.9 / l × DF</span>
     ],
     storage_conditions: [
+        "Enzyme extract: keep on ice and analyze immediately; for long-term storage, aliquot at −80℃ and avoid repeated freeze-thaw cycles.",
         "H₂O₂: Store refrigerated (4℃), sealed, in a brown bottle - use immediately after dilution, minimize air exposure.",
         "PBS buffer: Store refrigerated (after preparation) - prevent contamination, filter-sterilize for long-term storage."
     ],
@@ -236,9 +260,10 @@ const analysisProtocols = {
       "Extract enzyme with 20 mg sample + 2 mL pH 7.0 50 mM PBS",
       "Liquid nitrogen 5 min + sonication 10 min (3 times repeat)",
       "Centrifuge at 15,000 RPM, 4℃, 10 min",
-      "Extract supernatant (1.5 mL) and store in deep freezer",
-      <span>Prepare reaction mixture and add 20 μL sample</span>,
-      "Measure absorbance at 470 nm every 10 seconds"
+      "Collect 1–1.5 mL supernatant, keep on ice, and analyze immediately when possible. For storage, aliquot at −80℃ and avoid repeated freeze-thaw cycles",
+      <span>Prepare reaction mixture and add 20 μL sample extract</span>,
+      "Prepare blank by adding PBS instead of sample extract",
+      "Measure absorbance at 470 nm every 10 seconds and correct as sample slope − blank slope"
     ],
     reagents: [
       "50 mM PBS (pH 7.0): Dissolve 0.68 g KH₂PO₄ + 0.87 g K₂HPO₄ in 100 mL distilled water",
@@ -248,10 +273,12 @@ const analysisProtocols = {
       "Reaction mixture: 66.6 μL 40 mM phosphate buffer + 80 μL 20 mM guaiacol + 33.3 μL 3% H₂O₂"
     ],
     formulas: [
-      <span>POD activity (μmol/min/mL) = (ΔA<sub>470</sub>/min) × total volume × 1000 / (26.6 × enzyme volume)</span>,
-      "POD activity (μmol/min/mg DW) = unit/mL / enzyme (mg/mL)"
+      <span>ΔA<sub>corr</sub>/min = slope<sub>sample</sub> − slope<sub>blank</sub></span>,
+      <span>POD activity (μmol/min/mg DW) = ΔA<sub>corr</sub>/min × 0.0376 / l × DF</span>,
+      "Because ε = 26.6 mM⁻¹ cm⁻¹, do not multiply by 1000"
     ],
     storage_conditions: [
+        "Enzyme extract: keep on ice and analyze immediately; for long-term storage, aliquot at −80℃ and avoid repeated freeze-thaw cycles.",
         "H₂O₂: Store refrigerated (4℃), sealed, in a brown bottle - use immediately after dilution.",
         "Guaiacol: Can be stored at room temp (refrigerate for long-term), highly volatile, so keep sealed.",
         "PBS buffer: Store refrigerated (after preparation) - prevent contamination."
@@ -273,8 +300,11 @@ const analysisProtocols = {
       "Extract enzyme with 20 mg sample + 2 mL pH 7.0 50 mM PBS",
       "Liquid nitrogen 5 min + sonication 10 min (3 times repeat)",
       "Centrifuge at 15,000 RPM, 4℃, 10 min",
-      "Extract supernatant (1.5 mL) and store in deep freezer",
-      "Add reaction mixture in order and add riboflavin last",
+      "Collect 1–1.5 mL supernatant, keep on ice, and analyze immediately when possible. For storage, aliquot at −80℃ and avoid repeated freeze-thaw cycles",
+      "Sample: 20 μL enzyme extract + 180 μL SOD reaction mixture",
+      "Light control: 20 μL PBS + 180 μL SOD reaction mixture, LED exposure",
+      "Dark blank: 20 μL PBS + 180 μL SOD reaction mixture, dark condition",
+      "Sample dark blank: optional, 20 μL enzyme extract + 180 μL reaction mixture, dark condition",
       <span>Expose to LED light at PPFD 50 μmol m<sup>-2</sup>s<sup>-1</sup> for 15 min, then block light</span>,
       "Measure absorbance at 560 nm"
     ],
@@ -286,11 +316,13 @@ const analysisProtocols = {
       "0.5 mM Riboflavin: Dissolve 18.8 mg riboflavin in 100 mL distilled water"
     ],
     formulas: [
-      "SOD inhibition (%) = ((Control - Sample) / Control) × 100%",
-      "SOD activity (unit/mL) = (inhibition × total volume) / (50 × enzyme volume)",
-      "SOD activity (unit/mg DW) = unit/mL / enzyme (mg/mL)"
+      "Controlcorr = light control − dark blank",
+      "Samplecorr = sample − sample dark blank or dark blank",
+      "SOD inhibition (%) = ((Controlcorr − Samplecorr) / Controlcorr) × 100",
+      "SOD activity (unit/mg DW) = inhibition × 0.02 × DF"
     ],
     storage_conditions: [
+        "Enzyme extract: keep on ice and analyze immediately; for long-term storage, aliquot at −80℃ and avoid repeated freeze-thaw cycles.",
         "Riboflavin: Store refrigerated (4℃), must be wrapped in foil, light-sensitive, use immediately.",
         "NBT: Store refrigerated (4℃), foil wrapping recommended, use immediately after preparation, keep in dark.",
         "Methionine: Store refrigerated, seal to prevent oxidation.",
@@ -313,7 +345,7 @@ const analysisProtocols = {
       "Mix 20 mg sample + 2 mL 0.1% TCA and vortex",
       "Liquid nitrogen 5 min + sonication 10 min (3 times repeat)",
       "Centrifuge at 15,000 RPM, 4℃, 10 min",
-      "Extract 1.5 mL supernatant",
+      "Collect 1–1.5 mL supernatant and keep protected from light at 4℃; react on the same day when possible",
       "Prepare reaction mixture and react for 1 hour in dark",
       "Measure at 390 nm"
     ],
@@ -325,13 +357,15 @@ const analysisProtocols = {
       <span>H₂O₂ Standard Curve (Example): Using 1 mM stock, dilute to the following concentrations: 0, 0.05, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0 mM. React under the same conditions as samples (1 hour dark reaction). (Concentrations may vary by user)</span>
     ],
     storage_conditions: [
+      "TCA extract: keep protected from light at 4℃ and react on the same day when possible; aliquot at −20℃ for longer storage.",
       "H₂O₂: Refrigerated storage (4℃), sealed, brown bottle - Use immediately after dilution, minimize air exposure",
       "KI: Refrigerated storage - Prevent contamination, filter-sterilize for long-term storage",
       "TCA, PBS buffers: Refrigerated storage (after preparation) - Prevent contamination, filter-sterilize for long-term storage"
     ],
     formulas: [
       <span>Calculate content using H<sub>2</sub>O<sub>2</sub> standard curve</span>,
-      "Concentration = (Absorbance - b) / a"
+      "Concentration (mM) = (Absorbance - b) / a",
+      "μmol/g DW = concentration (mM) × extraction volume (mL) / dry weight (g)"
     ],
     unit: "μmol/g DW",
     icon: <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />,

@@ -1,15 +1,28 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { BarChart3 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import _ from "lodash";
 
-export default function StatisticsResults({ results }) {
+export default function StatisticsResults({ results, lang = "ko" }) {
   const [selectedFactors, setSelectedFactors] = useState(new Set());
   const [selectedTreatments, setSelectedTreatments] = useState(new Set());
   const [selectedCompound, setSelectedCompound] = useState("all");
+  const isEn = lang === "en";
+  const t = {
+    title: isEn ? "Statistics" : "통계 결과",
+    noData: isEn ? "No data to analyze" : "분석할 데이터가 없습니다",
+    upload: isEn ? "Upload PDF files first." : "PDF 파일을 업로드해주세요.",
+    compound: isEn ? "Compound" : "Compound",
+    selectCompound: isEn ? "Select compound" : "화합물 선택",
+    allCompounds: isEn ? "All compounds" : "모든 화합물",
+    mean: isEn ? "Mean" : "평균",
+    se: isEn ? "SE" : "표준오차",
+    n: isEn ? "n" : "샘플 수",
+    noFiltered: isEn ? "No results match the selected filters." : "선택된 조건에 해당하는 결과가 없습니다.",
+    filtered: isEn ? "Filtered samples" : "필터링된 샘플"
+  };
 
   if (results.length === 0) {
     return (
@@ -17,13 +30,13 @@ export default function StatisticsResults({ results }) {
         <CardHeader>
           <CardTitle className="text-gray-900 text-lg font-semibold flex items-center space-x-2">
             <BarChart3 className="h-4 w-4" />
-            <span>통계 결과</span>
+            <span>{t.title}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6 text-center flex flex-col justify-center items-center h-full">
           <div>
-            <p className="text-gray-500 font-medium">분석할 데이터가 없습니다</p>
-            <p className="text-gray-400 text-sm mt-2">PDF 파일을 업로드해주세요.</p>
+            <p className="text-gray-500 font-medium">{t.noData}</p>
+            <p className="text-gray-400 text-sm mt-2">{t.upload}</p>
           </div>
         </CardContent>
       </Card>
@@ -54,17 +67,15 @@ export default function StatisticsResults({ results }) {
   });
 
   const compoundStats = {};
-  const compoundsToStat = selectedCompound === 'all' ? uniqueCompounds : [selectedCompound];
+  const compoundsToStat = selectedCompound === "all" ? uniqueCompounds : [selectedCompound];
 
   compoundsToStat.forEach(compound => {
     const compoundData = filteredResults.filter(r => r.compound === compound);
     const concentrations = compoundData.map(r => r.concentration).filter(c => c !== null && !isNaN(c));
-    
     if (concentrations.length > 0) {
       const mean = _.mean(concentrations);
       const stdDev = concentrations.length > 1 ? Math.sqrt(_.sumBy(concentrations, c => Math.pow(c - mean, 2)) / (concentrations.length - 1)) : 0;
       const stdError = concentrations.length > 1 ? stdDev / Math.sqrt(concentrations.length) : 0;
-      
       compoundStats[compound] = { mean, stdError, count: concentrations.length };
     }
   });
@@ -74,17 +85,17 @@ export default function StatisticsResults({ results }) {
       <CardHeader>
         <CardTitle className="text-gray-900 text-lg font-semibold flex items-center space-x-2">
           <BarChart3 className="h-4 w-4" />
-          <span>통계 결과</span>
+          <span>{t.title}</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
           <div>
-            <h4 className="text-sm font-semibold text-gray-700 mb-2">Compound</h4>
+            <h4 className="text-sm font-semibold text-gray-700 mb-2">{t.compound}</h4>
             <Select value={selectedCompound} onValueChange={setSelectedCompound}>
-              <SelectTrigger className="w-full"><SelectValue placeholder="화합물 선택" /></SelectTrigger>
+              <SelectTrigger className="w-full"><SelectValue placeholder={t.selectCompound} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">모든 화합물</SelectItem>
+                <SelectItem value="all">{t.allCompounds}</SelectItem>
                 {uniqueCompounds.map(compound => <SelectItem key={compound} value={compound}>{compound}</SelectItem>)}
               </SelectContent>
             </Select>
@@ -119,24 +130,22 @@ export default function StatisticsResults({ results }) {
               <h5 className="text-gray-800 font-semibold text-sm mb-2">{compound}</h5>
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                  <h6 className="text-blue-800 font-semibold text-xs">평균</h6>
+                  <h6 className="text-blue-800 font-semibold text-xs">{t.mean}</h6>
                   <p className="text-blue-900 font-bold text-lg">{stats.mean.toFixed(4)}</p>
                 </div>
                 <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                  <h6 className="text-green-800 font-semibold text-xs">표준오차</h6>
+                  <h6 className="text-green-800 font-semibold text-xs">{t.se}</h6>
                   <p className="text-green-900 font-bold text-lg">{stats.stdError.toFixed(4)}</p>
                 </div>
               </div>
-              <p className="text-xs text-gray-600 mt-2">샘플 수: {stats.count}개</p>
+              <p className="text-xs text-gray-600 mt-2">{t.n}: {stats.count}</p>
             </div>
           ))}
           {Object.keys(compoundStats).length === 0 && (
-            <div className="text-center py-8">
-              <p className="text-gray-500">선택된 조건에 해당하는 결과가 없습니다.</p>
-            </div>
+            <div className="text-center py-8"><p className="text-gray-500">{t.noFiltered}</p></div>
           )}
         </div>
-        <div className="text-xs text-gray-600">필터링된 샘플: {filteredResults.length}개</div>
+        <div className="text-xs text-gray-600">{t.filtered}: {filteredResults.length}</div>
       </CardContent>
     </Card>
   );

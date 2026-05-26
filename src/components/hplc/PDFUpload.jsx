@@ -6,7 +6,21 @@ import { Upload, FileText, AlertCircle, CheckCircle, Loader, X } from "lucide-re
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ExtractDataFromUploadedFile, UploadFile } from "@/api/integrations";
 
-export default function PDFUpload({ onFilesUploaded, rtStandards, onResultsGenerated, analysisType, calculationParams, uploadedFiles = [] }) {
+export default function PDFUpload({ onFilesUploaded, rtStandards, onResultsGenerated, analysisType, calculationParams, uploadedFiles = [], lang = "ko" }) {
+  const isEn = lang === "en";
+  const text = {
+    needRT: isEn ? "Please enter and apply RT standards first." : "RT 기준을 먼저 입력하고 적용해주세요.",
+    processed: (n) => isEn ? `${n} file(s) were processed successfully.` : `${n}개 파일이 성공적으로 처리되었습니다.`,
+    error: isEn ? "Error while processing files: " : "파일 처리 중 오류 발생: ",
+    title: isEn ? "Upload PDF files" : "PDF 파일 업로드",
+    uploadTitle: isEn ? "PDF upload" : "PDF 업로드",
+    uploading: isEn ? "Uploading..." : "업로드 중...",
+    choose: isEn ? "Choose files" : "파일 선택",
+    needRTShort: isEn ? "⚠️ Enter RT standards first." : "⚠️ RT 기준을 먼저 입력해주세요.",
+    filenameFormat: isEn ? "Filename format: Factor_Treatment_Replicate.pdf" : "파일명 형식: Factor_Treatment_Replicate.pdf",
+    uploadedFiles: (n) => isEn ? `Uploaded files (${n})` : `업로드된 파일 (${n}개)`,
+    remove: isEn ? "Remove" : "삭제"
+  };
   const [uploading, setUploading] = useState(false);
   const [uploadResult, setUploadResult] = useState(null);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -110,7 +124,7 @@ export default function PDFUpload({ onFilesUploaded, rtStandards, onResultsGener
 
   const processAllFiles = async (newFiles) => {
     if (Object.keys(rtStandards).length === 0) {
-      setUploadResult({ success: false, message: "RT 기준을 먼저 입력하고 적용해주세요." });
+      setUploadResult({ success: false, message: text.needRT });
       return;
     }
 
@@ -192,11 +206,11 @@ export default function PDFUpload({ onFilesUploaded, rtStandards, onResultsGener
       onFilesUploaded(newProcessedFiles, false); // 두 번째 인수로 추가 모드 표시
 
       if (newFiles.length > 0) {
-        setUploadResult({ success: true, message: `${newFiles.length}개 파일이 성공적으로 처리되었습니다.` });
+        setUploadResult({ success: true, message: text.processed(newFiles.length) });
       }
 
     } catch (error) {
-      setUploadResult({ success: false, message: "파일 처리 중 오류 발생: " + error.message });
+      setUploadResult({ success: false, message: text.error + error.message });
     } finally {
       setUploading(false);
     }
@@ -227,7 +241,7 @@ export default function PDFUpload({ onFilesUploaded, rtStandards, onResultsGener
       <CardHeader>
         <CardTitle className="text-gray-900 text-lg font-semibold flex items-center space-x-2">
           <Upload className="h-4 w-4" />
-          <span>PDF 파일 업로드</span>
+          <span>{text.title}</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -240,16 +254,16 @@ export default function PDFUpload({ onFilesUploaded, rtStandards, onResultsGener
           <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
             {uploading ? <Loader className="h-6 w-6 text-blue-600 animate-spin" /> : <FileText className="h-6 w-6 text-blue-600" />}
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">PDF 업로드</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">{text.uploadTitle}</h3>
           
           <Button onClick={() => fileInputRef.current?.click()} disabled={uploading || Object.keys(rtStandards).length === 0} className="ios-button bg-blue-600 hover:bg-blue-700 h-10 px-6 text-sm rounded-xl">
-            {uploading ? "업로드 중..." : "파일 선택"}
+            {uploading ? text.uploading : text.choose}
           </Button>
           
           <input ref={fileInputRef} type="file" accept=".pdf" multiple onChange={handleFileUpload} className="hidden" />
 
-          {Object.keys(rtStandards).length === 0 && <p className="text-amber-600 text-xs mt-2">⚠️ RT 기준을 먼저 입력해주세요.</p>}
-           <p className="text-xs text-gray-500 mt-2">파일명 형식: Factor_Treatment_Replicate.pdf</p>
+          {Object.keys(rtStandards).length === 0 && <p className="text-amber-600 text-xs mt-2">{text.needRTShort}</p>}
+           <p className="text-xs text-gray-500 mt-2">{text.filenameFormat}</p>
         </div>
 
         {uploadResult && (
@@ -263,7 +277,7 @@ export default function PDFUpload({ onFilesUploaded, rtStandards, onResultsGener
 
         {uploadedFiles.length > 0 && (
           <div className="mt-4">
-            <h4 className="text-gray-900 text-sm font-semibold mb-2">업로드된 파일 ({uploadedFiles.length}개)</h4>
+            <h4 className="text-gray-900 text-sm font-semibold mb-2">{text.uploadedFiles(uploadedFiles.length)}</h4>
             <div className="space-y-1 max-h-32 overflow-y-auto">
               {uploadedFiles.map((file, index) => (
                 <div key={`${file.name}-${index}`} className="flex items-center justify-between p-2 bg-white/60 rounded-lg border border-gray-100">

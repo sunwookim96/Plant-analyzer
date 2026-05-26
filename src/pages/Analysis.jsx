@@ -177,10 +177,14 @@ const analysisProtocols = {
       "2 mL 튜브에 시료 20 mg과 2 mL의 90% MeOH 순서대로 혼합 후 vortex",
       "20℃에서 중간 강도로 sonication 20분간 추출 후 vortex",
       "15,000 RPM, 4℃, 10 min 조건으로 centrifuge",
-      "2 mL 튜브에 상층액 1~1.5 mL 추출",
-      "96-well에 200 μL 분주하여 652.4, 665.2, 470nm에서 흡광도 측정"
+      "상층액 1~1.5 mL를 회수하고 색소 분해를 줄이기 위해 차광·냉장 상태로 보관",
+      "96-well에 200 μL 분주하여 652.4, 665.2, 470 nm에서 흡광도 측정"
     ],
     reagents: ["90% MeOH: 90 mL 메탄올 + 10 mL 증류수"],
+    storage_conditions: [
+      "시료 분말: 동결건조 또는 저온건조 후 밀봉·차광·방습 상태로 −20℃ 보관 권장",
+      "90% MeOH 추출액: 호일 또는 갈색 용기로 차광하고 4℃에서 보관, 가능하면 당일 측정"
+    ],
     formulas: [
       <span key="c1">Chl a (mg/g) = (16.82 × A<sub>665.2</sub> - 9.28 × A<sub>652.4</sub>) / 10</span>,
       <span key="c2">Chl b (mg/g) = (36.92 × A<sub>652.4</sub> - 16.54 × A<sub>665.2</sub>) / 10</span>,
@@ -198,7 +202,7 @@ const analysisProtocols = {
       "2 mL 튜브에 시료 20 mg과 90% MeOH 2 mL 순서대로 혼합 후 vortex",
       "20℃에서 중간 강도로 sonication 20분간 추출 후 vortex",
       "15,000 RPM, 4℃, 10 min 조건으로 centrifuge",
-      "2 mL 튜브에 상층액 1~1.5 mL 추출",
+      "상층액 1~1.5 mL를 회수하고 차광·냉장 상태에서 가능한 한 당일 반응",
       "상층액 & gallic acid stock 100 μL + Folin-Ciocalteu reagent 100 μL + 증류수 1500 μL 순서대로 넣은 후 5분 방치",
       <span key="tp1">7.5% Na<sub>2</sub>CO<sub>3</sub> 용액 300 μL 넣기</span>,
       "40분간 상온에서 반응",
@@ -220,6 +224,9 @@ const analysisProtocols = {
       default_concs: [0, 20, 40, 60, 80, 100]
     },
     storage_conditions: [
+      "시료 분말: 동결건조 또는 저온건조 후 밀봉·차광·방습 상태로 −20℃ 보관 권장",
+      "90% MeOH 추출액: 4℃ 차광 보관, 가능하면 24~48시간 내 측정",
+      "Folin-Ciocalteu reagent 및 gallic acid 표준용액: 갈색 용기에 소분하여 냉장 또는 −20℃ 보관",
       "7.5% Na₂CO₃: 냉장 보관 (제조 후)"
     ],
     formulas: ["함량 (mg/g) = ((흡광도 - b) / a) / 10"],
@@ -235,7 +242,7 @@ const analysisProtocols = {
       "2 mL 튜브에 시료 20 mg과 90% MeOH 2 mL 순서대로 혼합 후 vortex",
       "20℃에서 중간 강도로 sonication 20분간 추출 후 vortex",
       "15,000 RPM, 4℃, 10 min 조건으로 centrifuge",
-      "2 mL 튜브에 상층액 1~1.5 mL 추출",
+      "상층액 1~1.5 mL를 회수하고 차광·냉장 상태에서 가능한 한 당일 반응",
       <span key="tf1">상층액 & Quercetin stock 100 μL + 95% EtOH 300 μL + 10% AlCl<sub>3</sub> 20 μL + 1 M potassium acetate 20 μL + 증류수 600 μL 순서대로 넣기</span>,
       "상온에서 40분간 반응",
       "96-well에 200 μL 분주 후 표준곡선과 동시에 415 nm에서 흡광도 측정"
@@ -255,6 +262,12 @@ const analysisProtocols = {
       default_total_vol: 1.0,
       default_concs: [0, 10, 20, 40, 60, 80, 100]
     },
+    storage_conditions: [
+      "시료 분말: 동결건조 또는 저온건조 후 밀봉·차광·방습 상태로 −20℃ 보관 권장",
+      "90% MeOH 추출액: 4℃ 차광 보관, 가능하면 24~48시간 내 측정",
+      "Quercetin 표준용액: 갈색 용기에 소분하여 −20℃ 차광 보관",
+      "AlCl₃ 및 potassium acetate 용액: 냉장 보관 (제조 후)"
+    ],
     formulas: ["함량 (mg/g) = ((흡광도 - b) / a) / 10"],
     unit: "mg QE/g DW",
     icon: <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" />,
@@ -268,13 +281,18 @@ const analysisProtocols = {
       "2 mL 튜브에 시료 20 mg과 90% MeOH 2 mL 순서대로 혼합 후 vortex",
       "20℃에서 중간 강도로 sonication 20분간 추출 후 vortex",
       "15,000 RPM, 4℃, 10 min 조건으로 centrifuge",
-      "2 mL 튜브에 상층액 1~1.5 mL 추출",
-      "2ml 튜브에 상층액 50 μL + 2 mM sodium tetrachloropalladate 1.5 mL + 증류수 150 μL 순서대로 넣기",
+      "상층액 1~1.5 mL를 회수하고 차광·냉장 상태에서 가능한 한 당일 반응",
+      "2 mL 튜브에 상층액 50 μL + 2 mM sodium tetrachloropalladate 1.5 mL + 증류수 150 μL 순서대로 넣기",
       "1시간 동안 상온에서 반응",
       "96-well에 200 μL 분주 후 425 nm에서 흡광도 측정"
     ],
     reagents: [
       "2 mM Sodium tetrachloropalladate: 100 mL 증류수에 36.5 mg Na₂PdCl₄ 용해"
+    ],
+    storage_conditions: [
+      "시료 분말: 건조 후 방습 상태로 −20℃ 보관, myrosinase에 의한 분해를 줄이기 위해 장시간 실온 방치 금지",
+      "MeOH 추출액: 4℃ 차광 보관, 장기 보관은 피하고 가능하면 24~48시간 내 측정",
+      "Sodium tetrachloropalladate 용액: 4℃ 차광 보관, 침전 또는 변색 시 새로 제조"
     ],
     formulas: [<span key="g1">Total glucosinolate (μmol/g) = 1.40 + 118.86 × A<sub>425</sub></span>],
     unit: "μmol/g DW",
@@ -289,7 +307,7 @@ const analysisProtocols = {
       "2 mL 튜브에 시료 20 mg과 90% MeOH 2 mL 순서대로 혼합 후 vortex",
       "20℃에서 중간 강도로 sonication 20분간 추출 후 vortex",
       "15,000 RPM, 4℃, 10 min 조건으로 centrifuge",
-      "2 mL 튜브에 상층액 1~1.5 mL 추출",
+      "상층액 1~1.5 mL를 회수하고 차광·냉장 상태에서 가능한 한 당일 반응",
       "96-well plate에 90% MeOH 170 μL + DPPH 용액 10 μL + 상층액 20 μL 순서대로 넣기",
       "Control(Blank)의 경우 90% MeOH 20uL를 사용",
       "Parafilm으로 밀봉 후 암조건에서 1시간 동안 반응",
@@ -300,7 +318,8 @@ const analysisProtocols = {
       "DPPH 용액: 50 mL 90% MeOH에 200 mg DPPH (최종농도 4 mg/mL) 용해 후 호일로 포장"
     ],
     storage_conditions: [
-      "DPPH: 냉장보관 (4℃), 갈색병 또는 호일 포장 권장"
+      "DPPH: 냉장보관 (4℃), 갈색병 또는 호일 포장 권장",
+      "시료 추출액: 4℃ 차광 보관, 항산화 반응성 변화를 줄이기 위해 당일 측정 권장"
     ],
     formulas: ["DPPH Inhibition (%) = ((Control - Sample) / Control) × 100%"],
     unit: "% inhibition",
@@ -315,12 +334,17 @@ const analysisProtocols = {
       <span key="a1">2 mL 튜브에 시료 20 mg과 1% HCl-MeOH 2 mL 순서대로 혼합 후 vortex</span>,
       "40℃에서 중간 강도로 sonication 1시간 추출 후 vortex",
       "15,000 RPM, 4℃, 10 min 조건으로 centrifuge",
-      "2 mL 튜브에 상층액 1~1.5 mL 추출",
+      "상층액 1~1.5 mL를 회수하고 산성 MeOH 추출액은 차광·냉장 상태로 보관",
       "96-well에 200 μL 분주 후 530, 600 nm에서 흡광도 측정"
     ],
     reagents: [
       "1% HCl-MeOH: 99 mL 메탄올에 1 mL 진한 염산(37%, 약 12 M)을 천천히 가하여 혼합",
       "1 M HCl: 100 mL 증류수에 진한 염산(37%, 12 M) 약 8.3 mL를 천천히 첨가하여 혼합"
+    ],
+    storage_conditions: [
+      "시료 분말: 동결건조 또는 저온건조 후 −20℃ 차광·방습 보관",
+      "1% HCl-MeOH 추출액: 색소 안정성을 위해 4℃ 차광 보관하고 가능한 당일 측정",
+      "산성 MeOH는 휘발성·부식성이 있으므로 밀봉하여 냉장 보관하고 후드에서 취급"
     ],
     formulas: [
       <span key="a2">Anthocyanin (mg/g) = (A<sub>530</sub> - A<sub>600</sub>) × V × n × Mw / (ε × m)</span>,
@@ -338,8 +362,9 @@ const analysisProtocols = {
       "2 mL 튜브에 시료 20 mg + 50 mM PBS (pH 7.0) 2 mL 순서대로 혼합 후 vortex",
       "액체질소 5분 → sonication 10분 (3회 반복) 후 vortex",
       "15,000 RPM, 4℃, 10 min centrifuge",
-      "Centrifuge 후 상층액 1~1.5 mL 뽑고 박스에 넣어 deep freezer에 보관",
-      <span key="cat1">반응 혼합물 + 상층액 3 μL 혼합</span>,
+      "Centrifuge 후 상층액 1~1.5 mL를 회수하고 얼음 위에서 보관하며 가능한 한 즉시 분석. 장기 보관이 필요하면 소분하여 −80℃ 보관하고 반복 동결·해동 금지",
+      <span key="cat1">Sample: 반응 혼합물 197 μL + 상층액 3 μL 혼합</span>,
+      "H₂O₂ control: 상층액 대신 PBS 3 μL를 넣어 같은 조건에서 slope 측정",
       "96-well에 200 μL 분주 후 240 nm에서 10초마다 10분간 흡광도 측정"
     ],
     reagents: [
@@ -348,12 +373,13 @@ const analysisProtocols = {
       "반응 혼합물: 3% H₂O₂ 3.4 μL + 50 mM PBS 193.6 μL"
     ],
     storage_conditions: [
+      "효소 추출액: 얼음 위에서 유지하고 즉시 분석. 장기 보관 시 소분하여 −80℃ 보관, 반복 동결·해동 금지",
       "H₂O₂: 냉장보관 (4℃), 갈색병 또는 호일 보관 권장, 공기 노출 최소화",
       "PBS 완충액: 냉장보관 (4℃) (제조 후) - 오염 주의"
     ],
     formulas: [
-      <span key="cat2">CAT activity (μmol/min/mL) = (ΔA<sub>240</sub>/min) × total volume × 1000 / (43.6 × enzyme volume)</span>,
-      "CAT activity (μmol/min/mg DW) = unit/mL / enzyme (mg/mL)"
+      <span key="cat2">ΔA<sub>corr</sub>/min = slope<sub>H₂O₂ control</sub> − slope<sub>sample</sub></span>,
+      <span key="cat3">CAT activity (μmol/min/mg DW) = ΔA<sub>corr</sub>/min × 152.9 / l × DF</span>
     ],
     unit: "μmol/min/mg DW",
     icon: <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" />,
@@ -367,9 +393,10 @@ const analysisProtocols = {
       "2 mL 튜브에 시료 20 mg + 50 mM PBS (pH 7.0) 2 mL 순서대로 혼합 후 vortex",
       "액체질소 5분 → sonication 10분 (3회 반복) 후 vortex",
       "15,000 RPM, 4℃, 10 min centrifuge",
-      "Centrifuge 후 상층액 1~1.5 mL 뽑고 박스에 넣어 deep freezer에 보관",
+      "Centrifuge 후 상층액 1~1.5 mL를 회수하고 얼음 위에서 보관하며 가능한 한 즉시 분석. 장기 보관이 필요하면 소분하여 −80℃ 보관하고 반복 동결·해동 금지",
       <span key="pod1">반응 혼합물 + 상층액 20 μL 혼합</span>,
-      "Blank는 상층액 제외한 반응 혼합물. 96-well에 200 μL 분주 후 470 nm에서 10초마다 흡광도 측정"
+      "Blank는 상층액 대신 PBS를 넣은 반응 혼합물로 준비",
+      "96-well에 200 μL 분주 후 470 nm에서 10초마다 흡광도 측정하고 sample slope − blank slope로 보정"
     ],
     reagents: [
       "50 mM PBS (pH 7.0): 100 mL 증류수에 0.68 g KH₂PO₄ + 0.87 g K₂HPO₄ 용해",
@@ -379,13 +406,15 @@ const analysisProtocols = {
       "반응 혼합물: 40 mM phosphate buffer 66.6 μL + 20 mM guaiacol 80 μL + 3% H₂O₂ 33.3 μL"
     ],
     storage_conditions: [
+      "효소 추출액: 얼음 위에서 유지하고 즉시 분석. 장기 보관 시 소분하여 −80℃ 보관, 반복 동결·해동 금지",
       "H₂O₂: 냉장보관 (4℃), 갈색병 또는 호일 보관 권장, 공기 노출 최소화",
       "Guaiacol: 실온 보관 가능 (장기 보관 시 냉장), 휘발성 강하므로 밀폐",
       "PBS 완충액(pH 7.0): 냉장보관 (4℃) (제조 후) - 오염 주의"
     ],
     formulas: [
-      <span key="pod2">POD activity (μmol/min/mL) = (ΔA<sub>470</sub>/min) × total volume × 1000 / (26.6 × enzyme volume)</span>,
-      "POD activity (μmol/min/mg DW) = unit/mL / enzyme (mg/mL)"
+      <span key="pod2">ΔA<sub>corr</sub>/min = slope<sub>sample</sub> − slope<sub>blank</sub></span>,
+      <span key="pod3">POD activity (μmol/min/mg DW) = ΔA<sub>corr</sub>/min × 0.0376 / l × DF</span>,
+      "ε = 26.6 mM⁻¹ cm⁻¹ 기준이므로 ×1000을 넣지 않음"
     ],
     unit: "μmol/min/mg DW",
     icon: <Beaker className="h-4 w-4 sm:h-5 sm:w-5" />,
@@ -399,8 +428,11 @@ const analysisProtocols = {
       "2 mL 튜브에 시료 20 mg + 50 mM PBS (pH 7.0) 2 mL 순서대로 혼합 후 vortex",
       "액체질소 5분 → sonication 10분 (3회 반복) 후 vortex",
       "15,000 RPM, 4℃, 10 min centrifuge",
-      "Centrifuge 후 상층액 1~1.5 mL 뽑고 박스에 넣어 deep freezer에 보관",
-      "Control은 반응 혼합물 들어가지 않는 것. 반응 혼합물 + 상층액 20 μL 혼합",
+      "Centrifuge 후 상층액 1~1.5 mL를 회수하고 얼음 위에서 보관하며 가능한 한 즉시 분석. 장기 보관이 필요하면 소분하여 −80℃ 보관하고 반복 동결·해동 금지",
+      "Sample: 시료 상층액 20 μL + SOD 반응혼합물 180 μL",
+      "Light control: PBS 20 μL + SOD 반응혼합물 180 μL, LED 노출",
+      "Dark blank: PBS 20 μL + SOD 반응혼합물 180 μL, 암조건",
+      "Sample dark blank: 선택 사항, 시료 상층액 20 μL + 반응혼합물 180 μL, 암조건",
       <span key="sod1">PPFD 50 μmol m<sup>-2</sup>s<sup>-1</sup>의 LED 광에 15분간 노출시킨 후 빛을 차단</span>,
       "96-well에 200 μL 분주 후 560 nm에서 흡광도 측정"
     ],
@@ -413,15 +445,17 @@ const analysisProtocols = {
       "반응 혼합물: 50mM pH 7.0 Sodium phosphate (93.5 μL) + 0.1M methionine (52 μL), 2.5 mM NBT (24.5 μL) + 10mM EDTA (2μL), 0.5mM riboflavin (8μL)"
     ],
     storage_conditions: [
+      "효소 추출액: 얼음 위에서 유지하고 즉시 분석. 장기 보관 시 소분하여 −80℃ 보관, 반복 동결·해동 금지",
       "Riboflavin: 냉장보관 (4℃), 갈색병 또는 호일 보관 권장, 광분해 민감, 즉시 사용 권장",
       "NBT: 냉장보관 (4℃), 갈색병 또는 호일 보관 권장, 암조건 유지",
       "Methionine: 냉장보관 (4℃), 갈색병 또는 호일 보관 권장",
       "EDTA, PBS 완충액(pH 7.0): 냉장보관 (4℃) - 오염 주의"
     ],
     formulas: [
-      "SOD inhibition (%) = ((Control - Sample) / Control) × 100%",
-      "SOD activity (unit/mL) = (inhibition × total volume) / (50 × enzyme volume)",
-      "SOD activity (unit/mg DW) = unit/mL / enzyme (mg/mL)"
+      "Controlcorr = Light control − Dark blank",
+      "Samplecorr = Sample − Sample dark blank 또는 Dark blank",
+      "SOD inhibition (%) = ((Controlcorr − Samplecorr) / Controlcorr) × 100",
+      "SOD activity (unit/mg DW) = inhibition × 0.02 × DF"
     ],
     unit: "unit/mg DW",
     icon: <Microscope className="h-4 w-4 sm:h-5 sm:w-5" />,
@@ -435,7 +469,7 @@ const analysisProtocols = {
       "2 mL 튜브에 시료 20 mg + 0.1% TCA 2 mL 혼합 후 vortex",
       "액체질소 5분 → sonication 10분 (3회 반복) 후 vortex",
       "15,000 RPM, 4℃, 10 min centrifuge",
-      "Centrifuge 후 상층액 1~1.5 mL 뽑고 박스에 넣어 deep freezer에 보관",
+      "상층액 1~1.5 mL를 회수하고 차광·냉장(4℃) 상태에서 가능한 한 당일 반응. 장기 보관 시 −20℃ 소분 보관",
       "96-well에 시료 50 μL 또는 H₂O₂ 표준곡선 50 μL + 10 mM Potassium phosphate buffer 50 μL + 1 M KI 100 μL 혼합",
       "암실에서 1시간 반응 후 390 nm에서 측정"
     ],
@@ -455,6 +489,7 @@ const analysisProtocols = {
       default_concs: [0, 0.05, 0.10, 0.20, 0.40, 0.60, 0.80, 1.00]
     },
     storage_conditions: [
+      "TCA 추출액: 4℃ 차광 보관 후 당일 반응 권장, 장기 보관 시 −20℃ 소분",
       "H₂O₂: 갈색병 또는 호일 보관 권장, 공기 노출 최소화",
       "KI: 냉장보관 (4℃)",
       "TCA, PBS 등 완충액: 냉장보관 (4℃) (제조 후) - 오염 주의"
@@ -465,7 +500,7 @@ const analysisProtocols = {
       "μmol/g DW = (농도(mM) × 2 mL) / 0.02 g",
       "μmol/g FW = μmol/g DW × (0.02 g / 측정한 FW g)"
     ],
-    unit: "μmol/g FW",
+    unit: "μmol/g DW",
     icon: <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />,
     references: [{ citation: "Alexieva, V. et al. (2001).", doi: "10.1046/j.1365-3040.2001.00778.x" }],
     writing_guide: {

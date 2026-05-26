@@ -81,14 +81,14 @@ export default function CalculationEngine({ samples }) {
             <StatCard
               title="엽록소 a 평균"
               value={chlAMean.toFixed(3)}
-              unit="μg/ml"
+              unit="mg/g DW"
               icon={<Target className="h-4 w-4" />}
               color="blue"
             />
             <StatCard
               title="엽록소 a 표준오차"
               value={chlAStdErr.toFixed(3)}
-              unit="μg/ml"
+              unit="mg/g DW"
               icon={<TrendingUp className="h-4 w-4" />}
               color="blue"
             />
@@ -97,14 +97,14 @@ export default function CalculationEngine({ samples }) {
             <StatCard
               title="엽록소 b 평균"
               value={chlBMean.toFixed(3)}
-              unit="μg/ml"
+              unit="mg/g DW"
               icon={<Target className="h-4 w-4" />}
               color="green"
             />
             <StatCard
               title="엽록소 b 표준오차"
               value={chlBStdErr.toFixed(3)}
-              unit="μg/ml"
+              unit="mg/g DW"
               icon={<TrendingUp className="h-4 w-4" />}
               color="green"
             />
@@ -113,14 +113,14 @@ export default function CalculationEngine({ samples }) {
             <StatCard
               title="총 엽록소 평균"
               value={totalChlMean.toFixed(3)}
-              unit="μg/ml"
+              unit="mg/g DW"
               icon={<Target className="h-4 w-4" />}
               color="orange"
             />
             <StatCard
               title="총 엽록소 표준오차"
               value={totalChlStdErr.toFixed(3)}
-              unit="μg/ml"
+              unit="mg/g DW"
               icon={<TrendingUp className="h-4 w-4" />}
               color="orange"
             />
@@ -129,14 +129,14 @@ export default function CalculationEngine({ samples }) {
             <StatCard
               title="카로티노이드 평균"
               value={carotenoidMean.toFixed(3)}
-              unit="μg/ml"
+              unit="mg/g DW"
               icon={<Target className="h-4 w-4" />}
               color="purple"
             />
             <StatCard
               title="카로티노이드 표준오차"
               value={carotenoidStdErr.toFixed(3)}
-              unit="μg/ml"
+              unit="mg/g DW"
               icon={<TrendingUp className="h-4 w-4" />}
               color="purple"
             />

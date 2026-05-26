@@ -98,8 +98,8 @@ export default function ChartVisualization({ samples }) {
       });
     };
 
-    const chlAData = createChartData('chl_a', 'μg/ml');
-    const chlBData = createChartData('chl_b', 'μg/ml');
+    const chlAData = createChartData('chl_a', 'mg/g DW');
+    const chlBData = createChartData('chl_b', 'mg/g DW');
     const totalChlData = Object.entries(treatmentGroups).map(([name, groupSamples]) => {
       const values = groupSamples.map(s => (s.chl_a || 0) + (s.chl_b || 0));
       const mean = _.mean(values);
@@ -111,11 +111,11 @@ export default function ChartVisualization({ samples }) {
         name,
         value: mean,
         errorY: stdErr,
-        unit: 'μg/ml',
+        unit: 'mg/g DW',
         n: groupSamples.length
       };
     });
-    const carotenoidData = createChartData('carotenoid', 'μg/ml');
+    const carotenoidData = createChartData('carotenoid', 'mg/g DW');
 
     return (
       <Card className="ios-card ios-blur rounded-3xl ios-shadow-lg border-0">
@@ -150,19 +150,19 @@ export default function ChartVisualization({ samples }) {
             </TabsList>
             
             <TabsContent value="chl_a" className="mt-6">
-              <ChartComponent data={chlAData} unit="μg/ml" />
+              <ChartComponent data={chlAData} unit="mg/g DW" />
             </TabsContent>
             
             <TabsContent value="chl_b" className="mt-6">
-              <ChartComponent data={chlBData} unit="μg/ml" />
+              <ChartComponent data={chlBData} unit="mg/g DW" />
             </TabsContent>
             
             <TabsContent value="total_chl" className="mt-6">
-              <ChartComponent data={totalChlData} unit="μg/ml" />
+              <ChartComponent data={totalChlData} unit="mg/g DW" />
             </TabsContent>
             
             <TabsContent value="carotenoid" className="mt-6">
-              <ChartComponent data={carotenoidData} unit="μg/ml" />
+              <ChartComponent data={carotenoidData} unit="mg/g DW" />
             </TabsContent>
           </Tabs>
         </CardContent>

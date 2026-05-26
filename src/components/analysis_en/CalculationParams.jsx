@@ -20,11 +20,14 @@ const ParamInput = ({ label, value, onChange, placeholder, type = "number" }) =>
   </div>
 );
 
-const HighlightedValue = ({ value, placeholder }) => (
-  <span className={`transition-colors duration-300 ${value ? 'text-blue-600 font-bold' : 'text-gray-500'}`}>
-    {value || placeholder}
-  </span>
-);
+const HighlightedValue = ({ value, placeholder }) => {
+  const hasValue = value !== undefined && value !== null && value !== "";
+  return (
+    <span className={`transition-colors duration-300 ${hasValue ? 'text-blue-600 font-bold' : 'text-gray-500'}`}>
+      {hasValue ? value : placeholder}
+    </span>
+  );
+};
 
 export default function CalculationParams({ analysisType, onParamsChange, initialParams = {} }) {
   const [params, setParams] = useState(initialParams);
@@ -60,9 +63,41 @@ export default function CalculationParams({ analysisType, onParamsChange, initia
 
   const renderParams = () => {
     switch (analysisType) {
+      case "chlorophyll_a_b":
+      case "carotenoid":
+        return (
+          <motion.div layout className="flex items-end gap-4">
+            <div className="flex-grow space-y-2">
+              <Label className="text-gray-600 text-sm">Dilution Factor</Label>
+              <Input
+                type="number"
+                value={params.dilutionFactor || ""}
+                onChange={(e) => handleParamChange('dilutionFactor', e.target.value)}
+                placeholder="e.g., 1, 10"
+                className="ios-input border-0 text-gray-900 placeholder:text-gray-400"
+              />
+            </div>
+            <Button onClick={handleApply} className="ios-button rounded-xl h-12 flex-shrink-0 flex items-center justify-center">
+              {isApplied && params.dilutionFactor ? <CheckCircle className="h-4 w-4 mr-2" /> : null}
+              {isApplied && params.dilutionFactor ? "Applied" : "Apply"}
+            </Button>
+            {isApplied && params.dilutionFactor && (
+              <motion.div
+                initial={{ opacity: 0, width: 0, x: -20 }}
+                animate={{ opacity: 1, width: 'auto', x: 0 }}
+                exit={{ opacity: 0, width: 0, x: -20 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="bg-blue-50 border border-blue-200 rounded-xl h-12 flex items-center px-4"
+              >
+                <p className="text-blue-800 font-semibold whitespace-nowrap">
+                  Applied factor: {params.dilutionFactor}
+                </p>
+              </motion.div>
+            )}
+          </motion.div>
+        );
       case "total_phenol":
       case "total_flavonoid":
-      case "h2o2":
         return (
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row items-end gap-4">
@@ -76,6 +111,54 @@ export default function CalculationParams({ analysisType, onParamsChange, initia
             <p className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-center">
                 y = <HighlightedValue value={params.std_a} placeholder="a" />x + (<HighlightedValue value={params.std_b} placeholder="b" />)
             </p>
+          </div>
+        );
+      case "h2o2":
+        return (
+          <div className="flex flex-col space-y-4">
+            <div className="flex flex-wrap items-end gap-4">
+              <div className="flex-1 min-w-[150px]">
+                <ParamInput
+                  label="Slope (a)"
+                  value={params.h2o2?.a || ""}
+                  onChange={e => handleNestedParamChange('h2o2', 'a', e.target.value)}
+                  placeholder="H₂O₂ standard curve slope"
+                />
+              </div>
+              <div className="flex-1 min-w-[150px]">
+                <ParamInput
+                  label="Y-intercept (b)"
+                  value={params.h2o2?.b || ""}
+                  onChange={e => handleNestedParamChange('h2o2', 'b', e.target.value)}
+                  placeholder="Default: 0 allowed"
+                />
+              </div>
+              <div className="flex-1 min-w-[120px]">
+                <ParamInput
+                  label="Extraction volume (mL)"
+                  value={params.h2o2?.vol || ""}
+                  onChange={e => handleNestedParamChange('h2o2', 'vol', e.target.value)}
+                  placeholder="Default: 2"
+                />
+              </div>
+              <div className="flex-1 min-w-[120px]">
+                <ParamInput
+                  label="Dry weight (g)"
+                  value={params.h2o2?.dw || ""}
+                  onChange={e => handleNestedParamChange('h2o2', 'dw', e.target.value)}
+                  placeholder="Default: 0.02"
+                />
+              </div>
+              <div className="flex-shrink-0">
+                <Button onClick={handleApply} className="ios-button rounded-xl h-12 flex items-center justify-center px-6">
+                  {isApplied && <CheckCircle className="h-4 w-4 mr-2" />}
+                  {isApplied ? "Applied" : "Apply"}
+                </Button>
+              </div>
+            </div>
+            <div className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-sm leading-relaxed text-center">
+              H₂O₂ (μmol/g DW) = ((A390 − b) / a) × <HighlightedValue value={params.h2o2?.vol} placeholder="2 mL" /> / <HighlightedValue value={params.h2o2?.dw} placeholder="0.02 g" />
+            </div>
           </div>
         );
       case "dpph_scavenging":
@@ -124,67 +207,105 @@ export default function CalculationParams({ analysisType, onParamsChange, initia
             </p>
            </div>
         );
-       case "pod":
-       case "cat":
-       case "sod":
-         const enzyme = analysisType;
-         
-         if (enzyme === 'sod') {
-             return (
-                 <div className="flex flex-col space-y-4">
-                   <div className="flex flex-wrap items-end gap-4">
-                     <div className="flex-1 min-w-[150px]">
-                       <ParamInput label="Control Absorbance" value={params.sod?.control_abs || ""} onChange={e => handleNestedParamChange('sod', 'control_abs', e.target.value)} placeholder="Absorbance of control" />
-                     </div>
-                     <div className="flex-1 min-w-[120px]">
-                       <ParamInput label="Total Volume (μL)" value={params.sod?.total_vol || ""} onChange={e => handleNestedParamChange('sod', 'total_vol', e.target.value)} placeholder="e.g., 200" />
-                     </div>
-                     <div className="flex-1 min-w-[120px]">
-                       <ParamInput label="Enzyme Volume (μL)" value={params.sod?.enzyme_vol || ""} onChange={e => handleNestedParamChange('sod', 'enzyme_vol', e.target.value)} placeholder="e.g., 20" />
-                     </div>
-                     <div className="flex-1 min-w-[150px]">
-                       <ParamInput label="Enzyme Conc. (mg/mL)" value={params.sod?.enzyme_conc || ""} onChange={e => handleNestedParamChange('sod', 'enzyme_conc', e.target.value)} placeholder="Enzyme concentration" />
-                     </div>
-                     <div className="flex-shrink-0">
-                       <Button onClick={handleApply} className="ios-button rounded-xl h-12 flex items-center justify-center px-6">
-                          {isApplied && <CheckCircle className="h-4 w-4 mr-2" />}
-                          {isApplied ? "Applied" : "Apply"}
-                       </Button>
-                     </div>
-                   </div>
-                    <p className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-center text-sm">
-                       SOD activity = (inhibition% × <HighlightedValue value={params.sod?.total_vol} placeholder="total_vol"/>) / (50 × <HighlightedValue value={params.sod?.enzyme_vol} placeholder="enzyme_vol"/>) / <HighlightedValue value={params.sod?.enzyme_conc} placeholder="enzyme_conc"/>
-                    </p>
-                </div>
-            )
-         }
-         return (
-           <div className="flex flex-col space-y-4">
-             <div className="flex flex-wrap items-end gap-4">
-               <div className="flex-1 min-w-[150px]">
-                 <ParamInput label="ΔA/min" value={params[enzyme]?.delta_A || ""} onChange={e => handleNestedParamChange(enzyme, 'delta_A', e.target.value)} placeholder="Change in absorbance per minute" />
-               </div>
-               <div className="flex-1 min-w-[120px]">
-                 <ParamInput label="Total Volume (μL)" value={params[enzyme]?.total_vol || ""} onChange={e => handleNestedParamChange(enzyme, 'total_vol', e.target.value)} placeholder="e.g., 200" />
-               </div>
-               <div className="flex-1 min-w-[120px]">
-                 <ParamInput label="Enzyme Volume (μL)" value={params[enzyme]?.enzyme_vol || ""} onChange={e => handleNestedParamChange(enzyme, 'enzyme_vol', e.target.value)} placeholder="e.g., 20" />
-               </div>
-               <div className="flex-1 min-w-[150px]">
-                 <ParamInput label="Enzyme Conc. (mg/mL)" value={params[enzyme]?.enzyme_conc || ""} onChange={e => handleNestedParamChange(enzyme, 'enzyme_conc', e.target.value)} placeholder="Enzyme concentration" />
-               </div>
-               <div className="flex-shrink-0">
-                 <Button onClick={handleApply} className="ios-button rounded-xl h-12 flex items-center justify-center px-6">
-                   {isApplied && <CheckCircle className="h-4 w-4 mr-2" />}
-                   {isApplied ? "Applied" : "Apply"}
-                 </Button>
-               </div>
-             </div>
-             <p className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-center text-sm">
-               {enzyme.toUpperCase()} activity = (<HighlightedValue value={params[enzyme]?.delta_A} placeholder="ΔA"/> × <HighlightedValue value={params[enzyme]?.total_vol} placeholder="total_vol"/> × 1000) / ({enzyme === 'cat' ? '39.4' : '26.6'} × <HighlightedValue value={params[enzyme]?.enzyme_vol} placeholder="enzyme_vol"/>) / <HighlightedValue value={params[enzyme]?.enzyme_conc} placeholder="enzyme_conc"/>
-             </p>
-           </div>
-         );
+      case "sod":
+        return (
+          <div className="flex flex-col space-y-4">
+            <div className="flex flex-wrap items-end gap-4">
+              <div className="flex-1 min-w-[150px]">
+                <ParamInput label="Light control A560" value={params.sod?.light_control_abs || ""} onChange={e => handleNestedParamChange('sod', 'light_control_abs', e.target.value)} placeholder="e.g., 0.800" />
+              </div>
+              <div className="flex-1 min-w-[150px]">
+                <ParamInput label="Dark blank A560" value={params.sod?.dark_blank_abs || ""} onChange={e => handleNestedParamChange('sod', 'dark_blank_abs', e.target.value)} placeholder="e.g., 0.050" />
+              </div>
+              <div className="flex-1 min-w-[120px]">
+                <ParamInput label="Dilution Factor (DF)" value={params.sod?.dilutionFactor || ""} onChange={e => handleNestedParamChange('sod', 'dilutionFactor', e.target.value)} placeholder="Default: 1" />
+              </div>
+              <div className="flex-shrink-0">
+                <Button onClick={handleApply} className="ios-button rounded-xl h-12 flex items-center justify-center px-6">
+                  {isApplied && <CheckCircle className="h-4 w-4 mr-2" />}
+                  {isApplied ? "Applied" : "Apply"}
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-sm leading-relaxed text-center">
+                Control<sub>corr</sub> = light control − dark blank, Sample<sub>corr</sub> = sample A560 − sample dark blank or dark blank
+              </div>
+              <div className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-sm leading-relaxed text-center">
+                SOD inhibition (%) = ((Control<sub>corr</sub> − Sample<sub>corr</sub>) / Control<sub>corr</sub>) × 100
+              </div>
+              <div className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-sm leading-relaxed text-center">
+                SOD activity = inhibition × 0.02 × <HighlightedValue value={params.sod?.dilutionFactor} placeholder="DF" /> (unit/mg DW)
+              </div>
+            </div>
+          </div>
+        );
+
+      case "cat":
+        return (
+          <div className="flex flex-col space-y-4">
+            <div className="flex flex-wrap items-end gap-4">
+              <div className="flex-1 min-w-[150px]">
+                <ParamInput label="H₂O₂ control slope" value={params.cat?.h2o2_control_slope || ""} onChange={e => handleNestedParamChange('cat', 'h2o2_control_slope', e.target.value)} placeholder="e.g., -0.005" />
+              </div>
+              <div className="flex-1 min-w-[120px]">
+                <ParamInput label="Path length (cm)" value={params.cat?.pathlength || ""} onChange={e => handleNestedParamChange('cat', 'pathlength', e.target.value)} placeholder="Default: 1" />
+              </div>
+              <div className="flex-1 min-w-[120px]">
+                <ParamInput label="Dilution Factor (DF)" value={params.cat?.dilutionFactor || ""} onChange={e => handleNestedParamChange('cat', 'dilutionFactor', e.target.value)} placeholder="Default: 1" />
+              </div>
+              <div className="flex-shrink-0">
+                <Button onClick={handleApply} className="ios-button rounded-xl h-12 flex items-center justify-center px-6">
+                  {isApplied && <CheckCircle className="h-4 w-4 mr-2" />}
+                  {isApplied ? "Applied" : "Apply"}
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-center text-sm">
+                ΔA<sub>corr</sub>/min = −(sample slope − H₂O₂ control slope)
+              </div>
+              <div className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-center text-sm">
+                CAT activity = ΔA<sub>corr</sub>/min × 152.9 / <HighlightedValue value={params.cat?.pathlength} placeholder="l" /> × <HighlightedValue value={params.cat?.dilutionFactor} placeholder="DF" /> (μmol/min/mg DW)
+              </div>
+            </div>
+          </div>
+        );
+
+      case "pod":
+        return (
+          <div className="flex flex-col space-y-4">
+            <div className="flex flex-wrap items-end gap-4">
+              <div className="flex-1 min-w-[150px]">
+                <ParamInput label="Blank slope" value={params.pod?.blank_slope || ""} onChange={e => handleNestedParamChange('pod', 'blank_slope', e.target.value)} placeholder="e.g., 0.002" />
+              </div>
+              <div className="flex-1 min-w-[120px]">
+                <ParamInput label="Path length (cm)" value={params.pod?.pathlength || ""} onChange={e => handleNestedParamChange('pod', 'pathlength', e.target.value)} placeholder="Default: 1" />
+              </div>
+              <div className="flex-1 min-w-[120px]">
+                <ParamInput label="Dilution Factor (DF)" value={params.pod?.dilutionFactor || ""} onChange={e => handleNestedParamChange('pod', 'dilutionFactor', e.target.value)} placeholder="Default: 1" />
+              </div>
+              <div className="flex-shrink-0">
+                <Button onClick={handleApply} className="ios-button rounded-xl h-12 flex items-center justify-center px-6">
+                  {isApplied && <CheckCircle className="h-4 w-4 mr-2" />}
+                  {isApplied ? "Applied" : "Apply"}
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-center text-sm">
+                ΔA<sub>corr</sub>/min = sample slope − blank slope
+              </div>
+              <div className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-center text-sm">
+                POD activity = ΔA<sub>corr</sub>/min × 0.0376 / <HighlightedValue value={params.pod?.pathlength} placeholder="l" /> × <HighlightedValue value={params.pod?.dilutionFactor} placeholder="DF" /> (μmol/min/mg DW)
+              </div>
+              <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                Because ε = 26.6 mM⁻¹ cm⁻¹, do not multiply the POD equation by 1000.
+              </p>
+            </div>
+          </div>
+        );
+
       default:
         return null;
     }

@@ -80,14 +80,14 @@ export default function CalculationEngine({ samples }) {
             <StatCard
               title="Chl a Mean"
               value={chlAMean.toFixed(3)}
-              unit="μg/ml"
+              unit="mg/g DW"
               icon={<Target className="h-4 w-4" />}
               color="blue"
             />
             <StatCard
               title="Chl a Std. Error"
               value={chlAStdErr.toFixed(3)}
-              unit="μg/ml"
+              unit="mg/g DW"
               icon={<TrendingUp className="h-4 w-4" />}
               color="blue"
             />
@@ -96,14 +96,14 @@ export default function CalculationEngine({ samples }) {
             <StatCard
               title="Chl b Mean"
               value={chlBMean.toFixed(3)}
-              unit="μg/ml"
+              unit="mg/g DW"
               icon={<Target className="h-4 w-4" />}
               color="green"
             />
             <StatCard
               title="Chl b Std. Error"
               value={chlBStdErr.toFixed(3)}
-              unit="μg/ml"
+              unit="mg/g DW"
               icon={<TrendingUp className="h-4 w-4" />}
               color="green"
             />
@@ -112,14 +112,14 @@ export default function CalculationEngine({ samples }) {
             <StatCard
               title="Total Chl Mean"
               value={totalChlMean.toFixed(3)}
-              unit="μg/ml"
+              unit="mg/g DW"
               icon={<Target className="h-4 w-4" />}
               color="orange"
             />
             <StatCard
               title="Total Chl Std. Error"
               value={totalChlStdErr.toFixed(3)}
-              unit="μg/ml"
+              unit="mg/g DW"
               icon={<TrendingUp className="h-4 w-4" />}
               color="orange"
             />
@@ -128,14 +128,14 @@ export default function CalculationEngine({ samples }) {
             <StatCard
               title="Carotenoid Mean"
               value={carotenoidMean.toFixed(3)}
-              unit="μg/ml"
+              unit="mg/g DW"
               icon={<Target className="h-4 w-4" />}
               color="purple"
             />
             <StatCard
               title="Carotenoid Std. Error"
               value={carotenoidStdErr.toFixed(3)}
-              unit="μg/ml"
+              unit="mg/g DW"
               icon={<TrendingUp className="h-4 w-4" />}
               color="purple"
             />

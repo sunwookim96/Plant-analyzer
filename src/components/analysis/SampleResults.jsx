@@ -1,8 +1,7 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Download, Edit, Trash2, X } from "lucide-react";
+import { FileText, Download, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -14,51 +13,36 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion, AnimatePresence } from "framer-motion";
-
-const getWavelengthsForAnalysis = (analysisType) => {
-  const wavelengths = {
-    chlorophyll_a_b: ["665.2", "652.4", "470"],
-    carotenoid: ["470", "665.2", "652.4"],
-    total_phenol: ["765"],
-    total_flavonoid: ["415"],
-    glucosinolate: ["425"],
-    dpph_scavenging: ["517"],
-    anthocyanin: ["530", "600"],
-    cat: ["240"],
-    pod: ["470"],
-    sod: ["560"],
-    h2o2: ["390"]
-  };
-  return wavelengths[analysisType] || [];
-};
+import { getMeasurementFields, getMeasurementLabel } from "@/utils/analysisFields";
 
 const SampleEditForm = ({ sample, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
     ...sample,
     absorbance_values: { ...sample.absorbance_values }
   });
-  const wavelengths = getWavelengthsForAnalysis(sample.analysis_type);
+  const fields = getMeasurementFields(sample.analysis_type, "ko");
   
-  const handleAbsorbanceChange = (wavelength, value) => {
+  const handleMeasurementChange = (key, value) => {
     setFormData(prev => ({
       ...prev,
       absorbance_values: {
         ...prev.absorbance_values,
-        [wavelength]: value
+        [key]: value
       }
     }));
   };
 
   const handleSave = () => {
-    // 빈 문자열은 0으로, 유효한 숫자는 그대로 변환
-    const processedValues = {};
-    Object.entries(formData.absorbance_values).forEach(([key, value]) => {
-      if (value === '' || value === null || value === undefined) {
-        processedValues[key] = 0;
-      } else {
-        const numValue = parseFloat(value);
-        processedValues[key] = isNaN(numValue) ? 0 : numValue;
+    const processedValues = { ...formData.absorbance_values };
+
+    fields.forEach(field => {
+      const value = formData.absorbance_values[field.key];
+      if (field.optional && (value === "" || value === null || value === undefined)) {
+        delete processedValues[field.key];
+        return;
       }
+      const numValue = parseFloat(value);
+      processedValues[field.key] = Number.isFinite(numValue) ? numValue : 0;
     });
 
     const processedFormData = {
@@ -67,31 +51,23 @@ const SampleEditForm = ({ sample, onSave, onCancel }) => {
     };
     
     onSave(processedFormData, true);
-    onCancel(); // 저장 후 다이얼로그 닫기
+    onCancel();
   };
 
-  // 흡광도 값 개수에 따른 그리드 클래스 결정
   const getGridCols = (count) => {
     if (count === 1) return "grid-cols-1";
-    if (count === 2) return "grid-cols-2";
-    if (count === 3) return "grid-cols-3";
-    if (count === 4) return "grid-cols-4";
-    // Add more conditions if needed for other counts, or default
-    return "grid-cols-3"; // 기본값
+    if (count === 2) return "grid-cols-1 sm:grid-cols-2";
+    if (count === 3) return "grid-cols-1 sm:grid-cols-3";
+    return "grid-cols-1 sm:grid-cols-2";
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-4" style={{ marginLeft: '520px' }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/40 backdrop-blur-sm">
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: -20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: -20 }}
-        transition={{ 
-          type: "spring", 
-          stiffness: 300, 
-          damping: 30,
-          duration: 0.3 
-        }}
+        transition={{ type: "spring", stiffness: 300, damping: 30, duration: 0.3 }}
         className="w-full max-w-lg bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 p-6"
       >
         <div className="mb-6">
@@ -99,7 +75,7 @@ const SampleEditForm = ({ sample, onSave, onCancel }) => {
         </div>
         
         <div className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label className="text-sm font-semibold text-gray-700">처리구 이름</Label>
               <Input 
@@ -121,23 +97,23 @@ const SampleEditForm = ({ sample, onSave, onCancel }) => {
           </div>
           
           <div className="space-y-4">
-            <Label className="text-base font-semibold text-gray-700">흡광도 값</Label>
-            <div className={`grid ${getGridCols(wavelengths.length)} gap-4`}>
-              {wavelengths.map(wl => (
-                <div key={wl} className="space-y-3">
+            <Label className="text-base font-semibold text-gray-700">측정값</Label>
+            <div className={`grid ${getGridCols(fields.length)} gap-4`}>
+              {fields.map(field => (
+                <div key={field.key} className="space-y-3">
                   <div className="text-center">
                     <Label className="text-sm font-medium text-gray-700">
-                      {wl} nm
+                      {field.label}{field.optional ? "" : " *"}
                     </Label>
                   </div>
                   <Input 
                     type="number" 
                     inputMode="decimal"
                     step="any"
-                    value={formData.absorbance_values[wl] ?? ''} 
-                    onChange={e => handleAbsorbanceChange(wl, e.target.value)} 
+                    value={formData.absorbance_values[field.key] ?? ''} 
+                    onChange={e => handleMeasurementChange(field.key, e.target.value)} 
                     className="h-14 text-center font-mono text-lg rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500/20" 
-                    placeholder="0.000"
+                    placeholder={field.placeholder || "0.000"}
                   />
                 </div>
               ))}
@@ -145,17 +121,10 @@ const SampleEditForm = ({ sample, onSave, onCancel }) => {
           </div>
           
           <div className="flex gap-3 pt-4">
-            <Button 
-              onClick={onCancel} 
-              variant="outline" 
-              className="flex-1 h-12 rounded-xl border-gray-300 text-gray-600 hover:bg-gray-50 font-semibold transition-colors"
-            >
+            <Button onClick={onCancel} variant="outline" className="flex-1 h-12 rounded-xl border-gray-300 text-gray-600 hover:bg-gray-50 font-semibold transition-colors">
               취소
             </Button>
-            <Button 
-              onClick={handleSave} 
-              className="flex-1 h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
-            >
+            <Button onClick={handleSave} className="flex-1 h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">
               저장
             </Button>
           </div>
@@ -371,7 +340,7 @@ export default function SampleResults({ samples, selectedIds, onSelectionChange,
                   <div className="flex items-center flex-wrap gap-x-2 gap-y-1 mt-1">
                     {Object.entries(sample.absorbance_values).map(([wl, val]) => (
                       <div key={wl} className="text-xs font-mono bg-gray-100 px-1.5 py-0.5 rounded">
-                          <span className="text-gray-500">{wl}:</span>
+                          <span className="text-gray-500">{getMeasurementLabel(sample.analysis_type, wl, "ko")}:</span>
                           <span className="font-medium text-gray-800 ml-1">{Number(val).toFixed(3)}</span>
                       </div>
                     ))}

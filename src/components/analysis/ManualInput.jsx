@@ -1,60 +1,49 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus } from "lucide-react";
-
-const getWavelengthsForAnalysis = (analysisType) => {
-  const wavelengths = {
-    chlorophyll_a_b: ["665.2", "652.4", "470"],
-    carotenoid: ["470", "665.2", "652.4"],
-    total_phenol: ["765"],
-    total_flavonoid: ["510"],
-    glucosinolate: ["425"],
-    dpph_scavenging: ["517"],
-    anthocyanin: ["530", "600"], // Changed from "657" to "600"
-    cat: ["240"],
-    pod: ["470"],
-    sod: ["560"],
-    h2o2: ["390"] // 과산화수소 프로토콜 수정: 390nm에서 240nm로 변경
-  };
-  return wavelengths[analysisType] || [];
-};
+import { getMeasurementFields } from "@/utils/analysisFields";
 
 export default function ManualInput({ analysisType, onSaveSample }) {
   const [treatmentName, setTreatmentName] = useState("");
   const [sampleName, setSampleName] = useState("");
-  const [absorbanceValues, setAbsorbanceValues] = useState({});
+  const [measurementValues, setMeasurementValues] = useState({});
 
-  const wavelengths = getWavelengthsForAnalysis(analysisType);
+  const fields = getMeasurementFields(analysisType, "ko");
 
-  const handleAbsorbanceChange = (wavelength, value) => {
-    setAbsorbanceValues(prev => ({
+  const handleMeasurementChange = (key, value) => {
+    setMeasurementValues(prev => ({
       ...prev,
-      [wavelength]: value === '' ? '' : parseFloat(value) || 0,
+      [key]: value === "" ? "" : parseFloat(value) || 0,
     }));
   };
 
-  const handleSave = () => {
-    // Process absorbance values: convert empty strings to 0 for saving
+  const buildProcessedValues = () => {
     const processedValues = {};
-    Object.entries(absorbanceValues).forEach(([key, value]) => {
-      processedValues[key] = value === '' ? 0 : parseFloat(value) || 0;
+
+    fields.forEach(field => {
+      const value = measurementValues[field.key];
+      if (field.optional && (value === "" || value === undefined || value === null)) return;
+      processedValues[field.key] = value === "" || value === undefined || value === null ? 0 : parseFloat(value) || 0;
     });
 
+    return processedValues;
+  };
+
+  const handleSave = () => {
     const sampleData = {
       treatment_name: treatmentName,
       sample_name: sampleName,
-      analysis_type: analysisType, // Keep analysis_type for save logic
-      absorbance_values: processedValues
+      analysis_type: analysisType,
+      absorbance_values: buildProcessedValues()
     };
-    onSaveSample(sampleData, false); // isEditing is false
-    // Clear form
+
+    onSaveSample(sampleData, false);
     setTreatmentName("");
     setSampleName("");
-    setAbsorbanceValues({});
+    setMeasurementValues({});
   };
   
   if (!analysisType) {
@@ -67,55 +56,63 @@ export default function ManualInput({ analysisType, onSaveSample }) {
     );
   }
 
-  const isFormValid = treatmentName.trim() && sampleName.trim() && wavelengths.every(wl => 
-    absorbanceValues[wl] !== undefined && 
-    absorbanceValues[wl] !== '' && 
-    !isNaN(parseFloat(absorbanceValues[wl])) // Ensure the value is a valid number after parsing
+  const requiredFields = fields.filter(field => !field.optional);
+  const isFormValid = treatmentName.trim() && sampleName.trim() && requiredFields.every(field => 
+    measurementValues[field.key] !== undefined &&
+    measurementValues[field.key] !== "" &&
+    !isNaN(parseFloat(measurementValues[field.key]))
   );
 
   return (
     <Card className="ios-card ios-blur rounded-3xl ios-shadow-lg border-0 h-full">
-        <CardHeader>
-            <CardTitle className="text-gray-900 text-xl font-semibold flex items-center space-x-2">
-                <Plus className="h-5 w-5" />
-                <span>샘플 직접 추가</span>
-            </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                    <Label className="text-gray-700 font-medium text-sm">처리구 이름</Label>
-                    <Input value={treatmentName} onChange={e => setTreatmentName(e.target.value)} placeholder="예: Control" className="ios-input border-0 text-gray-900 placeholder:text-gray-400" />
-                </div>
-                <div className="space-y-2">
-                    <Label className="text-gray-700 font-medium text-sm">반복 수</Label>
-                    <Input value={sampleName} onChange={e => setSampleName(e.target.value)} placeholder="예: Rep1" className="ios-input border-0 text-gray-900 placeholder:text-gray-400" />
-                </div>
-            </div>
-            
-            <div className="space-y-2">
-                <Label className="text-gray-700 font-medium text-sm">흡광도 값</Label>
-                <div className="flex flex-wrap gap-4">
-                    {wavelengths.map(wl => (
-                        <div key={wl} className="space-y-2 flex-1 min-w-[80px]">
-                            <Label className="text-gray-600 text-sm font-medium">{wl} nm</Label>
-                            <Input 
-                                type="number" 
-                                inputMode="decimal" // Added for mobile keyboard
-                                step="any" 
-                                value={absorbanceValues[wl] ?? ''} 
-                                onChange={e => handleAbsorbanceChange(wl, e.target.value)} 
-                                placeholder="0.000"
-                                className="ios-input border-0 text-gray-900 placeholder:text-gray-400 text-center" 
-                            />
-                        </div>
-                    ))}
-                </div>
-            </div>
-            <Button onClick={handleSave} disabled={!isFormValid} className="w-full ios-button rounded-2xl h-14 text-white font-semibold text-base">
-                추가
-            </Button>
-        </CardContent>
+      <CardHeader>
+        <CardTitle className="text-gray-900 text-xl font-semibold flex items-center space-x-2">
+          <Plus className="h-5 w-5" />
+          <span>샘플 직접 추가</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label className="text-gray-700 font-medium text-sm">처리구 이름</Label>
+            <Input value={treatmentName} onChange={e => setTreatmentName(e.target.value)} placeholder="예: Control" className="ios-input border-0 text-gray-900 placeholder:text-gray-400" />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-gray-700 font-medium text-sm">반복 수</Label>
+            <Input value={sampleName} onChange={e => setSampleName(e.target.value)} placeholder="예: Rep1" className="ios-input border-0 text-gray-900 placeholder:text-gray-400" />
+          </div>
+        </div>
+        
+        <div className="space-y-2">
+          <Label className="text-gray-700 font-medium text-sm">측정값</Label>
+          <div className="flex flex-wrap gap-4">
+            {fields.map(field => (
+              <div key={field.key} className="space-y-2 flex-1 min-w-[140px]">
+                <Label className="text-gray-600 text-sm font-medium">
+                  {field.label}{field.optional ? "" : " *"}
+                </Label>
+                <Input 
+                  type="number" 
+                  inputMode="decimal"
+                  step="any" 
+                  value={measurementValues[field.key] ?? ""} 
+                  onChange={e => handleMeasurementChange(field.key, e.target.value)} 
+                  placeholder={field.placeholder || "0.000"}
+                  className="ios-input border-0 text-gray-900 placeholder:text-gray-400 text-center" 
+                />
+              </div>
+            ))}
+          </div>
+          {analysisType === "sod" && (
+            <p className="text-xs text-gray-500 leading-relaxed">
+              Sample dark blank이 없으면 빈칸으로 두세요. 이 경우 공통 Dark blank로 보정합니다.
+            </p>
+          )}
+        </div>
+        <Button onClick={handleSave} disabled={!isFormValid} className="w-full ios-button rounded-2xl h-14 text-white font-semibold text-base">
+          추가
+        </Button>
+      </CardContent>
     </Card>
   );
 }

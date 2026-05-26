@@ -1,44 +1,62 @@
 import Layout from "./Layout.jsx";
 
 import Analysis from "./Analysis";
+import AnalysisEn from "./Analysis_en";
 
 import Results from "./Results";
+import ResultsEn from "./Results_en";
 
 import Home from "./Home";
+import HomeEn from "./Home_en";
 
 import HPLC from "./HPLC";
+import HPLCEn from "./HPLC_en";
 
 import HPLC_Results from "./HPLC_Results";
+import HPLCResultsEn from "./HPLC_Results_en";
 
 import Kjeldahl from "./Kjeldahl";
+import KjeldahlEn from "./Kjeldahl_en";
 
 import MainHome from "./MainHome";
+import MainHomeEn from "./MainHome_en";
 
 import PhysiologicalMeasurement from "./PhysiologicalMeasurement";
+import PhysiologicalMeasurementEn from "./PhysiologicalMeasurement_en";
 
-import Li6800 from "./Li6800";  
+import Li6800 from "./Li6800";
+import Li6800En from "./Li6800_en";
 
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
 const PAGES = {
     Analysis: Analysis,
+    Analysis_en: AnalysisEn,
     
     Results: Results,
+    Results_en: ResultsEn,
     
     Home: Home,
+    Home_en: HomeEn,
     
     HPLC: HPLC,
+    HPLC_en: HPLCEn,
     
     HPLC_Results: HPLC_Results,
+    HPLC_Results_en: HPLCResultsEn,
 
     Kjeldahl: Kjeldahl,
+    Kjeldahl_en: KjeldahlEn,
 
     Physiological: PhysiologicalMeasurement,
+    Physiological_en: PhysiologicalMeasurementEn,
 
     Li6800: Li6800,
+    Li6800_en: Li6800En,
 
     // [추가] MainHome도 PAGES 목록에 명시적으로 추가해두는 것이 안전합니다.
     MainHome: MainHome,
+    MainHome_en: MainHomeEn,
 }
 
 function _getCurrentPage(url) {
@@ -73,22 +91,36 @@ function PagesContent() {
             <Routes>            
                 
                 <Route path="/" element={<MainHome />} />
+                <Route path="/mainhome_en" element={<MainHomeEn />} />
                 
                 <Route path="/Analysis" element={<Analysis />} />
+                <Route path="/analysis_en" element={<AnalysisEn />} />
                 
                 <Route path="/Results" element={<Results />} />
+                <Route path="/results_en" element={<ResultsEn />} />
                 
                 <Route path="/Home" element={<Home />} />
+                <Route path="/home_en" element={<HomeEn />} />
                 
                 <Route path="/HPLC" element={<HPLC />} />
+                <Route path="/hplc" element={<HPLC />} />
+                <Route path="/hplc_en" element={<HPLCEn />} />
                 
                 <Route path="/HPLC_Results" element={<HPLC_Results />} />
+                <Route path="/hplc_results" element={<HPLC_Results />} />
+                <Route path="/hplc_results_en" element={<HPLCResultsEn />} />
 
                 <Route path="/Kjeldahl" element={<Kjeldahl />} />
+                <Route path="/kjeldahl" element={<Kjeldahl />} />
+                <Route path="/kjeldahl_en" element={<KjeldahlEn />} />
 
                 <Route path="/Physiological" element={<PhysiologicalMeasurement />} />
+                <Route path="/physiological" element={<PhysiologicalMeasurement />} />
+                <Route path="/physiological_en" element={<PhysiologicalMeasurementEn />} />
 
                 <Route path="/Li6800" element={<Li6800 />} />
+                <Route path="/li6800" element={<Li6800 />} />
+                <Route path="/li6800_en" element={<Li6800En />} />
 
             </Routes>
         </Layout>

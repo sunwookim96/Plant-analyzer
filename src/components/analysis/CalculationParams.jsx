@@ -20,11 +20,14 @@ const ParamInput = ({ label, value, onChange, placeholder, type = "number" }) =>
   </div>
 );
 
-const HighlightedValue = ({ value, placeholder }) => (
-  <span className={`transition-colors duration-300 ${value ? 'text-blue-600 font-bold' : 'text-gray-500'}`}>
-    {value || placeholder}
-  </span>
-);
+const HighlightedValue = ({ value, placeholder }) => {
+  const hasValue = value !== undefined && value !== null && value !== "";
+  return (
+    <span className={`transition-colors duration-300 ${hasValue ? 'text-blue-600 font-bold' : 'text-gray-500'}`}>
+      {hasValue ? value : placeholder}
+    </span>
+  );
+};
 
 export default function CalculationParams({ analysisType, onParamsChange, initialParams = {} }) {
   const [params, setParams] = useState(initialParams);
@@ -197,103 +200,103 @@ case "anthocyanin":
         );
 
 case "sod":
-         const enzyme = "sod"; 
-         
-         return (
-             <div className="flex flex-col space-y-4">
-               {/* 1. 상단 입력창들 (기존 유지) */}
-               <div className="flex flex-wrap items-end gap-4">
-                 <div className="flex-1 min-w-[150px]">
-                   <ParamInput label="Control Abs (560nm)" value={params.sod?.control_abs || ""} onChange={e => handleNestedParamChange('sod', 'control_abs', e.target.value)} placeholder="e.g., 0.800" />
-                 </div>
-                 <div className="flex-1 min-w-[120px]">
-                   <ParamInput label="Total Volume (μL)" value={params.sod?.total_vol || ""} onChange={e => handleNestedParamChange('sod', 'total_vol', e.target.value)} placeholder="e.g., 200" />
-                 </div>
-                 <div className="flex-1 min-w-[120px]">
-                   <ParamInput label="Enzyme Volume (μL)" value={params.sod?.enzyme_vol || ""} onChange={e => handleNestedParamChange('sod', 'enzyme_vol', e.target.value)} placeholder="e.g., 20" />
-                 </div>
-                 <div className="flex-1 min-w-[150px]">
-                   <ParamInput label="Enzyme Conc. (mg/mL)" value={params.sod?.enzyme_conc || ""} onChange={e => handleNestedParamChange('sod', 'enzyme_conc', e.target.value)} placeholder="e.g., 10" />
-                 </div>
-                 <div className="flex-shrink-0">
-                   <Button onClick={handleApply} className="ios-button rounded-xl h-12 flex items-center justify-center px-6">
-                      {isApplied && <CheckCircle className="h-4 w-4 mr-2" />}
-                      {isApplied ? "적용됨" : "적용"}
-                   </Button>
-                 </div>
-               </div>
-
-                {/* 2. 공식 표시 부분 (수정됨: 박스 2개로 분리) */}
-                <div className="space-y-2"> {/* 박스 사이 간격 조절 */}
-                   
-                   {/* 박스 1: Inhibition 공식 */}
-                   <div className="text-white font-mono p-4 bg-white/10 rounded-lg text-sm leading-relaxed text-center">
-                     <>SOD inhibition (%)</> = ((<HighlightedValue value={params.sod?.control_abs} placeholder="Control"/> - <>Sample</>) / <HighlightedValue value={params.sod?.control_abs} placeholder="Control"/>) × 100
-                   </div>
-
-                   {/* 박스 2: Activity 공식 */}
-                   <div className="text-white font-mono p-4 bg-white/10 rounded-lg text-sm leading-relaxed text-center">
-                     <>SOD activity</> = (SOD inhibition (%) × <HighlightedValue value={params.sod?.total_vol} placeholder="total_vol"/>) / (50 × <HighlightedValue value={params.sod?.enzyme_vol} placeholder="enzyme_vol"/>) / <HighlightedValue value={params.sod?.enzyme_conc} placeholder="enzyme_conc"/>
-                   </div>
-                   
-                </div>
+        return (
+          <div className="flex flex-col space-y-4">
+            <div className="flex flex-wrap items-end gap-4">
+              <div className="flex-1 min-w-[150px]">
+                <ParamInput label="Light control A560" value={params.sod?.light_control_abs || ""} onChange={e => handleNestedParamChange('sod', 'light_control_abs', e.target.value)} placeholder="예: 0.800" />
+              </div>
+              <div className="flex-1 min-w-[150px]">
+                <ParamInput label="Dark blank A560" value={params.sod?.dark_blank_abs || ""} onChange={e => handleNestedParamChange('sod', 'dark_blank_abs', e.target.value)} placeholder="예: 0.050" />
+              </div>
+              <div className="flex-1 min-w-[120px]">
+                <ParamInput label="희석배수 (DF)" value={params.sod?.dilutionFactor || ""} onChange={e => handleNestedParamChange('sod', 'dilutionFactor', e.target.value)} placeholder="Default: 1" />
+              </div>
+              <div className="flex-shrink-0">
+                <Button onClick={handleApply} className="ios-button rounded-xl h-12 flex items-center justify-center px-6">
+                  {isApplied && <CheckCircle className="h-4 w-4 mr-2" />}
+                  {isApplied ? "적용됨" : "적용"}
+                </Button>
+              </div>
             </div>
+            <div className="space-y-2">
+              <div className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-sm leading-relaxed text-center">
+                Control<sub>corr</sub> = Light control − Dark blank, Sample<sub>corr</sub> = Sample A560 − Sample dark blank 또는 Dark blank
+              </div>
+              <div className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-sm leading-relaxed text-center">
+                SOD inhibition (%) = ((Control<sub>corr</sub> − Sample<sub>corr</sub>) / Control<sub>corr</sub>) × 100
+              </div>
+              <div className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-sm leading-relaxed text-center">
+                SOD activity = inhibition × 0.02 × <HighlightedValue value={params.sod?.dilutionFactor} placeholder="DF" /> (unit/mg DW)
+              </div>
+            </div>
+          </div>
         );
-// 2. CAT (Catalase) 분리
+
       case "cat":
         return (
-           <div className="flex flex-col space-y-4">
-             <div className="flex flex-wrap items-end gap-4">
-               <div className="flex-1 min-w-[120px]">
-                 <ParamInput label="Total Volume (μL)" value={params.cat?.total_vol || ""} onChange={e => handleNestedParamChange('cat', 'total_vol', e.target.value)} placeholder="e.g., 200" />
-               </div>
-               {/* CAT는 3uL 권장 */}
-               <div className="flex-1 min-w-[120px]">
-                 <ParamInput label="Enzyme Volume (μL)" value={params.cat?.enzyme_vol || ""} onChange={e => handleNestedParamChange('cat', 'enzyme_vol', e.target.value)} placeholder="e.g., 3" />
-               </div>
-               <div className="flex-1 min-w-[150px]">
-                 <ParamInput label="Enzyme Conc. (mg/mL)" value={params.cat?.enzyme_conc || ""} onChange={e => handleNestedParamChange('cat', 'enzyme_conc', e.target.value)} placeholder="e.g., 10" />
-               </div>
-               <div className="flex-shrink-0">
-                 <Button onClick={handleApply} className="ios-button rounded-xl h-12 flex items-center justify-center px-6">
-                   {isApplied && <CheckCircle className="h-4 w-4 mr-2" />}
-                   {isApplied ? "적용됨" : "적용"}
-                 </Button>
-               </div>
-             </div>
-             <p className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-center text-sm">
-               CAT activity = (<span className="text-blue-600 font-bold">Measured ΔA (240 nm)</span> × <HighlightedValue value={params.cat?.total_vol} placeholder="total_vol"/> × 1000) / (43.6 × <HighlightedValue value={params.cat?.enzyme_vol} placeholder="enzyme_vol"/>) / <HighlightedValue value={params.cat?.enzyme_conc} placeholder="enzyme_conc"/>
-             </p>
-           </div>
-         );
+          <div className="flex flex-col space-y-4">
+            <div className="flex flex-wrap items-end gap-4">
+              <div className="flex-1 min-w-[150px]">
+                <ParamInput label="H₂O₂ control slope" value={params.cat?.h2o2_control_slope || ""} onChange={e => handleNestedParamChange('cat', 'h2o2_control_slope', e.target.value)} placeholder="예: -0.005" />
+              </div>
+              <div className="flex-1 min-w-[120px]">
+                <ParamInput label="Path length (cm)" value={params.cat?.pathlength || ""} onChange={e => handleNestedParamChange('cat', 'pathlength', e.target.value)} placeholder="Default: 1" />
+              </div>
+              <div className="flex-1 min-w-[120px]">
+                <ParamInput label="희석배수 (DF)" value={params.cat?.dilutionFactor || ""} onChange={e => handleNestedParamChange('cat', 'dilutionFactor', e.target.value)} placeholder="Default: 1" />
+              </div>
+              <div className="flex-shrink-0">
+                <Button onClick={handleApply} className="ios-button rounded-xl h-12 flex items-center justify-center px-6">
+                  {isApplied && <CheckCircle className="h-4 w-4 mr-2" />}
+                  {isApplied ? "적용됨" : "적용"}
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-center text-sm">
+                ΔA<sub>corr</sub>/min = −(Sample slope − H₂O₂ control slope)
+              </div>
+              <div className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-center text-sm">
+                CAT activity = ΔA<sub>corr</sub>/min × 152.9 / <HighlightedValue value={params.cat?.pathlength} placeholder="l" /> × <HighlightedValue value={params.cat?.dilutionFactor} placeholder="DF" /> (μmol/min/mg DW)
+              </div>
+            </div>
+          </div>
+        );
 
-      // 3. POD (Peroxidase) 분리
       case "pod":
         return (
-           <div className="flex flex-col space-y-4">
-             <div className="flex flex-wrap items-end gap-4">
-               <div className="flex-1 min-w-[120px]">
-                 <ParamInput label="Total Volume (μL)" value={params.pod?.total_vol || ""} onChange={e => handleNestedParamChange('pod', 'total_vol', e.target.value)} placeholder="e.g., 200" />
-               </div>
-               {/* POD는 20uL 권장 (프로토콜 기준) */}
-               <div className="flex-1 min-w-[120px]">
-                 <ParamInput label="Enzyme Volume (μL)" value={params.pod?.enzyme_vol || ""} onChange={e => handleNestedParamChange('pod', 'enzyme_vol', e.target.value)} placeholder="e.g., 20" />
-               </div>
-               <div className="flex-1 min-w-[150px]">
-                 <ParamInput label="Enzyme Conc. (mg/mL)" value={params.pod?.enzyme_conc || ""} onChange={e => handleNestedParamChange('pod', 'enzyme_conc', e.target.value)} placeholder="e.g., 10" />
-               </div>
-               <div className="flex-shrink-0">
-                 <Button onClick={handleApply} className="ios-button rounded-xl h-12 flex items-center justify-center px-6">
-                   {isApplied && <CheckCircle className="h-4 w-4 mr-2" />}
-                   {isApplied ? "적용됨" : "적용"}
-                 </Button>
-               </div>
-             </div>
-             <p className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-center text-sm">
-               POD activity = (<span className="text-blue-600 font-bold">Measured ΔA (470 nm)</span> × <HighlightedValue value={params.pod?.total_vol} placeholder="total_vol"/> × 1000) / (26.6 × <HighlightedValue value={params.pod?.enzyme_vol} placeholder="enzyme_vol"/>) / <HighlightedValue value={params.pod?.enzyme_conc} placeholder="enzyme_conc"/>
-             </p>
-           </div>
-         );
+          <div className="flex flex-col space-y-4">
+            <div className="flex flex-wrap items-end gap-4">
+              <div className="flex-1 min-w-[150px]">
+                <ParamInput label="Blank slope" value={params.pod?.blank_slope || ""} onChange={e => handleNestedParamChange('pod', 'blank_slope', e.target.value)} placeholder="예: 0.002" />
+              </div>
+              <div className="flex-1 min-w-[120px]">
+                <ParamInput label="Path length (cm)" value={params.pod?.pathlength || ""} onChange={e => handleNestedParamChange('pod', 'pathlength', e.target.value)} placeholder="Default: 1" />
+              </div>
+              <div className="flex-1 min-w-[120px]">
+                <ParamInput label="희석배수 (DF)" value={params.pod?.dilutionFactor || ""} onChange={e => handleNestedParamChange('pod', 'dilutionFactor', e.target.value)} placeholder="Default: 1" />
+              </div>
+              <div className="flex-shrink-0">
+                <Button onClick={handleApply} className="ios-button rounded-xl h-12 flex items-center justify-center px-6">
+                  {isApplied && <CheckCircle className="h-4 w-4 mr-2" />}
+                  {isApplied ? "적용됨" : "적용"}
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-center text-sm">
+                ΔA<sub>corr</sub>/min = Sample slope − Blank slope
+              </div>
+              <div className="text-gray-800 font-mono p-3 bg-gray-100 rounded-lg text-center text-sm">
+                POD activity = ΔA<sub>corr</sub>/min × 0.0376 / <HighlightedValue value={params.pod?.pathlength} placeholder="l" /> × <HighlightedValue value={params.pod?.dilutionFactor} placeholder="DF" /> (μmol/min/mg DW)
+              </div>
+              <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                ε = 26.6 mM⁻¹ cm⁻¹ 기준이므로 POD 계산에는 ×1000을 넣지 않습니다.
+              </p>
+            </div>
+          </div>
+        );
 
       default:
         return null;

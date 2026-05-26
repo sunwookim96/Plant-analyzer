@@ -1,58 +1,49 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus } from "lucide-react";
-
-const getWavelengthsForAnalysis = (analysisType) => {
-  const wavelengths = {
-    chlorophyll_a_b: ["665.2", "652.4", "470"],
-    carotenoid: ["470", "665.2", "652.4"],
-    total_phenol: ["765"],
-    total_flavonoid: ["510"],
-    glucosinolate: ["425"],
-    dpph_scavenging: ["517"],
-    anthocyanin: ["530", "600"], // Updated from "657" to "600"
-    cat: ["240"],
-    pod: ["470"],
-    sod: ["560"],
-    h2o2: ["390"]
-  };
-  return wavelengths[analysisType] || [];
-};
+import { getMeasurementFields } from "@/utils/analysisFields";
 
 export default function ManualInput({ analysisType, onSaveSample }) {
   const [treatmentName, setTreatmentName] = useState("");
   const [sampleName, setSampleName] = useState("");
-  const [absorbanceValues, setAbsorbanceValues] = useState({});
+  const [measurementValues, setMeasurementValues] = useState({});
 
-  const wavelengths = getWavelengthsForAnalysis(analysisType);
+  const fields = getMeasurementFields(analysisType, "en");
 
-  const handleAbsorbanceChange = (wavelength, value) => {
-    setAbsorbanceValues(prev => ({
+  const handleMeasurementChange = (key, value) => {
+    setMeasurementValues(prev => ({
       ...prev,
-      [wavelength]: value === '' ? '' : parseFloat(value) || 0,
+      [key]: value === "" ? "" : parseFloat(value) || 0,
     }));
   };
 
-  const handleSave = () => {
+  const buildProcessedValues = () => {
     const processedValues = {};
-    Object.entries(absorbanceValues).forEach(([key, value]) => {
-      processedValues[key] = value === '' ? 0 : parseFloat(value) || 0;
+
+    fields.forEach(field => {
+      const value = measurementValues[field.key];
+      if (field.optional && (value === "" || value === undefined || value === null)) return;
+      processedValues[field.key] = value === "" || value === undefined || value === null ? 0 : parseFloat(value) || 0;
     });
 
+    return processedValues;
+  };
+
+  const handleSave = () => {
     const sampleData = {
       treatment_name: treatmentName,
       sample_name: sampleName,
       analysis_type: analysisType,
-      absorbance_values: processedValues
+      absorbance_values: buildProcessedValues()
     };
+
     onSaveSample(sampleData, false);
     setTreatmentName("");
     setSampleName("");
-    setAbsorbanceValues({});
+    setMeasurementValues({});
   };
   
   if (!analysisType) {
@@ -65,55 +56,63 @@ export default function ManualInput({ analysisType, onSaveSample }) {
     );
   }
 
-  const isFormValid = treatmentName.trim() && sampleName.trim() && wavelengths.every(wl => 
-    absorbanceValues[wl] !== undefined && 
-    absorbanceValues[wl] !== '' && 
-    !isNaN(parseFloat(absorbanceValues[wl]))
+  const requiredFields = fields.filter(field => !field.optional);
+  const isFormValid = treatmentName.trim() && sampleName.trim() && requiredFields.every(field => 
+    measurementValues[field.key] !== undefined &&
+    measurementValues[field.key] !== "" &&
+    !isNaN(parseFloat(measurementValues[field.key]))
   );
 
   return (
     <Card className="ios-card ios-blur rounded-3xl ios-shadow-lg border-0 h-full">
-        <CardHeader>
-            <CardTitle className="text-gray-900 text-xl font-semibold flex items-center space-x-2">
-                <Plus className="h-5 w-5" />
-                <span>Add Sample Manually</span>
-            </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                    <Label className="text-gray-700 font-medium text-sm">Treatment Name</Label>
-                    <Input value={treatmentName} onChange={e => setTreatmentName(e.target.value)} placeholder="e.g., Control" className="ios-input border-0 text-gray-900 placeholder:text-gray-400" />
-                </div>
-                <div className="space-y-2">
-                    <Label className="text-gray-700 font-medium text-sm">Replicate</Label>
-                    <Input value={sampleName} onChange={e => setSampleName(e.target.value)} placeholder="e.g., Rep1" className="ios-input border-0 text-gray-900 placeholder:text-gray-400" />
-                </div>
-            </div>
-            
-            <div className="space-y-2">
-                <Label className="text-gray-700 font-medium text-sm">Absorbance Values</Label>
-                <div className="flex flex-wrap gap-4">
-                    {wavelengths.map(wl => (
-                        <div key={wl} className="space-y-2 flex-1 min-w-[80px]">
-                            <Label className="text-gray-600 text-sm font-medium">{wl} nm</Label>
-                            <Input 
-                                type="number" 
-                                inputMode="decimal"
-                                step="any" 
-                                value={absorbanceValues[wl] ?? ''} 
-                                onChange={e => handleAbsorbanceChange(wl, e.target.value)} 
-                                placeholder="0.000"
-                                className="ios-input border-0 text-gray-900 placeholder:text-gray-400 text-center" 
-                            />
-                        </div>
-                    ))}
-                </div>
-            </div>
-            <Button onClick={handleSave} disabled={!isFormValid} className="w-full ios-button rounded-2xl h-14 text-white font-semibold text-base">
-                Add
-            </Button>
-        </CardContent>
+      <CardHeader>
+        <CardTitle className="text-gray-900 text-xl font-semibold flex items-center space-x-2">
+          <Plus className="h-5 w-5" />
+          <span>Add Sample Manually</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label className="text-gray-700 font-medium text-sm">Treatment Name</Label>
+            <Input value={treatmentName} onChange={e => setTreatmentName(e.target.value)} placeholder="e.g., Control" className="ios-input border-0 text-gray-900 placeholder:text-gray-400" />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-gray-700 font-medium text-sm">Replicate</Label>
+            <Input value={sampleName} onChange={e => setSampleName(e.target.value)} placeholder="e.g., Rep1" className="ios-input border-0 text-gray-900 placeholder:text-gray-400" />
+          </div>
+        </div>
+        
+        <div className="space-y-2">
+          <Label className="text-gray-700 font-medium text-sm">Measurement values</Label>
+          <div className="flex flex-wrap gap-4">
+            {fields.map(field => (
+              <div key={field.key} className="space-y-2 flex-1 min-w-[140px]">
+                <Label className="text-gray-600 text-sm font-medium">
+                  {field.label}{field.optional ? "" : " *"}
+                </Label>
+                <Input 
+                  type="number" 
+                  inputMode="decimal"
+                  step="any" 
+                  value={measurementValues[field.key] ?? ""} 
+                  onChange={e => handleMeasurementChange(field.key, e.target.value)} 
+                  placeholder={field.placeholder || "0.000"}
+                  className="ios-input border-0 text-gray-900 placeholder:text-gray-400 text-center" 
+                />
+              </div>
+            ))}
+          </div>
+          {analysisType === "sod" && (
+            <p className="text-xs text-gray-500 leading-relaxed">
+              Leave sample dark blank empty when it was not measured; the common dark blank will be used instead.
+            </p>
+          )}
+        </div>
+        <Button onClick={handleSave} disabled={!isFormValid} className="w-full ios-button rounded-2xl h-14 text-white font-semibold text-base">
+          Add
+        </Button>
+      </CardContent>
     </Card>
   );
 }

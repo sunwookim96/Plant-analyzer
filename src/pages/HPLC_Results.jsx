@@ -14,6 +14,7 @@ import PDFUpload from "@/components/hplc/PDFUpload";
 import ResultsTable from "@/components/hplc/ResultsTable";
 import ResultsChart from "@/components/hplc/ResultsChart";
 import StatisticsResults from "@/components/hplc/StatisticsResults";
+import { getHplcProtocol, isCalibrationCurveHplcType } from "@/data/hplcProtocols";
 
 // --- [Visual Components: Transparent Liquid Glass System] ---
 
@@ -384,7 +385,8 @@ const LiquidTab = ({ active, onClick, icon, label }) => (
   </button>
 );
 
-export default function HPLC_Results() {
+export default function HPLC_Results({ lang = "ko" }) {
+  const isEn = lang === "en";
   const location = useLocation();
   const navigate = useNavigate();
   const [analysisType, setAnalysisType] = useState("");
@@ -424,37 +426,50 @@ export default function HPLC_Results() {
 
   // --- [Handlers] ---
   const handleBackToHPLC = () => {
-    const targetPath = typeof createPageUrl === "function" ? createPageUrl("HPLC") : "/hplc";
+    const targetName = isEn ? "HPLC_en" : "HPLC";
+    const targetPath = typeof createPageUrl === "function" ? createPageUrl(targetName) : (isEn ? "/hplc_en" : "/hplc");
     navigate(targetPath);
   };
 
+  const toFiniteNumber = (value, fallback = null) => {
+    if (value === "" || value === null || value === undefined) return fallback;
+    const parsed = parseFloat(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  };
+
   const calculateConcentration = (sampleArea, compound, calcParams, analysisType) => {
-    if (!sampleArea || !compound || !calcParams) return null;
+    const area = toFiniteNumber(sampleArea);
+    if (area === null || !compound || !calcParams) return null;
 
-    if (analysisType === "phenol") {
-      const a = calcParams[`${compound}_a`];
-      const b = calcParams[`${compound}_b`];
-      const sampleWeight = calcParams.sampleWeight;
+    if (isCalibrationCurveHplcType(analysisType)) {
+      const a = toFiniteNumber(calcParams[`${compound}_a`]);
+      const b = toFiniteNumber(calcParams[`${compound}_b`], 0);
+      const sampleWeight = toFiniteNumber(calcParams.sampleWeight);
+      const extractionVolume = toFiniteNumber(calcParams.extractionVolume);
+      const dilutionFactor = toFiniteNumber(calcParams.dilutionFactor, 1);
 
-      if (!a || !b || !sampleWeight) return null;
+      if (!a || a <= 0 || !sampleWeight || sampleWeight <= 0 || !extractionVolume || extractionVolume <= 0) return null;
 
-      const ugPerMl = (parseFloat(sampleArea) + parseFloat(b)) / parseFloat(a);
-      const mgPerG = ugPerMl * 2 / parseFloat(sampleWeight);
-      return mgPerG;
-    } else {
-      const { standardArea, molecularWeight, sampleWeight, conversionFactor } = calcParams;
-      if (!standardArea || !molecularWeight || !sampleWeight) return null;
-
-      const result =
-        (parseFloat(sampleArea) / parseFloat(standardArea)) *
-        0.5 /
-        parseFloat(molecularWeight) *
-        1000 /
-        parseFloat(sampleWeight) *
-        parseFloat(conversionFactor || 1);
-
-      return result;
+      const ugPerMl = (area - b) / a;
+      const mgPerG = (ugPerMl * extractionVolume * dilutionFactor) / sampleWeight / 1000;
+      return Number.isFinite(mgPerG) ? Math.max(0, mgPerG) : null;
     }
+
+    const { standardArea, molecularWeight, sampleWeight, conversionFactor } = calcParams;
+    const standardAreaNum = toFiniteNumber(standardArea);
+    const molecularWeightNum = toFiniteNumber(molecularWeight);
+    const sampleWeightNum = toFiniteNumber(sampleWeight);
+    if (!standardAreaNum || !molecularWeightNum || !sampleWeightNum) return null;
+
+    const result =
+      (area / standardAreaNum) *
+      0.5 /
+      molecularWeightNum *
+      1000 /
+      sampleWeightNum *
+      toFiniteNumber(conversionFactor, 1);
+
+    return Number.isFinite(result) ? result : null;
   };
 
   const regenerateResults = (newCalcParams) => {
@@ -508,14 +523,25 @@ export default function HPLC_Results() {
   };
 
   const getAnalysisTitle = () => {
-    const titles = {
-      phenol: "페놀 화합물 분석",
-      glucosinolate: "글루코시놀레이트 분석",
-      acacetin: "아카세틴 분석",
-      rosmarinic_acid: "로즈마린산 분석",
-      tilianin: "틸리아닌 분석",
-    };
-    return titles[analysisType] || "HPLC 분석";
+    const protocol = getHplcProtocol(analysisType, lang);
+    if (protocol?.title) return isEn ? `${protocol.title} Analysis` : `${protocol.title} 분석`;
+    return isEn ? "HPLC Analysis" : "HPLC 분석";
+  };
+
+  const text = {
+    selectItem: isEn ? "Please select an analysis item" : "분석 항목을 선택해주세요",
+    backToHplc: isEn ? "Back to HPLC protocols" : "HPLC 분석으로 돌아가기",
+    subtitle: isEn ? "HPLC quantification analysis" : "HPLC 정량 분석",
+    dataInput: isEn ? "Data input" : "데이터 입력",
+    visualization: isEn ? "Visualization" : "시각화",
+    rtSettings: isEn ? "RT standards" : "RT 기준 설정",
+    calcSettings: isEn ? "Calculation parameters" : "계산 변수 설정",
+    pdfUpload: isEn ? "PDF upload" : "PDF 파일 업로드",
+    stats: isEn ? "Statistics" : "통계 요약",
+    detailResults: isEn ? "Detailed results" : "분석 상세 결과",
+    noData: isEn ? "No data." : "데이터가 없습니다.",
+    noChartData: isEn ? "No data to visualize." : "시각화할 데이터가 없습니다.",
+    chartTitle: isEn ? "Data visualization" : "데이터 시각화"
   };
 
   if (!analysisType) {
@@ -523,13 +549,13 @@ export default function HPLC_Results() {
       <div className="liquid-scope min-h-screen bg-slate-900 flex items-center justify-center text-white p-4">
         <LiquidScopeStyles />
         <LiquidCard className="text-center p-10 max-w-md w-full">
-          <h1 className="text-2xl font-bold mb-4">분석 항목을 선택해주세요</h1>
+          <h1 className="text-2xl font-bold mb-4">{text.selectItem}</h1>
           <button
             onClick={handleBackToHPLC}
             className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl flex items-center justify-center space-x-2 w-full transition-all font-bold shadow-lg"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span>HPLC 분석으로 돌아가기</span>
+            <span>{text.backToHplc}</span>
           </button>
         </LiquidCard>
       </div>
@@ -570,7 +596,7 @@ export default function HPLC_Results() {
               <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-blue-200 drop-shadow-sm">
                 {getAnalysisTitle()}
               </h1>
-              <p className="text-slate-400 text-sm font-medium">HPLC Quantification Analysis</p>
+              <p className="text-slate-400 text-sm font-medium">{text.subtitle}</p>
             </div>
           </div>
 
@@ -579,13 +605,13 @@ export default function HPLC_Results() {
               active={activeTab === "data_input"}
               onClick={() => setActiveTab("data_input")}
               icon={<Database />}
-              label="데이터 입력"
+              label={text.dataInput}
             />
             <LiquidTab
               active={activeTab === "visualization"}
               onClick={() => setActiveTab("visualization")}
               icon={<BarChart3 />}
-              label="시각화"
+              label={text.visualization}
             />
           </div>
         </motion.div>
@@ -606,7 +632,7 @@ export default function HPLC_Results() {
 <LiquidCard className="p-1">
   <div className="bg-gradient-to-r from-blue-900/20 to-transparent px-6 py-4 border-b border-white/5 flex items-center gap-2 rounded-t-3xl overflow-hidden">
     <Settings2 className="w-5 h-5 text-blue-300" />
-    <h2 className="text-lg font-bold text-white">RT 기준 설정</h2>
+    <h2 className="text-lg font-bold text-white">{text.rtSettings}</h2>
   </div>
   <div className="p-6">
     <InnerGlass className="p-4 force-readable rt-ux">
@@ -614,6 +640,7 @@ export default function HPLC_Results() {
         analysisType={analysisType}
         onRTStandardsChange={handleRTStandardsChange}
         initialValues={rtStandards}
+        lang={lang}
       />
     </InnerGlass>
   </div>
@@ -623,7 +650,7 @@ export default function HPLC_Results() {
 <LiquidCard className="p-1">
   <div className="bg-gradient-to-r from-green-900/20 to-transparent px-6 py-4 border-b border-white/5 flex items-center gap-2 rounded-t-3xl overflow-hidden">
     <FlaskConical className="w-5 h-5 text-green-300" />
-    <h2 className="text-lg font-bold text-white">계산 변수 설정</h2>
+    <h2 className="text-lg font-bold text-white">{text.calcSettings}</h2>
   </div>
   <div className="p-6">
     <InnerGlass className="p-4 force-readable calc-ux">
@@ -631,6 +658,7 @@ export default function HPLC_Results() {
         analysisType={analysisType}
         onCalculationParamsChange={handleCalculationParamsChange}
         initialValues={calculationParams}
+        lang={lang}
       />
     </InnerGlass>
   </div>
@@ -644,7 +672,7 @@ export default function HPLC_Results() {
 <LiquidCard className="lg:col-span-1 p-1 flex flex-col h-full">
   <div className="bg-gradient-to-r from-orange-900/20 to-transparent px-6 py-4 border-b border-white/5 flex items-center gap-2 rounded-t-3xl overflow-hidden">
     <Upload className="w-5 h-5 text-orange-300" />
-    <h2 className="text-lg font-bold text-white">PDF 파일 업로드</h2>
+    <h2 className="text-lg font-bold text-white">{text.pdfUpload}</h2>
   </div>
   <div className="p-6 flex-1">
     <InnerGlass className="p-4 h-full force-readable upload-ux">
@@ -655,6 +683,7 @@ export default function HPLC_Results() {
         analysisType={analysisType}
         calculationParams={calculationParams}
         uploadedFiles={uploadedFiles}
+        lang={lang}
       />
     </InnerGlass>
   </div>
@@ -664,11 +693,11 @@ export default function HPLC_Results() {
                 <LiquidCard className="lg:col-span-2 p-1 flex flex-col h-full">
   <div className="bg-gradient-to-r from-purple-900/20 to-transparent px-6 py-4 border-b border-white/5 flex items-center gap-2 rounded-t-3xl overflow-hidden">
     <PieChart className="w-5 h-5 text-purple-300" />
-    <h2 className="text-lg font-bold text-white">통계 요약</h2>
+    <h2 className="text-lg font-bold text-white">{text.stats}</h2>
   </div>
   <div className="p-6 flex-1">
     <InnerGlass className="p-4 h-full flex items-center justify-center force-readable stats-ux">
-      <StatisticsResults results={results} />
+      <StatisticsResults results={results} lang={lang} />
     </InnerGlass>
   </div>
 </LiquidCard>
@@ -679,7 +708,7 @@ export default function HPLC_Results() {
   <div className="bg-gradient-to-r from-indigo-900/20 to-transparent px-6 py-4 border-b border-white/5 flex items-center justify-between rounded-t-3xl overflow-hidden">
     <div className="flex items-center gap-2">
       <FileText className="w-5 h-5 text-indigo-300" />
-      <h2 className="text-lg font-bold text-white">분석 상세 결과</h2>
+      <h2 className="text-lg font-bold text-white">{text.detailResults}</h2>
     </div>
     <div className="px-3 py-1 rounded-full bg-white/10 text-xs text-gray-300 font-medium border border-white/10">
       {results.length} Rows
@@ -688,10 +717,10 @@ export default function HPLC_Results() {
   <div className="p-6">
     <InnerGlass className="p-2 overflow-hidden min-h-[300px] results-ux force-readable">
       {results.length > 0 ? (
-        <ResultsTable results={results} analysisType={analysisType} />
+        <ResultsTable results={results} analysisType={analysisType} lang={lang} />
       ) : (
         <div className="flex items-center justify-center h-full text-gray-400 py-10">
-          데이터가 없습니다.
+          {text.noData}
         </div>
       )}
     </InnerGlass>
@@ -714,15 +743,15 @@ export default function HPLC_Results() {
 <LiquidCard className="min-h-[600px] p-1">
   <div className="bg-gradient-to-r from-pink-900/20 to-transparent px-6 py-4 border-b border-white/5 flex items-center gap-2 rounded-t-3xl overflow-hidden">
     <BarChart3 className="w-5 h-5 text-pink-400" />
-    <h2 className="text-lg font-bold text-white">데이터 시각화</h2>
+    <h2 className="text-lg font-bold text-white">{text.chartTitle}</h2>
 
   </div>
   <div className="p-6">
     <InnerGlass className="min-h-[500px] p-6 flex items-center justify-center force-readable">
       {results.length > 0 ? (
-        <ResultsChart results={results} analysisType={analysisType} />
+        <ResultsChart results={results} analysisType={analysisType} lang={lang} />
       ) : (
-        <div className="text-gray-400">시각화할 데이터가 없습니다.</div>
+        <div className="text-gray-400">{text.noChartData}</div>
       )}
     </InnerGlass>
   </div>

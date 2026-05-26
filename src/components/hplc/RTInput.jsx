@@ -4,23 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { FileText, CheckCircle } from "lucide-react";
-
-const defaultCompounds = {
-  phenol: [
-    "Arbutin", "Gallic acid", "Catechin hydrate", "4-Hydroxybenzoic acid", 
-    "Chlorogenic acid", "Caffeic acid", "(-)-Epicatechin", "4-Hydroxy-3-benzoic acid",
-    "p-Coumaric acid", "trans-Ferulic acid", "Benzoic acid", "Rutin",
-    "trans-Cinnamic acid", "Quercetin", "Kaempferol"
-  ],
-  glucosinolate: [
-    "Progoitrin", "Sinigrin", "Glucoalyssin", "Gluconapoleiferin",
-    "Gluconapin", "4-Hydroxyglucobrassicin", "Glucobrassicanapin", "Glucoerucin",
-    "Glucobrassicin", "4-Methoxyglucobrassicin", "Gluconasturtiin", "Neoglucobrassicin"
-  ],
-  acacetin: ["Acacetin", "Acacetin-7-O-glucoside"],
-  rosmarinic_acid: ["Rosmarinic acid", "Caffeic acid", "Salvianolic acid B"],
-  tilianin: ["Tilianin", "Acacetin-7-O-rutinoside"]
-};
+import { getHplcCompounds } from "@/data/hplcProtocols";
 
 const getShortName = (compoundName) => {
   const shortNames = {
@@ -33,31 +17,31 @@ const getShortName = (compoundName) => {
     "4-Hydroxyglucobrassicin": "4-Hydroxygluco",
     "Glucobrassicanapin": "Glucobrassican",
     "4-Methoxyglucobrassicin": "4-Methoxygluco",
-    "Acacetin-7-O-glucoside": "Acacetin-7-O-gluco",
-    "Acacetin-7-O-rutinoside": "Acacetin-7-O-ruti"
+    "Rosmarinic acid": "Rosmarinic acid",
+    "Artemisinin": "Artemisinin",
+    "Δ9-THC": "Δ9-THC"
   };
   return shortNames[compoundName] || compoundName;
 };
 
-export default function RTInput({ analysisType, onRTStandardsChange, initialValues = {} }) {
+export default function RTInput({ analysisType, onRTStandardsChange, initialValues = {}, lang = "ko" }) {
   const [compounds, setCompounds] = useState([]);
   const [rtValues, setRtValues] = useState({});
   const [isApplied, setIsApplied] = useState(false);
+  const isEn = lang === "en";
 
   useEffect(() => {
-    if (analysisType && defaultCompounds[analysisType]) {
-      const defaultList = defaultCompounds[analysisType];
+    if (analysisType) {
+      const defaultList = getHplcCompounds(analysisType, lang);
       setCompounds(defaultList);
-      
       const initialRTValues = {};
       defaultList.forEach(compound => {
         initialRTValues[compound] = initialValues[compound] || "";
       });
       setRtValues(initialRTValues);
-      
       setIsApplied(Object.keys(initialValues).length > 0 && Object.values(initialValues).some(v => v !== ""));
     }
-  }, [analysisType, initialValues]);
+  }, [analysisType, initialValues, lang]);
 
   const handleRTChange = (compound, value) => {
     setRtValues(prev => ({ ...prev, [compound]: value }));
@@ -67,7 +51,7 @@ export default function RTInput({ analysisType, onRTStandardsChange, initialValu
   const handleApply = () => {
     const validRTValues = {};
     Object.entries(rtValues).forEach(([comp, rt]) => {
-      if (rt && !isNaN(parseFloat(rt))) {
+      if (rt !== "" && !isNaN(parseFloat(rt))) {
         validRTValues[comp] = parseFloat(rt);
       }
     });
@@ -77,7 +61,7 @@ export default function RTInput({ analysisType, onRTStandardsChange, initialValu
 
   const getCompoundsByColumns = () => {
     const compoundsArray = [...compounds];
-    const columnSize = Math.ceil(compoundsArray.length / 3);
+    const columnSize = Math.ceil(compoundsArray.length / 3) || 1;
     return [
       compoundsArray.slice(0, columnSize),
       compoundsArray.slice(columnSize, columnSize * 2),
@@ -85,30 +69,38 @@ export default function RTInput({ analysisType, onRTStandardsChange, initialValu
     ];
   };
 
+  const t = {
+    title: isEn ? "RT standards" : "RT 기준 입력",
+    apply: isEn ? "Apply" : "적용",
+    applied: isEn ? "Applied" : "적용됨",
+    desc: isEn ? "Enter the reference retention time for each target compound." : "각 화합물의 기준 Retention Time을 입력하세요.",
+    appliedTitle: isEn ? "Applied RT values" : "적용된 RT"
+  };
+
   const compoundColumns = getCompoundsByColumns();
 
   return (
     <Card className="ios-card ios-blur rounded-3xl ios-shadow-lg border-0">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <CardTitle className="text-gray-900 text-xl font-semibold flex items-center space-x-2">
             <FileText className="h-5 w-5" />
-            <span>RT 기준 입력</span>
+            <span>{t.title}</span>
           </CardTitle>
-          <Button 
+          <Button
             onClick={handleApply}
             className={`ios-button rounded-xl h-10 px-6 flex items-center space-x-2 ${
-              isApplied ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'
+              isApplied ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"
             }`}
           >
             {isApplied && <CheckCircle className="h-4 w-4" />}
-            <span>{isApplied ? "적용됨" : "적용"}</span>
+            <span>{isApplied ? t.applied : t.apply}</span>
           </Button>
         </div>
-        <p className="text-gray-600 text-sm">각 화합물의 기준 Retention Time을 입력하세요.</p>
+        <p className="text-gray-600 text-sm">{t.desc}</p>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-3 gap-x-4 gap-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-4 gap-y-4">
           {compoundColumns.map((column, colIndex) => (
             <div key={colIndex} className="space-y-4">
               {column.map((compound) => (
@@ -133,14 +125,11 @@ export default function RTInput({ analysisType, onRTStandardsChange, initialValu
 
         {isApplied && Object.keys(initialValues).length > 0 && (
           <div className="applied-summary mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
-
-            <h4 className="text-blue-800 font-semibold mb-3">적용된 RT</h4>
-            <div className="grid grid-cols-3 gap-x-2 gap-y-2 text-xs text-blue-900 font-mono">
+            <h4 className="text-blue-800 font-semibold mb-3">{t.appliedTitle}</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-2 gap-y-2 text-xs text-blue-900 font-mono">
               {Object.entries(initialValues).map(([compound, rt]) => (
                 <div key={compound} className="bg-blue-100 rounded p-2 text-center">
-                  <div className="text-blue-700 font-medium mb-1" title={compound}>
-                    {getShortName(compound)}
-                  </div>
+                  <div className="text-blue-700 font-medium mb-1" title={compound}>{getShortName(compound)}</div>
                   <div className="font-bold text-blue-900">{parseFloat(rt).toFixed(2)}</div>
                 </div>
               ))}
